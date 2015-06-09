@@ -28,12 +28,23 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
-# Application definition
+# --------- PASSWORD HASHER CONFIGURATION
+# See: https://docs.djangoproject.com/en/1.6/topics/auth/passwords/
+# Note: libffi must be installed.
+PASSWORD_HASHERS = (
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+)
+#--------- END PASSWORD HASHER CONFIGURATION
 
+
+# --------- Application definition
 DJANGO_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.messages'
 )
 
@@ -45,43 +56,30 @@ THIRD_PARTY_APPS = (
 
 LOCAL_APPS = (
     'common',
-    'user'
+    'usr'
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'common.middleware.HeadInfoMiddleware'
 )
 
 ROOT_URLCONF = 'buildergiant.urls'
 
-TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
-]
-
 WSGI_APPLICATION = 'buildergiant.wsgi.application'
 
+APPEND_SLASH = False
+#--------- END Application definition
 
-# Database
+
+#--------- Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
@@ -93,9 +91,22 @@ DATABASES = {
         'CONN_MAX_AGE': 1 * 60 * 60  # 1 hour
     }
 }
+#--------- END Database
 
 
-# Internationalization
+# -------- REST framework
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': ('common.renderer.JSONRenderer',),
+
+    'PAGINATE_BY': 10,  # Default to 10
+    'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
+    'MAX_PAGINATE_BY': 100,  # Maximum limit allowed when using `?page_size=xxx`.
+    'EXCEPTION_HANDLER': 'common.helper.custom_exception_handler',
+}
+# -------- End REST framework
+
+
+#--------- Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
@@ -107,12 +118,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+#--------- END Internationalization
 
-APPEND_SLASH = False
 
-
-# ========== CUSTOM AUTH CONFIGURATION
+#--------- CUSTOM AUTH CONFIGURATION
 #: Specify the authentication User model, we're using ``miniauth`` module which gives only
 #: email and password fields. `See here <https://github.com/inabhi9/django-miniauth>`_
 AUTH_USER_MODEL = 'miniauth.User'
-# ========== END CUSTOM AUTH CONFIGURATION
+#--------- END CUSTOM AUTH CONFIGURATION
