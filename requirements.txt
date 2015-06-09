@@ -1,0 +1,1 @@
+git+https://github.com/inabhi9/django-miniauth.git
