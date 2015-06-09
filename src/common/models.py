@@ -9,4 +9,5 @@ class BaseModel(models.Model):
     objects = BaseManager()
 
     class Meta:
+        default_permissions = ('add', 'change', 'delete', 'view')
         abstract = True
