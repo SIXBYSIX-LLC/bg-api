@@ -15,10 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from rest_framework.authtoken import views
+
+from common.auth.authtoken import obtain_auth_token
 
 
 urlpatterns = [
     url(r'^admin', include(admin.site.urls)),
-    url(r'^auth$', views.obtain_auth_token)
+    url(r'^auth$', obtain_auth_token)
 ]
