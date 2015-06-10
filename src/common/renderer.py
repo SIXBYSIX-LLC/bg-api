@@ -55,16 +55,18 @@ class JSONRenderer(RFJSONRenderer):
             data.pop('_context', None)
 
             # Normalizing detail field in error, only first element of dict should be visible
-            if isinstance(data.get('detail'), dict):
-                for k, v in data.get('detail').items():
-                    try:
-                        detail = '%s: %s' % (k, v[0])
-                    except IndexError:
-                        detail = '%s: %s' % (k, v)
-                    break
-                data['detail'] = detail
-            elif data.get('non_field_errors'):
+            if data.get('non_field_errors'):
                 data['detail'] = data.pop('non_field_errors')[0]
+            else:
+                detail = {}
+                for k, v in data.items():
+                    if k in ['type', 'error_code', 'status_code']:
+                        continue
+
+                    detail[k] = data.pop(k)[0]
+
+                data['detail'] = detail
+
 
         # check if the results have been paginated
         if isinstance(data, dict) and data.has_key('results'):
