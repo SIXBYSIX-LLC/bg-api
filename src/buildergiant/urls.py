@@ -21,5 +21,6 @@ from common.auth.authtoken import obtain_auth_token
 
 urlpatterns = [
     url(r'^admin', include(admin.site.urls)),
-    url(r'^auth$', obtain_auth_token)
+    url(r'^login$', obtain_auth_token),
+    url(r'^', include('usr.urls')),
 ]
