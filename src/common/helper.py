@@ -40,7 +40,7 @@ def custom_exception_handler(exc, context):
     # Globally catch some typical error and transform them into API error
     # if isinstance(exc, me_error.NotUniqueError):
     # return custom_exception_handler(errors.DuplicateValueError('Some of the request values '
-    #                                                                'are not unique'))
+    # 'are not unique'))
     # elif isinstance(exc, me_error.ValidationError) or isinstance(exc, objectid.InvalidId):
     #     return custom_exception_handler(errors.ValidationError(exc.message))
 
@@ -61,6 +61,7 @@ def custom_exception_handler(exc, context):
     response.data['_context'] = 'error'
     response.data['type'] = error_type or exc.__class__.__name__
     response.data['status_code'] = response.status_code
+    response.data['error_code'] = getattr(exc, 'error_code', 0)
 
     return response
 
