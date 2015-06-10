@@ -1,1 +1,56 @@
-# Create your tests here.
+from rest_framework import status
+
+from common.tests import TestCase
+from . import factories
+
+
+class TestUser(TestCase):
+    def test_login(self):
+        data = {
+            'username': self.device.email,
+            'password': '123'
+        }
+        response = self.device_client.post('/login', data)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(response.data.get('token'))
+
+    def test_registration(self):
+        # check if created successfully
+        data = factories.RegistrationFactory.build()
+        response = self.admin_client.post('/users', data=data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # Try to login using newly created user
+        login_response = self.device_client.post('/login', data={'username': data['email'],
+                                                                 'password': data['password']})
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)
+
+    def test_registration_duplicate_email(self):
+        data = factories.RegistrationFactory.build()
+        data['email'] = self.device.email
+        response = self.admin_client.post('/users', data=data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_registration_missing_fields(self):
+        keys = factories.RegistrationFactory.build().keys()
+
+        # check if created successfully
+        for k in keys:
+            data = factories.RegistrationFactory.build()
+            del data[k]
+            response = self.admin_client.post('/users', data=data)
+            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_registration_extra_fields(self):
+        data = factories.RegistrationFactory.build()
+        data['is_superuser'] = True
+        response = self.admin_client.post('/users', data=data)
+
+        self.assertEqual(response.data['is_superuser'], False)
+
+
+    def test_invalid_email(self):
+        data = factories.RegistrationFactory.build(email='shit0@example')
+        response = self.admin_client.post('/users', data=data)
+        self.assertEqual(response.status_code, 400)
