@@ -22,3 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
 class LoginSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         exclude = ('unverified_email_key',)
+
+
+class UpdateUserSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        fields = ('fullname', 'zip_code', 'phone', 'store_name', 'timezone')

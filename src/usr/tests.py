@@ -49,8 +49,23 @@ class TestUser(TestCase):
 
         self.assertEqual(response.data['is_superuser'], False)
 
-
     def test_invalid_email(self):
         data = factories.RegistrationFactory.build(email='shit0@example')
         response = self.admin_client.post('/users', data=data)
         self.assertEqual(response.status_code, 400)
+
+    def test_update(self):
+        user = factories.UserFactory()
+        response = self.admin_client.patch('/users/%s' % user.id, data={'zip_code': '456-789'})
+        user.refresh_from_db()
+        self.assertEqual(user.zip_code, response.data['zip_code'])
+
+    def test_update_extra_info(self):
+        user = factories.UserFactory()
+        self.admin_client.patch('/users/%s' % user.id, data={'is_active': False})
+        user.refresh_from_db()
+        self.assertEqual(user.is_active, True)
+
+        user = factories.UserFactory()
+        response = self.admin_client.patch('/users/%s' % user.id, data={'fullname': ''})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
