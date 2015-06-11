@@ -30,5 +30,11 @@ class UpdateUserSerializer(UserSerializer):
 
 
 class ChangePasswordSerializer(serializers.Serializer):
-    old_password = rf_serializers.CharField(max_length=128, min_length=3)
-    new_password = rf_serializers.CharField(max_length=128, min_length=3)
+    old_password = rf_serializers.CharField(max_length=128, min_length=3, required=True)
+    new_password = rf_serializers.CharField(max_length=128, min_length=3, required=True)
+
+
+class ResetPasswordSerializer(serializers.Serializer):
+    email = rf_serializers.EmailField(required=True)
+    reset_key = rf_serializers.UUIDField(required=True)
+    new_password = rf_serializers.CharField(max_length=128, min_length=3, required=True)
