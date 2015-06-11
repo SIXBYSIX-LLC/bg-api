@@ -2,7 +2,7 @@ import logging
 
 from .models import Profile
 from common import serializers
-
+from common.serializers import rf_serializers
 
 LOG = logging.getLogger('bgapi.' + __name__)
 
@@ -27,3 +27,8 @@ class LoginSerializer(UserSerializer):
 class UpdateUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = ('fullname', 'zip_code', 'phone', 'store_name', 'timezone')
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = rf_serializers.CharField(max_length=128, min_length=3)
+    new_password = rf_serializers.CharField(max_length=128, min_length=3)

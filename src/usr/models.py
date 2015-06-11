@@ -1,10 +1,18 @@
 import uuid
+import logging
 
 from django.db import models
 from django.utils import timezone
 from miniauth.models import User, UserManager
-from django.utils.translation import ugettext as _
 from django.contrib.auth.hashers import make_password, is_password_usable
+from django.utils.translation import ugettext as _
+from django.core import validators
+
+from common import errors
+from . import messages
+
+
+LOG = logging.getLogger('bgapi.' + __name__)
 
 
 class ProfileManager(UserManager):
@@ -67,4 +75,15 @@ class Profile(User):
 
     objects = ProfileManager()
 
+    def change_password(self, old_password, new_password):
+        LOG.debug('Changing password', extra={'old_password': old_password,
+                                              'new_password': new_password})
 
+        if self.check_password(old_password) is False:
+            LOG.warning('Old password does not match', extra={'old_password': old_password})
+            raise errors.ValidationError(*messages.ERR_OLD_PWD)
+        validators.MinLengthValidator(3).__call__(new_password)
+
+        self.set_password(new_password)
+
+        self.save()
