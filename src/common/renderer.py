@@ -50,13 +50,15 @@ class JSONRenderer(RFJSONRenderer):
 
         # When exception handler will pass the response, we would expect
         # the context to be `error`
-        if data.get('_context') == 'error':
+        if data and data.get('_context') == 'error':
             context = 'error'
             data.pop('_context', None)
 
             # Normalizing detail field in error, only first element of dict should be visible
             if data.get('non_field_errors'):
                 data['detail'] = data.pop('non_field_errors')[0]
+            elif data.get('detail'):
+                pass
             else:
                 detail = {}
                 for k, v in data.items():

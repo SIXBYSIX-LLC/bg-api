@@ -1,10 +1,18 @@
 import uuid
+import logging
 
 from django.db import models
 from django.utils import timezone
 from miniauth.models import User, UserManager
-from django.utils.translation import ugettext as _
 from django.contrib.auth.hashers import make_password, is_password_usable
+from django.utils.translation import ugettext as _
+from django.core import validators
+
+from common import errors
+from . import messages
+
+
+LOG = logging.getLogger('bgapi.' + __name__)
 
 
 class ProfileManager(UserManager):
@@ -42,6 +50,41 @@ class ProfileManager(UserManager):
 
         return super(ProfileManager, self).create(**kwargs)
 
+    def generate_password_reset_key(self, email):
+        try:
+            user = self.get(email=email)
+        except Profile.DoesNotExist:
+            raise errors.ValidationError(*messages.ERR_EMAIL_NOT_EXISTS)
+
+        if user.is_password_reset is False:
+            return
+
+        user.is_password_reset = False
+        user.date_password_reset_request = timezone.now()
+        user.password_reset_key = uuid.uuid4()
+        user.save(update_fields=['is_password_reset', 'date_password_reset_request',
+                                 'password_reset_key'])
+
+    def reset_password(self, email, reset_key, new_password):
+        try:
+            user = self.get(email=email)
+        except Profile.DoesNotExist:
+            raise errors.ValidationError(*messages.ERR_EMAIL_NOT_EXISTS)
+
+        if str(user.password_reset_key) != reset_key:
+            raise errors.ValidationError(*messages.ERR_EMAIL_PW_KEY_MISMATCH)
+        if user.is_password_reset is True:
+            raise errors.ValidationError(*messages.ERR_PW_RESET_KEY_USED)
+
+        user.set_password(new_password)
+        # changing the key so user cannot use same key again
+        user.password_reset_key = uuid.uuid4()
+        user.date_password_reset = timezone.now()
+        user.is_password_reset = True
+
+        user.save(update_fields=['password', 'password_reset_key', 'date_password_reset',
+                                 'is_password_reset'])
+
 
 class Profile(User):
     """
@@ -64,7 +107,30 @@ class Profile(User):
     #: User's time zone. It can be used for converting datetime instance to user's time zone
     # while displaying the data
     timezone = models.CharField(max_length=30, blank=True, default='UTC')
+    #: Unique that is used to reset password
+    password_reset_key = models.UUIDField(blank=True, default=uuid.uuid4, editable=False)
+    #: Date time that holds the last time stamp of password reset done successfully
+    date_password_reset = models.DateTimeField(blank=True, null=True, editable=False)
+    #: Date time that holds the time stamp of last password reset request
+    date_password_reset_request = models.DateTimeField(blank=True, null=True, editable=False)
+    #: Stores boolean if the password is reset using the key. The idea of keeping this variable
+    #: is to check if the new password reset key should be generated each time user requests or it
+    #:  should be generated only if old key is not used. I thought it this way because sometimes
+    #: email gets delayed and user try and try again and all email contains different key that
+    #: makes user confused which key should be used to reset password
+    is_password_reset = models.BooleanField(blank=True, default=True)
 
     objects = ProfileManager()
 
+    def change_password(self, old_password, new_password):
+        LOG.debug('Changing password', extra={'old_password': old_password,
+                                              'new_password': new_password})
 
+        if self.check_password(old_password) is False:
+            LOG.warning('Old password does not match', extra={'old_password': old_password})
+            raise errors.ValidationError(*messages.ERR_OLD_PWD)
+        validators.MinLengthValidator(3).__call__(new_password)
+
+        self.set_password(new_password)
+
+        self.save()
