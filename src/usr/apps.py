@@ -6,3 +6,5 @@ class UserConfig(AppConfig):
     verbose_name = "User"
 
     def ready(self):
+        # noinspection PyUnresolvedReferences
+        import tasks

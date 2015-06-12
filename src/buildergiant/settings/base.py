@@ -122,8 +122,17 @@ CELERY_QUEUES = (
 )
 
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']
-BROKER_URL = 'redis://localhost:6379/0'
+BROKER_URL = 'redis://localhost:6379/9'
 # --------- End Celery
+
+
+# --------- Email (Mandrill) specific
+# See: https://djrill.readthedocs.org/en/v1.2/installation/#configuration
+EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
+MANDRILL_API_KEY = "OVERRIDE_THIS"
+# Email templates
+ETPL_VERIFICATION = 'bg-email-verification'
+# --------- End Email (Mandrill) specific
 
 
 #--------- Internationalization
@@ -146,3 +155,8 @@ USE_TZ = True
 #: email and password fields. `See here <https://github.com/inabhi9/django-miniauth>`_
 AUTH_USER_MODEL = 'miniauth.User'
 #--------- END CUSTOM AUTH CONFIGURATION
+
+
+# --------- Misc
+WEB_DOMAIN = 'www.buildergiant.com'
+#--------- End Misc

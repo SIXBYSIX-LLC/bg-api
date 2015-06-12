@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from buildergiant.celery import celeryapp
 
 
-def async_receiver(signal, **kwargs):
+def async_receiver(signal, sender=None, **kwargs):
     """
     Decorator to perform django signal asynchronously using Celery. The function decorated with
     this should be recognized by celery. django signal mechanism should be working normally and
@@ -13,16 +13,16 @@ def async_receiver(signal, **kwargs):
 
     def _decorator(func):
         # Convert normal function to celery task
-        func_celery = celeryapp.task(func)
+        func_celery = celeryapp.task(func, **kwargs)
 
         # Connect to a signal
         if isinstance(signal, (list, tuple)):
             for s in signal:
-                # Weak is false as proxyfunc doesn't exists outside the closure scope. So cannot
+                # Weak is false as func_celery doesn't exists outside the closure scope. So cannot
                 # be referenced weakly and will be erased by garbage collector
-                s.connect(func_celery.delay, **kwargs)
+                s.connect(func_celery.delay, sender=sender)
         else:
-            signal.connect(func_celery.delay, **kwargs)
+            signal.connect(func_celery.delay, sender=sender)
 
         # To let celery recognize normal function as celery task
         return func_celery

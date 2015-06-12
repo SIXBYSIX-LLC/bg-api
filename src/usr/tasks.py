@@ -1,14 +1,8 @@
-from common.dispatch import async_receiver, receiver
+from common.dispatch import async_receiver
 from . import signals
 
 
-@async_receiver(signals.reset_password_request)
+@async_receiver(signals.user_registered)
 def send_email_verification(sender, **kwargs):
-    print 'send mail verification by celery'
-
-
-@receiver(signals.reset_password_request)
-def send_email_verification(sender, **kwargs):
-    print 'send mail verification by rec'
-
-
+    user = kwargs.get('instance')
+    user.send_email_verification()

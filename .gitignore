@@ -1,6 +1,7 @@
 ### Custom
 *.bak
 *.orig
+src/buildergiant/settings/local.py
 
 
 # Created by .ignore support plugin (hsz.mobi)

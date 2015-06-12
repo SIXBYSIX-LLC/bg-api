@@ -7,6 +7,8 @@ from miniauth.models import User, UserManager
 from django.contrib.auth.hashers import make_password, is_password_usable
 from django.utils.translation import ugettext as _
 from django.core import validators
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 from common import errors
 from . import messages, signals
@@ -31,11 +33,9 @@ class ProfileManager(UserManager):
                       is_active=True,
                       is_superuser=False,
                       last_login=now,
-                      date_joined=now)
-        user = self.model(**dict(extra_fields.items() + preset.items()))
-
-        user.set_password(password)
-        user.save(using=self._db)
+                      date_joined=now,
+                      password=password)
+        user = self.create(**dict(extra_fields.items() + preset.items()))
 
         return user
 
@@ -48,7 +48,11 @@ class ProfileManager(UserManager):
         if is_password_usable(password) is False:
             kwargs['password'] = make_password(password)
 
-        return super(ProfileManager, self).create(**kwargs)
+        user = super(ProfileManager, self).create(**kwargs)
+
+        signals.user_registered.send(instance=user)
+
+        return user
 
     def generate_password_reset_key(self, email):
         try:
@@ -154,3 +158,33 @@ class Profile(User):
         self.save()
 
         signals.password_changed.send(instance=self)
+
+    def send_email_verification(self):
+        """
+        Sends email address verification email. The following variable will be available in the
+        template
+        Variables:
+        * **VERIFICATION_KEY**: Verification key
+        * **USER_EMAIL**: User email address
+        * **FULL_NAME**: Username
+        * **WEB_DOMAIN**: Website domain name
+        """
+        if self.is_email_verified is True:
+            raise errors.ValidationError('Email address is already verified')
+
+        msg = EmailMessage(to=[self.email])
+        msg.template_name = settings.ETPL_VERIFICATION
+        # Merge tags in template
+        msg.global_merge_vars = {
+            'VERIFICATION_KEY': self.unverified_email_key,
+            'USER_EMAIL': self.email,
+            'FULL_NAME': self.fullname,
+            'WEB_DOMAIN': settings.WEB_DOMAIN
+        }
+        # User templates subject and from address
+        msg.use_template_subject = True
+        msg.use_template_from = True
+        # Send it right away
+        msg.send()
+
+        return True
