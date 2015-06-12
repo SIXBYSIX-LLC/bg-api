@@ -5,3 +5,4 @@ ERR_EMAIL_NOT_EXISTS = _('Email does not exists'), 1003
 ERR_EMAIL_PW_KEY_MISMATCH = _('Password reset key with email is mismatched'), 1004
 ERR_PW_RESET_KEY_USED = _('Password reset key is invalidated. Please try resetting password '
                           'again'), 1005
+ERR_INVALID_EMAIL_KEY = _('Email verification key in invalid'), 1006

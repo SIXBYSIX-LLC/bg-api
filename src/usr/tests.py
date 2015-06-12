@@ -135,3 +135,18 @@ class TestUser(TestCase):
         # try to login with new password
         resp = self.admin_client.post('/login', data={'username': user.email, 'password': '789'})
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+    def test_email_verification(self):
+        user = factories.UserFactory()
+        self.assertEqual(user.is_email_verified, False)
+
+        # Test with bad key
+        resp = self.admin_client.post('/users/actions/verify_email',
+                                      data={'key': 'wrong key'})
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # Test with correct key
+        self.admin_client.post('/users/actions/verify_email',
+                               data={'key': user.unverified_email_key})
+        user.refresh_from_db()
+        self.assertEqual(user.is_email_verified, True)

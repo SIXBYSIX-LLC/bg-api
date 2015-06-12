@@ -85,6 +85,19 @@ class ProfileManager(UserManager):
         user.save(update_fields=['password', 'password_reset_key', 'date_password_reset',
                                  'is_password_reset'])
 
+    def verify_email(self, email_key):
+        """
+        Verify email address using email_key
+        """
+        try:
+            user = self.get(unverified_email_key=email_key)
+        except (Profile.DoesNotExist, ValueError):
+            raise errors.ValidationError(*messages.ERR_INVALID_EMAIL_KEY)
+
+        user.unverified_email_key = uuid.uuid4()
+        user.is_email_verified = True
+
+        user.save(update_fields=['is_email_verified', 'unverified_email_key'])
 
 class Profile(User):
     """
