@@ -108,6 +108,17 @@ class ProfileManager(UserManager):
 
         user.save(update_fields=['is_email_verified', 'unverified_email_key'])
 
+    def resend_email_verification(self, email):
+        """
+        Re-sends email verification mail by email
+        """
+        try:
+            user = self.get(email=email)
+        except Profile.DoesNotExist:
+            raise errors.NotFound(*messages.ERR_EMAIL_NOT_EXISTS)
+
+        user.send_email_verification()
+
 
 class Profile(User):
     """

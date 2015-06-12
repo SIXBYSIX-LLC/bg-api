@@ -23,6 +23,11 @@ class UserViewSet(ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @detail_route(methods=['POST'])
+    def resend_email_verification(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.send_email_verification()
+
 
 @api_view(['POST', 'PUT'])
 def password_reset(request, *args, **kwargs):
@@ -41,3 +46,12 @@ def verify_email(request, *args, **kwargs):
     Profile.objects.verify_email(request.data.get('key'))
 
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['POST'])
+def resend_email_verification(request, *args, **kwargs):
+    """
+    This API is intended for Admins/Staff
+    """
+    Profile.objects.resend_email_verification(email=request.data.get('email'))
+

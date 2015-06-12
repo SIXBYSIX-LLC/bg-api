@@ -9,3 +9,7 @@ class APIException(exceptions.APIException):
 
 class ValidationError(APIException):
     status_code = 400
+
+
+class NotFound(APIException):
+    status_code = 404
