@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
+from kombu import Queue
+
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -104,6 +107,23 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'common.helper.custom_exception_handler',
 }
 # -------- End REST framework
+
+
+# --------- Celery
+# Configuring queue
+CELERY_CREATE_MISSING_QUEUES = True
+CELERY_DEFAULT_QUEUE = 'default'
+CELERY_DEFAULT_ROUTING_KEY = 'default'
+CELERY_QUEUES = (
+    Queue('default', routing_key='default'),
+    Queue('video', routing_key='video'),
+    Queue('push_notification', routing_key='push_notification'),
+    Queue('email', routing_key='email'),
+)
+
+CELERY_ACCEPT_CONTENT = ['pickle', 'json']
+BROKER_URL = 'redis://localhost:6379/0'
+# --------- End Celery
 
 
 #--------- Internationalization

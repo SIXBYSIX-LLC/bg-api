@@ -9,7 +9,7 @@ from django.utils.translation import ugettext as _
 from django.core import validators
 
 from common import errors
-from . import messages
+from . import messages, signals
 
 
 LOG = logging.getLogger('bgapi.' + __name__)
@@ -57,6 +57,7 @@ class ProfileManager(UserManager):
             raise errors.ValidationError(*messages.ERR_EMAIL_NOT_EXISTS)
 
         if user.is_password_reset is False:
+            signals.reset_password_request.send(instance=user, retry=True)
             return
 
         user.is_password_reset = False
@@ -64,6 +65,8 @@ class ProfileManager(UserManager):
         user.password_reset_key = uuid.uuid4()
         user.save(update_fields=['is_password_reset', 'date_password_reset_request',
                                  'password_reset_key'])
+
+        signals.reset_password_request.send(instance=user, retry=False)
 
     def reset_password(self, email, reset_key, new_password):
         try:
@@ -85,6 +88,8 @@ class ProfileManager(UserManager):
         user.save(update_fields=['password', 'password_reset_key', 'date_password_reset',
                                  'is_password_reset'])
 
+        signals.reset_password_request.send(instance=user)
+
     def verify_email(self, email_key):
         """
         Verify email address using email_key
@@ -98,6 +103,7 @@ class ProfileManager(UserManager):
         user.is_email_verified = True
 
         user.save(update_fields=['is_email_verified', 'unverified_email_key'])
+
 
 class Profile(User):
     """
@@ -145,5 +151,6 @@ class Profile(User):
         validators.MinLengthValidator(3).__call__(new_password)
 
         self.set_password(new_password)
-
         self.save()
+
+        signals.password_changed.send(instance=self)
