@@ -153,6 +153,9 @@ class Profile(User):
     #: email gets delayed and user try and try again and all email contains different key that
     #: makes user confused which key should be used to reset password
     is_password_reset = models.BooleanField(blank=True, default=True)
+    #: The user under which the actual user is
+    user = models.ForeignKey(User, blank=True, null=True, default=None,
+                             on_delete=models.SET_DEFAULT, related_name='owner')
 
     objects = ProfileManager()
 

@@ -1,5 +1,7 @@
 import logging
 
+from django.contrib.auth.models import AnonymousUser
+
 from .models import Profile
 from common import serializers
 from common.serializers import rf_serializers
@@ -13,10 +15,14 @@ class UserSerializer(serializers.ModelSerializer):
         write_only_fields = ('password',)
         read_only_fields = ('unverified_email_key', 'is_email_verified', 'is_active',
                             'is_superuser', 'is_staff', 'last_login', 'groups',
-                            'user_permissions', 'is_admin', 'date_joined', 'id')
+                            'user_permissions', 'is_admin', 'date_joined', 'id', 'user')
+        depth = 1
 
     def create(self, validated_data):
-        return Profile.objects.create_user(**validated_data)
+        user = self.context.get('request').user
+        if isinstance(user, AnonymousUser):
+            user = None
+        return Profile.objects.create_user(user=user, **validated_data)
 
 
 class LoginSerializer(UserSerializer):
