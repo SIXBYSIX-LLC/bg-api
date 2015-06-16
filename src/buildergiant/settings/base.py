@@ -39,7 +39,7 @@ PASSWORD_HASHERS = (
     'django.contrib.auth.hashers.BCryptPasswordHasher',
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
 )
-#--------- END PASSWORD HASHER CONFIGURATION
+# --------- END PASSWORD HASHER CONFIGURATION
 
 
 # --------- Application definition
@@ -54,12 +54,15 @@ DJANGO_APPS = (
 THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
-    'miniauth'
+    'miniauth',
+    'cities'
 )
 
 LOCAL_APPS = (
     'common',
-    'usr'
+    'system',
+    'usr',
+    'address'
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -87,7 +90,7 @@ APPEND_SLASH = False
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'buildergiant',
         'USER': 'abhinav',
         'PASSWORD': 'admin',
@@ -100,7 +103,7 @@ DATABASES = {
 # -------- REST framework
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': ('common.renderer.JSONRenderer',),
-
+    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
     'PAGINATE_BY': 10,  # Default to 10
     'PAGINATE_BY_PARAM': 'page_size',  # Allow client to override, using `?page_size=xxx`.
     'MAX_PAGINATE_BY': 100,  # Maximum limit allowed when using `?page_size=xxx`.
@@ -155,6 +158,9 @@ USE_TZ = True
 #: email and password fields. `See here <https://github.com/inabhi9/django-miniauth>`_
 AUTH_USER_MODEL = 'miniauth.User'
 #--------- END CUSTOM AUTH CONFIGURATION
+
+CITIES_POSTAL_CODES = ['US']
+CITIES_LOCALES = ['en']
 
 
 # --------- Misc

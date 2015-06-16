@@ -50,7 +50,7 @@ class JSONRenderer(RFJSONRenderer):
 
         # When exception handler will pass the response, we would expect
         # the context to be `error`
-        if data and data.get('_context') == 'error':
+        if isinstance(data, dict) and data.get('_context') == 'error':
             context = 'error'
             data.pop('_context', None)
 
