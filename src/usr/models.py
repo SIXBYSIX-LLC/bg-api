@@ -155,7 +155,7 @@ class Profile(User):
     is_password_reset = models.BooleanField(blank=True, default=True)
     #: The user under which the actual user is
     user = models.ForeignKey(User, blank=True, null=True, default=None,
-                             on_delete=models.SET_DEFAULT, related_name='owner')
+                             on_delete=models.SET_DEFAULT, related_name='managers')
 
     objects = ProfileManager()
 
