@@ -1,4 +1,5 @@
 from rest_framework import serializers as rf_serializers
+from rest_framework_gis import serializers as rfg_serializers
 
 
 class Serializer(rf_serializers.Serializer):
@@ -25,4 +26,8 @@ class Serializer(rf_serializers.Serializer):
 
 
 class ModelSerializer(rf_serializers.ModelSerializer, Serializer):
+    pass
+
+
+class GeoModelSerializer(rfg_serializers.GeoModelSerializer, Serializer):
     pass
