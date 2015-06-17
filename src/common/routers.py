@@ -1,6 +1,7 @@
 import re
 
 from rest_framework import routers as rf_routers
+from rest_framework_extensions import routers as rfe_routers
 
 
 class CustomRouter(rf_routers.SimpleRouter):
@@ -17,3 +18,7 @@ class CustomRouter(rf_routers.SimpleRouter):
             url._regex = re.sub(r'/actions?_', '/actions/', url._regex, 1)
 
         return urls
+
+
+class CustomExtendedSimpleRouter(rfe_routers.ExtendedSimpleRouter, CustomRouter):
+    pass

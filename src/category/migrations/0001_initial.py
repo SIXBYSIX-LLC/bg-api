@@ -24,6 +24,8 @@ class Migration(migrations.Migration):
                  models.ForeignKey(default=None, blank=True, to='category.Category', null=True)),
             ],
             options={
+                'default_permissions': ('add', 'change', 'delete', 'view'),
+                'abstract': False,
                 'db_table': 'category',
             },
         ),

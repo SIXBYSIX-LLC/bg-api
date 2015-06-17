@@ -48,7 +48,8 @@ DJANGO_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    'django.contrib.messages'
+    'django.contrib.messages',
+    'django.contrib.staticfiles'
 )
 
 THIRD_PARTY_APPS = (
@@ -62,8 +63,8 @@ LOCAL_APPS = (
     'common',
     'system',
     'usr',
-    'address',
     'category',
+    'group',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -83,10 +84,12 @@ ROOT_URLCONF = 'buildergiant.urls'
 WSGI_APPLICATION = 'buildergiant.wsgi.application'
 
 APPEND_SLASH = False
+
+STATIC_URL = '/static/'
 # --------- END Application definition
 
 
-#--------- Database
+# --------- Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
@@ -105,6 +108,10 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': ('common.renderer.JSONRenderer',),
     'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'common.permissions.DjangoModelPermissions',
+        'common.permissions.IsOwnerPermissions',
+    ),
     # pagination
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,  # Default to 10

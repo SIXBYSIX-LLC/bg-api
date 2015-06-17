@@ -2,11 +2,12 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view, permission_classes
 from rest_framework import status
 from rest_framework.permissions import AllowAny
+from rest_framework_extensions.mixins import NestedViewSetMixin
 
 from common.viewsets import ModelViewSet
 from common.permissions import CustomActionPermissions
 from . import serializers
-from .models import Profile
+from .models import Profile, Address
 
 
 class UserViewSet(ModelViewSet):
@@ -61,4 +62,9 @@ def resend_email_verification(request, *args, **kwargs):
     This API is intended for Admins/Staff
     """
     Profile.objects.resend_email_verification(email=request.data.get('email'))
+
+
+class AddressViewSet(NestedViewSetMixin, ModelViewSet):
+    queryset = Address.objects.all()
+    serializer_class = serializers.AddressSerializer
 
