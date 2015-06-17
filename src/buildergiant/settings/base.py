@@ -83,7 +83,7 @@ ROOT_URLCONF = 'buildergiant.urls'
 WSGI_APPLICATION = 'buildergiant.wsgi.application'
 
 APPEND_SLASH = False
-#--------- END Application definition
+# --------- END Application definition
 
 
 #--------- Database
@@ -112,6 +112,8 @@ REST_FRAMEWORK = {
     'MAX_PAGINATE_BY': 100,  # Maximum limit allowed when using `?page_size=xxx`.
     # exception
     'EXCEPTION_HANDLER': 'common.helper.custom_exception_handler',
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework_filters.backends.DjangoFilterBackend',),
+
 }
 # -------- End REST framework
 

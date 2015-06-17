@@ -13,6 +13,7 @@ django-filter==0.10.0
 git+https://github.com/inabhi9/django-miniauth.git
 git+https://github.com/inabhi9/djangofuture.git
 djangorestframework==3.1.3
+djangorestframework-filters==0.3.0
 djangorestframework-gis==0.9
 djrill==1.4.0
 factory-boy==2.5.2
