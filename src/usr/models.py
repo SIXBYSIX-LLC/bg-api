@@ -11,6 +11,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 
 from common import errors
+from common.models import BaseModel
 from . import messages, signals
 
 
@@ -158,6 +159,10 @@ class Profile(User):
                              on_delete=models.SET_DEFAULT, related_name='managers')
 
     objects = ProfileManager()
+
+    class Meta(User.Meta, BaseModel.Meta):
+        pass
+
 
     def change_password(self, old_password, new_password):
         LOG.debug('Changing password', extra={'old_password': old_password,

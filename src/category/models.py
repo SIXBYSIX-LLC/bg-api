@@ -21,7 +21,7 @@ class Category(BaseModel):
 
     objects = CategoryManager()
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         db_table = 'category'
 
     def build_hierarchy(self):
