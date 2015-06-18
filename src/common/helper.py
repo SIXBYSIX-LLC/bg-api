@@ -1,7 +1,7 @@
 """
 Helper Methods
 ~~~~~~~~~~~~~~
-Common helper methods that frequently used in whole application
+Common helper methods that frequently used in this project
 """
 
 import logging
@@ -42,7 +42,7 @@ def custom_exception_handler(exc, context):
     # return custom_exception_handler(errors.DuplicateValueError('Some of the request values '
     # 'are not unique'))
     # elif isinstance(exc, me_error.ValidationError) or isinstance(exc, objectid.InvalidId):
-    #     return custom_exception_handler(errors.ValidationError(exc.message))
+    # return custom_exception_handler(errors.ValidationError(exc.message))
 
     if response is None and settings.DEBUG:
         return response

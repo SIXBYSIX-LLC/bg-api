@@ -1,8 +1,13 @@
+"""
+Middlewares
+===========
+"""
 import uuid
 import os
 import socket
 
 from django.utils import timezone
+
 
 
 # Getting branch and commit hash, we want to cache these to so declaring the here
@@ -13,7 +18,12 @@ commit_hash = os.popen('git rev-parse HEAD').read().strip()
 
 class HeadInfoMiddleware(object):
     """
-    Adds additional headers to response
+    Adds these extra headers to response
+
+    * X-Runtime: Time to product the output
+    * X-Request-Id: UUID to identify the request
+    * X-Version: Git commit hash and branch name
+    * X-Served-By: Host name of the machine
     """
     request_id = None
     start_time = None

@@ -1,3 +1,7 @@
+"""
+Routers
+=======
+"""
 import re
 
 from rest_framework import routers as rf_routers
@@ -5,6 +9,10 @@ from rest_framework_extensions import routers as rfe_routers
 
 
 class CustomRouter(rf_routers.SimpleRouter):
+    """
+    Extends simple router with default trailing_slash to False
+    """
+
     def __init__(self):
         super(CustomRouter, self).__init__(trailing_slash=False)
 

@@ -211,6 +211,9 @@ class Profile(User):
 
 
 class Address(BaseModel):
+    """
+    Address collection of the user
+    """
     TYPES = (
         (constants.TYPE_JOB_SITE, 'Job site'),
         (constants.TYPE_BILLING, 'Billing'),

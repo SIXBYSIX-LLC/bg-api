@@ -1,3 +1,8 @@
+"""
+Dispatch
+========
+Identical to django.dispatch module but adds few more features
+"""
 import django.dispatch
 from django.dispatch import receiver
 

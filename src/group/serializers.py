@@ -11,5 +11,6 @@ class GroupSerializer(serializers.ModelSerializer):
         exclude = ('name',)
 
     def create(self, validated_data):
+        # Auto generate name
         validated_data['name'] = timezone.now().strftime('%s-%f')
         return Group.objects.create(**validated_data)
