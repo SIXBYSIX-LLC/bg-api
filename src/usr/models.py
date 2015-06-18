@@ -2,7 +2,6 @@ import uuid
 import logging
 
 from django.db import models
-
 from django.utils import timezone
 from miniauth.models import User, UserManager
 from django.contrib.auth.hashers import make_password, is_password_usable
@@ -13,7 +12,6 @@ from django.conf import settings
 from django.contrib.gis.db import models as gis_models
 
 from common import errors
-
 from common.models import BaseModel
 from . import messages, signals, constants
 
@@ -159,7 +157,7 @@ class Profile(User):
     is_password_reset = models.BooleanField(blank=True, default=True)
     #: The user under which the actual user is
     user = models.ForeignKey(User, blank=True, null=True, default=None,
-                             on_delete=models.SET_DEFAULT, related_name='managers')
+                             on_delete=models.SET_DEFAULT, related_name='members')
 
     objects = ProfileManager()
 

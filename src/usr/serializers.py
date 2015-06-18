@@ -1,6 +1,5 @@
 import logging
 
-from django.contrib.auth.models import AnonymousUser
 from cities.models import PostalCode
 
 from .models import Profile, Address
@@ -20,9 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         depth = 1
 
     def create(self, validated_data):
-        user = self.context.get('request').user
-        if isinstance(user, AnonymousUser):
-            user = None
+        user = self.context.get('request').parent_user
         return Profile.objects.create_user(user=user, **validated_data)
 
 
@@ -53,13 +50,7 @@ class AddressSerializer(serializers.GeoModelSerializer):
         read_only_fields = ('user',)
 
     def create(self, validated_data):
-        user = self.context['request'].user
-        try:
-            if user.profile.user:
-                user = user.profile.user
-        except:
-            pass
-
+        user = self.context['request'].parent_user
         validated_data['user'] = user
 
         return Address.objects.create(**validated_data)

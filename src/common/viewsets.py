@@ -6,7 +6,14 @@ from rest_framework import generics as rf_generics, viewsets as rf_viewsets
 
 
 class GenericAPIView(rf_generics.GenericAPIView):
-    pass
+    def perform_authentication(self, request):
+        """
+        Add parent_user object request if current user belongs to User group
+        """
+        request.user
+        request.parent_user = None
+        if request.user.groups.filter(name='User').exists():
+            request.parent_user = request.user.profile.user
 
 
 class GenericViewSet(GenericAPIView, rf_viewsets.GenericViewSet):
