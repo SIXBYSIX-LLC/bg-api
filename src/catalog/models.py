@@ -28,31 +28,31 @@ class Product(BaseModel):
     #: Brand
     brand = models.CharField(max_length=100)
     #: Daily rental price
-    daily_price = models.FloatField()
+    daily_price = models.DecimalField(max_digits=10, decimal_places=2)
     #: Weekly rental price
-    weekly_price = models.FloatField()
+    weekly_price = models.DecimalField(max_digits=10, decimal_places=2)
     #: Monthly rental price
-    monthly_price = models.FloatField()
+    monthly_price = models.DecimalField(max_digits=10, decimal_places=2)
     #: Selling price
-    sell_price = models.FloatField()
+    sell_price = models.DecimalField(max_digits=10, decimal_places=2)
     #: Product category
-    category = models.ForeignKey('Category')
+    category = models.ForeignKey('category.Category')
     #: Is active and searchable
     is_active = models.BooleanField(blank=True, default=False)
     #: Product location
-    location = models.ForeignKey('Address')
+    location = models.ForeignKey('usr.Address')
     #: SKU id, auto generated in-case of received blank
     sku = models.CharField(max_length=30, blank=True)
     #: Additional attributes
     attributes = pg_fields.JSONField(null=True, blank=True)
     #: Search tags
-    tags = pg_fields.ArrayField(models.CharField(), blank=True, null=True)
+    tags = pg_fields.ArrayField(models.CharField(max_length=30), blank=True, null=True)
     #: User
-    user = models.ForeignKey('miniauth.User')
+    user = models.ForeignKey('miniauth.User', editable=False, blank=True, default=None)
     #: Condition
-    condition = models.CharField(choices=CONDITION)
-    date_created_at = models.DateTimeField(auto_now_add=True, blank=True, editable=False)
-    date_updated_at = models.DateTimeField(auto_now=True, blank=True, editable=False)
+    condition = models.CharField(choices=CONDITION, max_length=50)
+    date_created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    date_updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     objects = ProductManager()
 
@@ -76,7 +76,7 @@ class Inventory(BaseModel):
     product = models.ForeignKey(Product)
     serial_no = models.CharField(max_length=50, blank=True, null=True)
     #: The source of inventory, either owned, re-rent from others
-    source = models.CharField(choices=SOURCE, default='purchased', blank=True)
+    source = models.CharField(choices=SOURCE, default='purchased', blank=True, max_length=50)
     #: Is inventory available
     is_active = models.BooleanField()
     date_created_at = models.DateTimeField(auto_now_add=True, blank=True, editable=False)
