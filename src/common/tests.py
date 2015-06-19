@@ -5,6 +5,8 @@ from usr import factories as usr_factories
 
 
 class TestCase(APITestCase):
+    fixtures = ['country', 'city', 'region']
+
     def setUp(self):
         # Turning on debugging
         settings.DEBUG = True
@@ -22,3 +24,10 @@ class TestCase(APITestCase):
         # Initiate API Client for Admin
         self.admin_client = APIClient()
         self.admin_client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin_token)
+
+        # User token
+        self.user = usr_factories.UserFactory()
+        self.user_token = self.device.auth_token.key
+        # Initiate API Client for Device
+        self.user_client = APIClient()
+        self.user_client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)

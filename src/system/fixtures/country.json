@@ -1,0 +1,23 @@
+[
+    {
+        "fields": {
+            "languages": "en-IN,hi,bn,te,mr,ta,ur,gu,kn,ml,or,pa,as,bh,sat,ks,ne,sd,kok,doi,mni,sit,sa,fr,lus,inc",
+            "code3": "IND",
+            "name": "India",
+            "area": 3287590,
+            "capital": "New Delhi",
+            "alt_names": [],
+            "phone": "91",
+            "continent": "AS",
+            "currency_name": "Rupee",
+            "currency": "INR",
+            "neighbours": [],
+            "code": "IN",
+            "tld": "in",
+            "slug": "india",
+            "population": 1173108018
+        },
+        "model": "cities.country",
+        "pk": 1269750
+    }
+]
