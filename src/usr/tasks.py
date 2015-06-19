@@ -17,7 +17,10 @@ def send_email_verification(sender, **kwargs):
 @receiver(post_save, sender=models.Profile)
 def assign_group(sender, **kwargs):
     """
-    Assign default group to user
+    Assign default group to user.
+
+    TODO:
+        Exclude member user to assign group
     """
     if kwargs.get('created', False) is False:
         return
