@@ -6,3 +6,4 @@ For now this module provides following features
 
 * API view for cities: Country, region and city
 """
+default_app_config = 'system.apps.SystemConfig'
