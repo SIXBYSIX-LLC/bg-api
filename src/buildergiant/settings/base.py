@@ -65,6 +65,7 @@ LOCAL_APPS = (
     'usr',
     'category',
     'group',
+    'catalog'
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -101,7 +102,7 @@ DATABASES = {
         'CONN_MAX_AGE': 1 * 60 * 60  # 1 hour
     }
 }
-#--------- END Database
+# --------- END Database
 
 
 # -------- REST framework
