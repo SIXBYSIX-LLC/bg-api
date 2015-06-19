@@ -24,7 +24,7 @@ class ProductBaseFactory(factory.DictFactory):
     category = factory.lazy_attribute(lambda x: Sub2CategoryFactory().id)
     tags = ['excavator', 'pornition', 'bob builder']
     condition = 'used'
-    location = factory.lazy_attribute(lambda o: AddressFactory(user=o.user).id)
+    location = factory.lazy_attribute(lambda o: AddressFactory(user_id=o.user_id).id)
     sku = ''
 
 
