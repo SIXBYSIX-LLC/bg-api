@@ -1,3 +1,5 @@
+from django.core.validators import MinValueValidator
+
 from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 
@@ -28,13 +30,17 @@ class Product(BaseModel):
     #: Brand
     brand = models.CharField(max_length=100)
     #: Daily rental price
-    daily_price = models.DecimalField(max_digits=10, decimal_places=2)
+    daily_price = models.DecimalField(max_digits=10, decimal_places=2,
+                                      validators=[MinValueValidator(0.0)])
     #: Weekly rental price
-    weekly_price = models.DecimalField(max_digits=10, decimal_places=2)
+    weekly_price = models.DecimalField(max_digits=10, decimal_places=2,
+                                       validators=[MinValueValidator(0.0)])
     #: Monthly rental price
-    monthly_price = models.DecimalField(max_digits=10, decimal_places=2)
+    monthly_price = models.DecimalField(max_digits=10, decimal_places=2,
+                                        validators=[MinValueValidator(0.0)])
     #: Selling price
-    sell_price = models.DecimalField(max_digits=10, decimal_places=2)
+    sell_price = models.DecimalField(max_digits=10, decimal_places=2,
+                                     validators=[MinValueValidator(0.0)])
     #: Product category
     category = models.ForeignKey('category.Category')
     #: Is active and searchable
