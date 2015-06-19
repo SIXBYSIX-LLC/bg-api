@@ -22,4 +22,4 @@ def assign_group(sender, **kwargs):
     if kwargs.get('created', False) is False:
         return
     profile = kwargs['instance']
-    profile.groups.add(Group.objects.get_or_create(name='User'))
+    profile.groups.add(Group.objects.get_or_create(name='User')[0])
