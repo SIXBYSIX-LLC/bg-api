@@ -72,18 +72,18 @@ class TestUser(TestCase):
 
     def test_password_change(self):
         user = factories.UserFactory()
-        response = self.admin_client.put('/users/%s/password' % user.id,
-                                         data={'new_password': '456', 'old_password': '123'})
+        response = self.admin_client.post('/users/%s/actions/change_password' % user.id,
+                                          data={'new_password': '456', 'old_password': '123'})
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        response = self.admin_client.put('/users/%s/password' % user.id,
-                                         data={'new_password': '456', 'old_password': '123'})
+        response = self.admin_client.post('/users/%s/actions/change_password' % user.id,
+                                          data={'new_password': '456', 'old_password': '123'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_password_change_blank(self):
         user = factories.UserFactory()
-        response = self.admin_client.put('/users/%s/password' % user.id,
-                                         data={'new_password': '', 'old_password': '123'})
+        response = self.admin_client.post('/users/%s/actions/change_password' % user.id,
+                                          data={'new_password': '', 'old_password': '123'})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
