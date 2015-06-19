@@ -1,5 +1,7 @@
 from django.conf import settings
 from rest_framework.test import APITestCase, APIClient
+from rest_framework import status
+from django.core.management import call_command
 
 from usr import factories as usr_factories
 
@@ -31,3 +33,12 @@ class TestCase(APITestCase):
         # Initiate API Client for Device
         self.user_client = APIClient()
         self.user_client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
+
+        call_command('syncperms')
+        self.status_code = status
+
+    def get_client(self, user):
+        c = APIClient()
+        c.credentials(HTTP_AUTHORIZATION='Token ' + user.auth_token.key)
+        return c
+
