@@ -1,12 +1,9 @@
 import factory
-from faker import Factory
 from factory import fuzzy
 
-from usr.models import Profile
+from usr.models import Profile, Address
 from common.auth.authtoken import Token
-
-
-fake = Factory.create(locale='en_US')
+from common.faker import fake
 
 
 class TokenFactory(factory.DjangoModelFactory):
@@ -42,3 +39,22 @@ class AdminUserFactory(UserFactory):
     email = factory.Sequence(lambda n: 'admin{0}@example.com'.format(n))
     is_superuser = True
     is_staff = True
+
+
+class AddressBaseFactory(factory.DictFactory):
+    name = factory.LazyAttribute(lambda x: fake.first_name())
+    address1 = factory.LazyAttribute(lambda x: fake.address())
+    country = factory.LazyAttribute(lambda x: fake.cities_country().id)
+    state = factory.LazyAttribute(lambda o: fake.cities_region(o.country).id)
+    city = factory.LazyAttribute(lambda o: fake.cities_city(o.state).id)
+    zip_code = factory.LazyAttribute(lambda o: fake.postcode())
+    kind = Address.Const.TYPE_JOB_SITE
+
+
+class AddressFactory(factory.DjangoModelFactory, AddressBaseFactory):
+    class Meta:
+        model = Address
+
+    country = factory.LazyAttribute(lambda x: fake.cities_country())
+    state = factory.LazyAttribute(lambda o: fake.cities_region(o.country))
+    city = factory.LazyAttribute(lambda o: fake.cities_city(o.state))

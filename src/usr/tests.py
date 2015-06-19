@@ -150,3 +150,7 @@ class TestUser(TestCase):
                                data={'key': user.unverified_email_key})
         user.refresh_from_db()
         self.assertEqual(user.is_email_verified, True)
+
+    def test_address_factory(self):
+        factories.AddressFactory(user=self.user)
+        self.assertEqual(self.user.address_set.count(), 1)
