@@ -14,5 +14,5 @@ class ProductSerializer(serializers.ModelSerializer):
         request = self.context['request']
         validated_data['user'] = request.parent_user or request.user
 
-        return super(ProductSerializer, self).create(validated_data)
+        return Product.objects.create_product(**validated_data)
 

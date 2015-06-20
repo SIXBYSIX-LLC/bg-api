@@ -14,7 +14,23 @@ def validate_category_is_leaf(value):
 
 
 class ProductManager(BaseManager):
-    pass
+    def create_product(self, **kwargs):
+        """
+        Create product same way as .create() method. Only difference is it creates inventories
+        from qty field
+        """
+        qty = kwargs.pop('qty', 0)
+
+        # Create product object
+        product = self.create(**kwargs)
+
+        # Adding inventory
+        if qty > 0:
+            inventories = [Inventory(source=constats.Inventory.SOURCE_PURCHASED,
+                                     product=product, is_active=True) for i in xrange(qty)]
+            product.inventory_set.add(*inventories)
+
+        return product
 
 
 class Product(BaseModel):
