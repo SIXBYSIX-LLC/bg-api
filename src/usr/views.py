@@ -16,6 +16,8 @@ class UserViewSet(ModelViewSet):
     update_serializer_class = serializers.UpdateUserSerializer
     partial_update_serializer_class = update_serializer_class
 
+    ownership_fields = ('user',)
+
     @detail_route(methods=['POST'])
     def action_change_password(self, request, *args, **kwargs):
         user = self.get_object()

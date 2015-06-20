@@ -8,3 +8,5 @@ class GroupViewSet(ModelViewSet):
     queryset = Group.objects.all()
     paginate_by = 0
     paginate_by_param = ''
+
+    ownership_fields = ('user',)

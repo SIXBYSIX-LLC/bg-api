@@ -120,7 +120,10 @@ REST_FRAMEWORK = {
     'MAX_PAGINATE_BY': 100,  # Maximum limit allowed when using `?page_size=xxx`.
     # exception
     'EXCEPTION_HANDLER': 'common.helper.custom_exception_handler',
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework_filters.backends.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework_filters.backends.DjangoFilterBackend',
+        'common.filters.OwnerFilterBackend'
+    ),
 
 }
 # -------- End REST framework
