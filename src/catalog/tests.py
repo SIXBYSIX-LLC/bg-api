@@ -55,3 +55,15 @@ class ProductTest(TestCase):
         data = factories.ProductBaseFactory(user_id=self.user.id, category=category.hierarchy[1])
         resp = self.user_client.post('/products', data=data)
         self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST)
+
+    def test_create_with_inventory(self):
+        data = factories.ProductBaseFactory(user_id=self.user.id, qty=30)
+
+        resp = self.user_client.post('/products', data=data)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
+        self.assertEqual()
+
+    def test_listing_with_qty_field(self):
+        factories.ProductFactory.create_batch(2, user=self.user, qty=30)
+        resp = self.user_client.get('/products')
+        self.assertEqual(resp.data[0].get('qty'), 30)
