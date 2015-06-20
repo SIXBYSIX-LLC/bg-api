@@ -34,3 +34,9 @@ class ProductFactory(factory.DjangoModelFactory, ProductBaseFactory):
 
     user = factory.SubFactory(UserFactory)
     location = factory.lazy_attribute(lambda o: AddressFactory(user=o.user))
+    category = factory.lazy_attribute(lambda x: Sub2CategoryFactory())
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        obj = model_class.objects.create_product(*args, **kwargs)
+        return obj
