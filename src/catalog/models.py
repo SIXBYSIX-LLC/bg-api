@@ -2,9 +2,15 @@ from django.core.validators import MinValueValidator
 
 from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
+from django.core.exceptions import ValidationError
 
 from common.models import BaseManager, BaseModel
-from . import constats
+from . import constats, messages
+
+
+def validate_category_is_leaf(value):
+    if value.category_set.count() > 0:
+        raise ValidationError(*messages.ERR_NOT_LEAF_CATEGORY)
 
 
 class ProductManager(BaseManager):
@@ -42,7 +48,7 @@ class Product(BaseModel):
     sell_price = models.DecimalField(max_digits=10, decimal_places=2,
                                      validators=[MinValueValidator(0.0)])
     #: Product category
-    category = models.ForeignKey('category.Category')
+    category = models.ForeignKey('category.Category', validators=[validate_category_is_leaf])
     #: Is active and searchable
     is_active = models.BooleanField(blank=True, default=False)
     #: Product location

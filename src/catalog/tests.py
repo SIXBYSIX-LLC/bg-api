@@ -1,5 +1,6 @@
 from common.tests import TestCase
 from . import factories
+from category import factories as cat_factories
 
 
 class ProductTest(TestCase):
@@ -41,3 +42,16 @@ class ProductTest(TestCase):
 
         resp = self.user_client.post('/products', data=data, format='json')
         self.assertEqual(resp.data['tags'], TAGS)
+
+    def test_create_with_non_leaf_category(self):
+        category = cat_factories.Sub4CategoryFactory()
+
+        # Root category
+        data = factories.ProductBaseFactory(user_id=self.user.id, category=category.hierarchy[0])
+        resp = self.user_client.post('/products', data=data)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST)
+
+        # 2nd category
+        data = factories.ProductBaseFactory(user_id=self.user.id, category=category.hierarchy[1])
+        resp = self.user_client.post('/products', data=data)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST)
