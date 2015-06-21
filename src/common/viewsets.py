@@ -11,9 +11,7 @@ class GenericAPIView(rf_generics.GenericAPIView):
         Add parent_user object request if current user belongs to User group
         """
         request.user
-        request.parent_user = None
-        if request.user.groups.filter(name='User').exists():
-            request.parent_user = request.user.profile.user
+        request.parent_user = request.user.profile.parent
 
 
 class GenericViewSet(GenericAPIView, rf_viewsets.GenericViewSet):
