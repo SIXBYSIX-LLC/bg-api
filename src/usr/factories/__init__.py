@@ -34,11 +34,26 @@ class UserFactory(RegistrationFactory, factory.DjangoModelFactory):
     auth_token = factory.RelatedFactory(TokenFactory, 'user')
     store_name = factory.LazyAttribute(lambda x: fake.company())
 
+    @factory.post_generation
+    def groups(self, create, groups, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if groups:
+            # A list of groups were passed in, use them
+            for group in groups:
+                self.groups.add(group)
+
 
 class AdminUserFactory(UserFactory):
     email = factory.Sequence(lambda n: 'admin{0}@example.com'.format(n))
     is_superuser = True
     is_staff = True
+
+
+class DeviceUserFactory(UserFactory):
+    email = factory.Sequence(lambda n: 'device{0}@example.com'.format(n))
 
 
 class AddressBaseFactory(factory.DictFactory):

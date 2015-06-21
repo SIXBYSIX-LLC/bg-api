@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase, APIClient as _APIClient
 from rest_framework import status
 from django.core.management import call_command
 
+from group.models import Group
 from usr import factories as usr_factories
 
 
@@ -36,8 +37,9 @@ class APIClient(_APIClient):
 
     @classmethod
     def _fix_response(cls, response):
-        response.meta = response.data
-        response.data = json.loads(response.content).get('data')
+        if response.data and response.data.get('meta'):
+            response.meta = response.data
+            response.data = json.loads(response.content).get('data')
         return response
 
 
@@ -45,11 +47,13 @@ class TestCase(APITestCase):
     fixtures = ['country', 'city', 'region']
 
     def setUp(self):
+        # Syncing permissions
+        call_command('syncperms')
         # Turning on debugging
         settings.DEBUG = True
 
         # Get device token
-        self.device = usr_factories.UserFactory()
+        self.device = usr_factories.DeviceUserFactory(groups=[Group.objects.get(name='Device')])
         self.device_token = self.device.auth_token.key
         # Initiate API Client for Device
         self.device_client = APIClient()
@@ -63,13 +67,12 @@ class TestCase(APITestCase):
         self.admin_client.credentials(HTTP_AUTHORIZATION='Token ' + self.admin_token)
 
         # User token
-        self.user = usr_factories.UserFactory()
+        self.user = usr_factories.UserFactory(user=self.device)
         self.user_token = self.device.auth_token.key
         # Initiate API Client for Device
         self.user_client = APIClient()
         self.user_client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
 
-        call_command('syncperms')
         self.status_code = status
 
     def get_client(self, user):
