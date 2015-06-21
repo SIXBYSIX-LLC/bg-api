@@ -53,7 +53,7 @@ class TestCase(APITestCase):
         settings.DEBUG = True
 
         # Get device token
-        self.device = usr_factories.DeviceUserFactory(groups=[Group.objects.get(name='Device')])
+        self.device = usr_factories.DeviceUserFactory()
         self.device_token = self.device.auth_token.key
         # Initiate API Client for Device
         self.device_client = APIClient()

@@ -1,5 +1,6 @@
 import factory
 from factory import fuzzy
+from group.models import Group
 
 from usr.models import Profile, Address
 from common.auth.authtoken import Token
@@ -54,6 +55,14 @@ class AdminUserFactory(UserFactory):
 
 class DeviceUserFactory(UserFactory):
     email = factory.Sequence(lambda n: 'device{0}@example.com'.format(n))
+
+    @factory.post_generation
+    def default_group(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        self.groups.add(Group.objects.get(name='Device'))
 
 
 class AddressBaseFactory(factory.DictFactory):
