@@ -22,7 +22,14 @@ def assign_group(sender, **kwargs):
     TODO:
         Exclude member user to assign group
     """
-    if kwargs.get('created', False) is False:
-        return
     profile = kwargs['instance']
-    profile.groups.add(Group.objects.get_or_create(name='User')[0])
+
+    if kwargs.get('created', False) is False or not profile.parent:
+        return
+
+    # Assign group only if creator belongs to Device group. Otherwise all the users that either
+    # registered them selves or created by other user will by default be into User group and we
+    # don't want that because if sub-user will have User group by default he can create another
+    # user so we leave that to creator if he wants to add new user to User group
+    if profile.parent.groups.filter(name='Device').exists():
+        profile.groups.add(Group.objects.get_or_create(name='User')[0])
