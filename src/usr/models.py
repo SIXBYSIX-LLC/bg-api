@@ -164,6 +164,9 @@ class Profile(User):
     class Meta(User.Meta, BaseModel.Meta):
         pass
 
+    @property
+    def parent(self):
+        return self.user
 
     def change_password(self, old_password, new_password):
         LOG.debug('Changing password', extra={'old_password': old_password,
