@@ -34,8 +34,7 @@ class FileManager(BaseManager):
             raise errors.ValidationError(*messages.ERR_INVALID_TARGET)
 
         # Upload to cloudinary
-        response = cloudinary.uploader.upload_image(f, public_id=path, use_filename=True,
-                                                    unique_filename=False, invalidate=True)
+        response = cloudinary.uploader.upload_image(f, public_id=path, use_filename=True)
         meta = response.metadata
 
         with transaction.atomic() as t:
