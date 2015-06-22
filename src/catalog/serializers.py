@@ -1,6 +1,6 @@
 from common import serializers
 from common.serializers import rf_serializers
-from models import Product
+from models import Product, Inventory
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -15,4 +15,12 @@ class ProductSerializer(serializers.ModelSerializer):
         validated_data['user'] = request.parent_user or request.user
 
         return Product.objects.create_product(**validated_data)
+
+
+class InventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        write_only_fields = ('product',)
+        read_only_fields = ('date_created_at',)
+
 

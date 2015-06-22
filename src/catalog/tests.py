@@ -19,8 +19,7 @@ class ProductTest(TestCase):
         member_client = self.get_client(member)
 
         resp = member_client.post('/products', data=data)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
-        self.assertEqual(resp.data['user'], self.user.id)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_403_FORBIDDEN)
 
     def test_create_with_sku(self):
         SKU = 'abcxyz'

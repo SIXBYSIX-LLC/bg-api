@@ -12,3 +12,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         qs = super(ProductViewSet, self).get_queryset()
         qs = qs.annotate(qty=Count(Case(When(inventory__is_active=True, then=Value(1)))))
         return qs
+
+
+class InventoryViewSet(viewsets.NestedViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = serializers.InventorySerializer
+    queryset = models.Inventory.objects.all()
+
+

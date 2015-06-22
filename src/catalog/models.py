@@ -1,5 +1,4 @@
 from django.core.validators import MinValueValidator
-
 from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 from django.core.exceptions import ValidationError
@@ -26,7 +25,7 @@ class ProductManager(BaseManager):
 
         # Adding inventory
         if qty > 0:
-            inventories = [Inventory(source=constats.Inventory.SOURCE_PURCHASED,
+            inventories = [Inventory(source=constats.Inventory.SOURCE_PURCHASED, user=product.user,
                                      product=product, is_active=True) for i in xrange(qty)]
             product.inventory_set.add(*inventories)
 
@@ -70,7 +69,7 @@ class Product(BaseModel):
     #: Product location
     location = models.ForeignKey('usr.Address')
     #: SKU id, auto generated in-case of received blank
-    sku = models.CharField(max_length=30, blank=True)
+    sku = models.CharField(max_length=30, blank=True, default=None)
     #: Additional attributes
     attributes = pg_fields.JSONField(null=True, blank=True)
     #: Search tags
@@ -108,6 +107,7 @@ class Inventory(BaseModel):
     #: Is inventory available
     is_active = models.BooleanField()
     date_created_at = models.DateTimeField(auto_now_add=True, blank=True, editable=False)
+    user = models.ForeignKey('miniauth.User', editable=False, blank=True, default=None)
 
     objects = InventoryManager()
 
