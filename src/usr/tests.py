@@ -154,3 +154,17 @@ class TestUser(TestCase):
     def test_address_factory(self):
         factories.AddressFactory(user=self.user)
         self.assertEqual(self.user.address_set.count(), 1)
+
+
+class PermissionTest(TestCase):
+    def test_user_default_group(self):
+        new_user = factories.RegistrationFactory()
+        resp = self.device_client.post('/users', data=new_user)
+
+        self.assertIn('User', [d['name'] for d in resp.data.get('groups')])
+
+    def test_user_create_member(self):
+        new_user = factories.RegistrationFactory()
+        resp = self.user_client.post('/users', data=new_user)
+
+        self.assertEqual(resp.data['user']['id'], self.user.id)

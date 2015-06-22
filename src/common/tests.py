@@ -5,7 +5,6 @@ from rest_framework.test import APITestCase, APIClient as _APIClient
 from rest_framework import status
 from django.core.management import call_command
 
-from group.models import Group
 from usr import factories as usr_factories
 
 
@@ -68,7 +67,7 @@ class TestCase(APITestCase):
 
         # User token
         self.user = usr_factories.UserFactory(user=self.device)
-        self.user_token = self.device.auth_token.key
+        self.user_token = self.user.auth_token.key
         # Initiate API Client for Device
         self.user_client = APIClient()
         self.user_client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)

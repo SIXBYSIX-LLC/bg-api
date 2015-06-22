@@ -1,7 +1,7 @@
 import factory
 from factory import fuzzy
-from group.models import Group
 
+from group.models import Group
 from usr.models import Profile, Address
 from common.auth.authtoken import Token
 from common.faker import fake
@@ -55,6 +55,7 @@ class AdminUserFactory(UserFactory):
 
 class DeviceUserFactory(UserFactory):
     email = factory.Sequence(lambda n: 'device{0}@example.com'.format(n))
+    is_staff = True
 
     @factory.post_generation
     def default_group(self, create, extracted, **kwargs):

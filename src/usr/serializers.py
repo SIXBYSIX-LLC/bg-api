@@ -5,11 +5,14 @@ from cities.models import PostalCode
 from .models import Profile, Address
 from common import serializers
 from common.serializers import rf_serializers
+from group.serializers import GroupRefSerializer
 
 LOG = logging.getLogger('bgapi.' + __name__)
 
 
 class UserSerializer(serializers.ModelSerializer):
+    groups = GroupRefSerializer(read_only=True, many=True)
+
     class Meta:
         model = Profile
         write_only_fields = ('password',)
@@ -19,7 +22,8 @@ class UserSerializer(serializers.ModelSerializer):
         depth = 1
 
     def create(self, validated_data):
-        user = self.context.get('request').parent_user
+        request = self.context.get('request')
+        user = request.parent_user or request.user
         return Profile.objects.create_user(user=user, **validated_data)
 
 
