@@ -45,7 +45,7 @@ class Product(BaseModel):
     #: Product name
     name = models.CharField(max_length=100)
     #: Product images, up to 10
-    images = pg_fields.ArrayField(models.URLField(), 10, blank=True, null=True)
+    images = models.ManyToManyField('static.File', blank=True)
     #: Product description
     description = models.TextField(blank=True, null=True)
     #: Brand
