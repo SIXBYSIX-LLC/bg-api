@@ -17,7 +17,7 @@ class Group(AuthGroup):
     #: Title instead of name
     title = models.CharField(max_length=80)
     #: Creator of the group
-    user = models.ForeignKey('miniauth.User', blank=True, null=True)
+    user = models.ForeignKey('miniauth.User', blank=True, null=True, editable=False)
 
     class Meta(BaseModel.Meta):
         unique_together = ('title', 'user')
