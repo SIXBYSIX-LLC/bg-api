@@ -11,9 +11,6 @@ class ProductSerializer(serializers.ModelSerializer):
         read_only_fields = ('date_created_at', 'date_updated_at', 'user')
 
     def create(self, validated_data):
-        request = self.context['request']
-        validated_data['user'] = request.parent_user or request.user
-
         return Product.objects.create_product(**validated_data)
 
 
@@ -21,6 +18,6 @@ class InventorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Inventory
         write_only_fields = ('product',)
-        read_only_fields = ('date_created_at',)
+        read_only_fields = ('date_created_at', 'user')
 
 
