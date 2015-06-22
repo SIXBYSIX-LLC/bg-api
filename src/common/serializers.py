@@ -26,8 +26,16 @@ class Serializer(rf_serializers.Serializer):
 
 
 class ModelSerializer(rf_serializers.ModelSerializer, Serializer):
-    pass
+    @property
+    def validated_data(self):
+        validated_data = super(Serializer, self).validated_data
+
+        if getattr(self.Meta.model, 'user', None):
+            user = self.context['request'].parent_user or self.context['request'].user
+            validated_data['user'] = user
+
+        return validated_data
 
 
-class GeoModelSerializer(rfg_serializers.GeoModelSerializer, Serializer):
+class GeoModelSerializer(rfg_serializers.GeoModelSerializer, ModelSerializer):
     pass
