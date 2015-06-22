@@ -22,9 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         depth = 1
 
     def create(self, validated_data):
-        request = self.context.get('request')
-        user = request.parent_user or request.user
-        return Profile.objects.create_user(user=user, **validated_data)
+        return Profile.objects.create_user(**validated_data)
 
 
 class LoginSerializer(UserSerializer):
@@ -52,12 +50,6 @@ class AddressSerializer(serializers.GeoModelSerializer):
     class Meta:
         model = Address
         read_only_fields = ('user',)
-
-    def create(self, validated_data):
-        user = self.context['request'].parent_user or self.context['request'].user
-        validated_data['user'] = user
-
-        return Address.objects.create(**validated_data)
 
     def validate(self, attrs):
         zip_count = PostalCode.objects.filter(code=attrs.get('zip_code'),

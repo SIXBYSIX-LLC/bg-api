@@ -2,9 +2,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view, permission_classes
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from common.viewsets import ModelViewSet
+from common.viewsets import ModelViewSet, NestedViewSetMixin
 from common.permissions import CustomActionPermissions
 from . import serializers
 from .models import Profile, Address
