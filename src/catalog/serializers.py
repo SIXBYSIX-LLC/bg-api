@@ -1,10 +1,12 @@
 from common import serializers
 from common.serializers import rf_serializers
 from models import Product, Inventory
+from static.serializers import FileRefSerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
     qty = rf_serializers.IntegerField(required=False)
+    images = FileRefSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
