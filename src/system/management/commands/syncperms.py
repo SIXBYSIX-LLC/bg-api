@@ -42,3 +42,13 @@ class Command(BaseCommand):
             Permission.objects.get(codename='view_product'),
         )
 
+        # Assign device group permission
+        device_group.permissions.add(
+            # Profiles
+            Permission.objects.get(codename='add_profile'),
+            # Category
+            Permission.objects.get(codename='view_category'),
+            Permission.objects.get(codename='view_product'),
+        )
+
+
