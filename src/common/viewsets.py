@@ -3,6 +3,7 @@ ViewSet
 ~~~~~~~
 """
 from rest_framework import generics as rf_generics, viewsets as rf_viewsets
+from rest_framework_extensions.mixins import NestedViewSetMixin as _NestedViewSetMixin
 
 
 class GenericAPIView(rf_generics.GenericAPIView):
@@ -80,3 +81,27 @@ class ModelViewSet(rf_viewsets.ModelViewSet, GenericViewSet):
     Base class for model view set
     """
 
+
+class NestedViewSetMixin(_NestedViewSetMixin):
+    def create(self, request, *args, **kwargs):
+        self.get_parent_object()
+        request.data.update(**self.get_parents_query_dict())
+
+        return super(NestedViewSetMixin, self).create(request, *args, **kwargs)
+
+    def get_parent_object(self):
+        """
+        Checks the object's parent object permission and returns it
+        """
+        # Getting related field name
+        parent_object_name = self.get_parents_query_dict().keys()[:1][0]
+        # Getting parent model
+        parent_model = self.get_queryset().model._meta.get_field(parent_object_name).rel.to
+        # Getting parent object
+        parent_object = parent_model.objects.get(
+            id=self.get_parents_query_dict().get(parent_object_name)
+        )
+
+        self.check_object_permissions(self.request, parent_object)
+
+        return parent_object
