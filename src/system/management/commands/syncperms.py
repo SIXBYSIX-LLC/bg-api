@@ -43,6 +43,9 @@ class Command(BaseCommand):
             Permission.objects.get(codename='add_inventory'),
             Permission.objects.get(codename='change_inventory'),
             Permission.objects.get(codename='view_inventory'),
+            # Staticfiles
+            Permission.objects.get(codename='add_file'),
+            Permission.objects.get(codename='delete_file'),
         )
 
         # Assign device group permission

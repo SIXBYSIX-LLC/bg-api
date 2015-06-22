@@ -6,4 +6,7 @@ user credit form, etc...) and store them to cloud.
 
 So any other app that needs file storage and upload should define ManyToMany field with
 static.File model
+
+TODO:
+    - Delete file from upstream server when the delete is called
 """
