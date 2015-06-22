@@ -62,6 +62,7 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     'common',
     'system',
+    'static',
     'usr',
     'category',
     'group',
@@ -179,6 +180,13 @@ AUTH_USER_MODEL = 'miniauth.User'
 CITIES_POSTAL_CODES = ['US']
 CITIES_LOCALES = ['en']
 
+
+# --------- Cloudinary
+CLOUDINARY_API_KEY = '428851893232781'  # Override this
+CLOUDINARY_API_SECRET = 'RugGl4f1ljrs0i50t2rOJbrDvbg'  # Override this
+CLOUDINARY_CLOUD_NAME = 'inabhi9'  # Override this
+STATIC_FILE_BASE = 'local'  # Override this
+# --------- End Cloudinary
 
 # --------- Misc
 WEB_DOMAIN = 'www.buildergiant.com'
