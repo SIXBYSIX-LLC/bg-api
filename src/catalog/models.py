@@ -112,3 +112,6 @@ class Inventory(BaseModel):
     objects = InventoryManager()
 
     Const = constats.Inventory
+
+    class Meta(BaseModel.Meta):
+        unique_together = ('product', 'serial_no')
