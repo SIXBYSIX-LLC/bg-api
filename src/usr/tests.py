@@ -72,18 +72,18 @@ class TestUser(TestCase):
 
     def test_password_change(self):
         user = factories.UserFactory()
-        response = self.admin_client.put('/users/%s/password' % user.id,
-                                         data={'new_password': '456', 'old_password': '123'})
+        response = self.admin_client.post('/users/%s/actions/change_password' % user.id,
+                                          data={'new_password': '456', 'old_password': '123'})
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        response = self.admin_client.put('/users/%s/password' % user.id,
-                                         data={'new_password': '456', 'old_password': '123'})
+        response = self.admin_client.post('/users/%s/actions/change_password' % user.id,
+                                          data={'new_password': '456', 'old_password': '123'})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_password_change_blank(self):
         user = factories.UserFactory()
-        response = self.admin_client.put('/users/%s/password' % user.id,
-                                         data={'new_password': '', 'old_password': '123'})
+        response = self.admin_client.post('/users/%s/actions/change_password' % user.id,
+                                          data={'new_password': '', 'old_password': '123'})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -150,3 +150,21 @@ class TestUser(TestCase):
                                data={'key': user.unverified_email_key})
         user.refresh_from_db()
         self.assertEqual(user.is_email_verified, True)
+
+    def test_address_factory(self):
+        factories.AddressFactory(user=self.user)
+        self.assertEqual(self.user.address_set.count(), 1)
+
+
+class PermissionTest(TestCase):
+    def test_user_default_group(self):
+        new_user = factories.RegistrationFactory()
+        resp = self.device_client.post('/users', data=new_user)
+
+        self.assertIn('User', [d['name'] for d in resp.data.get('groups')])
+
+    def test_user_create_member(self):
+        new_user = factories.RegistrationFactory()
+        resp = self.user_client.post('/users', data=new_user)
+
+        self.assertEqual(resp.data['user']['id'], self.user.id)

@@ -14,3 +14,9 @@ class GroupSerializer(serializers.ModelSerializer):
         # Auto generate name
         validated_data['name'] = timezone.now().strftime('%s-%f')
         return Group.objects.create(**validated_data)
+
+
+class GroupRefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = ('id', 'name')

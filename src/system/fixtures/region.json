@@ -1,0 +1,14 @@
+[
+    {
+        "fields": {
+            "code": "09",
+            "name": "Gujarat",
+            "country": 1269750,
+            "alt_names": [],
+            "name_std": "Gujarat",
+            "slug": "gujarat"
+        },
+        "model": "cities.region",
+        "pk": 1270770
+    }
+]

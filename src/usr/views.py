@@ -2,9 +2,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view, permission_classes
 from rest_framework import status
 from rest_framework.permissions import AllowAny
-from rest_framework_extensions.mixins import NestedViewSetMixin
 
-from common.viewsets import ModelViewSet
+from common.viewsets import ModelViewSet, NestedViewSetMixin
 from common.permissions import CustomActionPermissions
 from . import serializers
 from .models import Profile, Address
@@ -15,6 +14,8 @@ class UserViewSet(ModelViewSet):
     serializer_class = serializers.UserSerializer
     update_serializer_class = serializers.UpdateUserSerializer
     partial_update_serializer_class = update_serializer_class
+
+    ownership_fields = ('user',)
 
     @detail_route(methods=['POST'])
     def action_change_password(self, request, *args, **kwargs):

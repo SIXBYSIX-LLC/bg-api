@@ -1,0 +1,3350 @@
+[
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "W\u0101nk\u0101ner",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Wankaner",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.9437900000000070 22.6119799999999991)",
+            "timezone": "Asia/Kolkata",
+            "slug": "wankaner",
+            "population": 47814
+        },
+        "model": "cities.city",
+        "pk": 1252958
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Wagh\u0101i",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Waghai",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.5007399999999933 20.7704799999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "waghai",
+            "population": 6462
+        },
+        "model": "cities.city",
+        "pk": 1253024
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vy\u0101ra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vyara",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.3936499999999938 21.1107900000000015)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vyara",
+            "population": 38168
+        },
+        "model": "cities.city",
+        "pk": 1253074
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Visnagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Visnagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.5520999999999958 23.6985500000000009)",
+            "timezone": "Asia/Kolkata",
+            "slug": "visnagar",
+            "population": 68619
+        },
+        "model": "cities.city",
+        "pk": 1253095
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "V\u012bs\u0101vadar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Visavadar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.7496600000000058 21.3395399999999995)",
+            "timezone": "Asia/Kolkata",
+            "slug": "visavadar",
+            "population": 18382
+        },
+        "model": "cities.city",
+        "pk": 1253105
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Virpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Virpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.4806999999999988 23.1893300000000018)",
+            "timezone": "Asia/Kolkata",
+            "slug": "virpur",
+            "population": 8866
+        },
+        "model": "cities.city",
+        "pk": 1253115
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vinchia",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vinchia",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.3796700000000044 22.2102700000000013)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vinchia",
+            "population": 12355
+        },
+        "model": "cities.city",
+        "pk": 1253162
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vij\u0101pur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vijapur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7484800000000007 23.5623000000000005)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vijapur",
+            "population": 24297
+        },
+        "model": "cities.city",
+        "pk": 1253193
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Ver\u0101val",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Veraval",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.3678599999999932 20.9076999999999984)",
+            "timezone": "Asia/Kolkata",
+            "slug": "veraval",
+            "population": 163326
+        },
+        "model": "cities.city",
+        "pk": 1253237
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vejalpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vejalpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.5629899999999992 22.6902100000000004)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vejalpur",
+            "population": 121610
+        },
+        "model": "cities.city",
+        "pk": 1253315
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vasa",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vasa",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7551899999999989 22.6607899999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vasa",
+            "population": 15934
+        },
+        "model": "cities.city",
+        "pk": 1253374
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vartej",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vartej",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.0655299999999954 21.7394700000000007)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vartej",
+            "population": 10271
+        },
+        "model": "cities.city",
+        "pk": 1253381
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "V\u0101nsada",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vansada",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.3638899999999978 20.7581699999999998)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vansada",
+            "population": 12703
+        },
+        "model": "cities.city",
+        "pk": 1253425
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vals\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Valsad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9284300000000059 20.6172800000000009)",
+            "timezone": "Asia/Kolkata",
+            "slug": "valsad",
+            "population": 72929
+        },
+        "model": "cities.city",
+        "pk": 1253468
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vallabh Vidyanagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vallabh Vidyanagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9000000000000057 22.5333299999999994)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vallabh-vidyanagar",
+            "population": 32581
+        },
+        "model": "cities.city",
+        "pk": 1253482
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Valabh\u012bpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Valabhipur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.8793500000000023 21.8886800000000008)",
+            "timezone": "Asia/Kolkata",
+            "slug": "valabhipur",
+            "population": 18663
+        },
+        "model": "cities.city",
+        "pk": 1253512
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "V\u0101ghodia",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vaghodia",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.4001599999999996 22.3050500000000014)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vaghodia",
+            "population": 14606
+        },
+        "model": "cities.city",
+        "pk": 1253559
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vadodara",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vadodara",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.2081199999999939 22.2994100000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vadodara",
+            "population": 1409476
+        },
+        "model": "cities.city",
+        "pk": 1253573
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vadnagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vadnagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.6389300000000020 23.7859300000000005)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vadnagar",
+            "population": 24832
+        },
+        "model": "cities.city",
+        "pk": 1253577
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Utr\u0101n",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Utran",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8666699999999992 21.2333299999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "utran",
+            "population": 14855
+        },
+        "model": "cities.city",
+        "pk": 1253640
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Upleta",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Upleta",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.2825600000000037 21.7401499999999999)",
+            "timezone": "Asia/Kolkata",
+            "slug": "upleta",
+            "population": 56354
+        },
+        "model": "cities.city",
+        "pk": 1253736
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Unjha",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Unjha",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.3910099999999943 23.8036600000000007)",
+            "timezone": "Asia/Kolkata",
+            "slug": "unjha",
+            "population": 54620
+        },
+        "model": "cities.city",
+        "pk": 1253750
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Una",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Una",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.0379499999999950 20.8231800000000007)",
+            "timezone": "Asia/Kolkata",
+            "slug": "una",
+            "population": 56545
+        },
+        "model": "cities.city",
+        "pk": 1253783
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Un",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Un",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.7697500000000019 23.8874500000000012)",
+            "timezone": "Asia/Kolkata",
+            "slug": "un",
+            "population": 30671
+        },
+        "model": "cities.city",
+        "pk": 1253786
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Umreth",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Umreth",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.1156100000000038 22.6988100000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "umreth",
+            "population": 32802
+        },
+        "model": "cities.city",
+        "pk": 1253805
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Umr\u0101la",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Umrala",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.8030499999999989 21.8435300000000012)",
+            "timezone": "Asia/Kolkata",
+            "slug": "umrala",
+            "population": 11874
+        },
+        "model": "cities.city",
+        "pk": 1253815
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Th\u0101sra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Thasra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.2117400000000060 22.7983100000000007)",
+            "timezone": "Asia/Kolkata",
+            "slug": "thasra",
+            "population": 18337
+        },
+        "model": "cities.city",
+        "pk": 1254624
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Thar\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Tharad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.6257700000000028 24.3959699999999984)",
+            "timezone": "Asia/Kolkata",
+            "slug": "tharad",
+            "population": 24697
+        },
+        "model": "cities.city",
+        "pk": 1254638
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Th\u0101n",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Than",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.1994200000000035 22.5742200000000004)",
+            "timezone": "Asia/Kolkata",
+            "slug": "than",
+            "population": 42508
+        },
+        "model": "cities.city",
+        "pk": 1254675
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Tank\u0101ra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Tankara",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.7494499999999960 22.6562200000000011)",
+            "timezone": "Asia/Kolkata",
+            "slug": "tankara",
+            "population": 10175
+        },
+        "model": "cities.city",
+        "pk": 1254972
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Tal\u0101ja",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Talaja",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.0352400000000017 21.3526999999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "talaja",
+            "population": 29948
+        },
+        "model": "cities.city",
+        "pk": 1255175
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Surendranagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Surendranagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.6485600000000034 22.7270600000000016)",
+            "timezone": "Asia/Kolkata",
+            "slug": "surendranagar",
+            "population": 179628
+        },
+        "model": "cities.city",
+        "pk": 1255349
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "S\u016brat",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Surat",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8302300000000002 21.1959400000000002)",
+            "timezone": "Asia/Kolkata",
+            "slug": "surat",
+            "population": 2894504
+        },
+        "model": "cities.city",
+        "pk": 1255364
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Songadh",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Songadh",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.5635699999999986 21.1696600000000004)",
+            "timezone": "Asia/Kolkata",
+            "slug": "songadh",
+            "population": 25269
+        },
+        "model": "cities.city",
+        "pk": 1255762
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Soj\u012btra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sojitra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7198400000000049 22.5388400000000004)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sojitra",
+            "population": 19403
+        },
+        "model": "cities.city",
+        "pk": 1255858
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sinor",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sinor",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.3397400000000061 21.9111699999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sinor",
+            "population": 11267
+        },
+        "model": "cities.city",
+        "pk": 1256117
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sikka",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sikka",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.8415799999999933 22.4321799999999989)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sikka",
+            "population": 19404
+        },
+        "model": "cities.city",
+        "pk": 1256333
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sihor",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sihor",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.9617899999999935 21.7113399999999999)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sihor",
+            "population": 52603
+        },
+        "model": "cities.city",
+        "pk": 1256343
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Siddhapur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Siddhapur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.3721199999999953 23.9178299999999986)",
+            "timezone": "Asia/Kolkata",
+            "slug": "siddhapur",
+            "population": 54313
+        },
+        "model": "cities.city",
+        "pk": 1256382
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Shivr\u0101jpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Shivrajpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.6086499999999972 22.4231900000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "shivrajpur",
+            "population": 6705
+        },
+        "model": "cities.city",
+        "pk": 1256450
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sh\u0101hpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Shahpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.7706799999999987 22.1561100000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "shahpur",
+            "population": 12867
+        },
+        "model": "cities.city",
+        "pk": 1256719
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "S\u0101yla",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sayla",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.4832399999999950 22.5492500000000007)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sayla",
+            "population": 15376
+        },
+        "model": "cities.city",
+        "pk": 1256929
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sarkhej",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sarkhej",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.5019599999999969 22.9829700000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sarkhej",
+            "population": 30341
+        },
+        "model": "cities.city",
+        "pk": 1257149
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sankheda",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sankheda",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.5781999999999954 22.1702100000000009)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sankheda",
+            "population": 12077
+        },
+        "model": "cities.city",
+        "pk": 1257366
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "S\u0101nand",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sanand",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.3817700000000031 22.9922700000000013)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sanand",
+            "population": 35033
+        },
+        "model": "cities.city",
+        "pk": 1257486
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sal\u0101ya",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Salaya",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.6037599999999941 22.3103799999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "salaya",
+            "population": 30228
+        },
+        "model": "cities.city",
+        "pk": 1257638
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Sach\u012bn",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Sachin",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8815299999999979 21.0871800000000000)",
+            "timezone": "Asia/Kolkata",
+            "slug": "sachin",
+            "population": 12662
+        },
+        "model": "cities.city",
+        "pk": 1257901
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Roha",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Roha",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.2707599999999957 23.1964599999999983)",
+            "timezone": "Asia/Kolkata",
+            "slug": "roha",
+            "population": 8664
+        },
+        "model": "cities.city",
+        "pk": 1258098
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "R\u0101par",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Rapar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.6471800000000059 23.5726699999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "rapar",
+            "population": 21507
+        },
+        "model": "cities.city",
+        "pk": 1258406
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "R\u0101n\u0101v\u0101v",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Ranavav",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.7448499999999996 21.6873399999999990)",
+            "timezone": "Asia/Kolkata",
+            "slug": "ranavav",
+            "population": 26011
+        },
+        "model": "cities.city",
+        "pk": 1258534
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "R\u0101jula",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Rajula",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.4434499999999986 21.0385400000000011)",
+            "timezone": "Asia/Kolkata",
+            "slug": "rajula",
+            "population": 34652
+        },
+        "model": "cities.city",
+        "pk": 1258795
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "R\u0101jp\u012bpla",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Rajpipla",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.5000000000000000 21.8666699999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "rajpipla",
+            "population": 35392
+        },
+        "model": "cities.city",
+        "pk": 1258819
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "R\u0101jkot",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Rajkot",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.7932200000000051 22.2916099999999986)",
+            "timezone": "Asia/Kolkata",
+            "slug": "rajkot",
+            "population": 1177362
+        },
+        "model": "cities.city",
+        "pk": 1258847
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "R\u0101dhanpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Radhanpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.6046999999999940 23.8323800000000006)",
+            "timezone": "Asia/Kolkata",
+            "slug": "radhanpur",
+            "population": 35457
+        },
+        "model": "cities.city",
+        "pk": 1259069
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Porbandar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Porbandar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.6092900000000014 21.6421899999999994)",
+            "timezone": "Asia/Kolkata",
+            "slug": "porbandar",
+            "population": 138872
+        },
+        "model": "cities.city",
+        "pk": 1259395
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Petl\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Petlad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7999499999999955 22.4768100000000004)",
+            "timezone": "Asia/Kolkata",
+            "slug": "petlad",
+            "population": 51819
+        },
+        "model": "cities.city",
+        "pk": 1259841
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "P\u0101tan",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Patan",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.1296300000000059 23.8506999999999998)",
+            "timezone": "Asia/Kolkata",
+            "slug": "patan",
+            "population": 117863
+        },
+        "model": "cities.city",
+        "pk": 1260173
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Parnera",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Parnera",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9484599999999972 20.5610099999999996)",
+            "timezone": "Asia/Kolkata",
+            "slug": "parnera",
+            "population": 11434
+        },
+        "model": "cities.city",
+        "pk": 1260281
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "P\u0101rdi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Pardi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9456899999999990 20.5087000000000010)",
+            "timezone": "Asia/Kolkata",
+            "slug": "pardi",
+            "population": 27423
+        },
+        "model": "cities.city",
+        "pk": 1260335
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "P\u0101liy\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Paliyad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.5602399999999932 22.2575700000000012)",
+            "timezone": "Asia/Kolkata",
+            "slug": "paliyad",
+            "population": 10862
+        },
+        "model": "cities.city",
+        "pk": 1260706
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "P\u0101lit\u0101na",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Palitana",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.8230899999999934 21.5251899999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "palitana",
+            "population": 55913
+        },
+        "model": "cities.city",
+        "pk": 1260707
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "P\u0101lanpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Palanpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.4382099999999980 24.1709700000000005)",
+            "timezone": "Asia/Kolkata",
+            "slug": "palanpur",
+            "population": 123294
+        },
+        "model": "cities.city",
+        "pk": 1260777
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Padra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Padra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.0845099999999945 22.2397999999999989)",
+            "timezone": "Asia/Kolkata",
+            "slug": "padra",
+            "population": 36499
+        },
+        "model": "cities.city",
+        "pk": 1260911
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Paddhari",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Paddhari",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.6016199999999969 22.4365400000000008)",
+            "timezone": "Asia/Kolkata",
+            "slug": "paddhari",
+            "population": 9701
+        },
+        "model": "cities.city",
+        "pk": 1260933
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Olp\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Olpad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7516099999999994 21.3364900000000013)",
+            "timezone": "Asia/Kolkata",
+            "slug": "olpad",
+            "population": 14091
+        },
+        "model": "cities.city",
+        "pk": 1261050
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Okha",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Okha",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.0700199999999995 22.4675599999999989)",
+            "timezone": "Asia/Kolkata",
+            "slug": "okha",
+            "population": 21048
+        },
+        "model": "cities.city",
+        "pk": 1261066
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Naroda",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Naroda",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.6570200000000028 23.0704099999999990)",
+            "timezone": "Asia/Kolkata",
+            "slug": "naroda",
+            "population": 5366
+        },
+        "model": "cities.city",
+        "pk": 1261768
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Naliya",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Naliya",
+            "subregion": null,
+            "location": "SRID=4326;POINT (68.8265499999999975 23.2605800000000009)",
+            "timezone": "Asia/Kolkata",
+            "slug": "naliya",
+            "population": 10587
+        },
+        "model": "cities.city",
+        "pk": 1262062
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Nadi\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Nadiad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8615700000000004 22.6938500000000012)",
+            "timezone": "Asia/Kolkata",
+            "slug": "nadiad",
+            "population": 202067
+        },
+        "model": "cities.city",
+        "pk": 1262292
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Mundra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mundra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.7219000000000051 22.8391799999999989)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mundra",
+            "population": 15220
+        },
+        "model": "cities.city",
+        "pk": 1262497
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Morwa",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Morwa",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.8391199999999941 22.9046899999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "morwa",
+            "population": 20168
+        },
+        "model": "cities.city",
+        "pk": 1262734
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Morbi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Morbi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.8376999999999981 22.8173099999999991)",
+            "timezone": "Asia/Kolkata",
+            "slug": "morbi",
+            "population": 118022
+        },
+        "model": "cities.city",
+        "pk": 1262775
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Mod\u0101sa",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Modasa",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.2985699999999980 23.4625300000000010)",
+            "timezone": "Asia/Kolkata",
+            "slug": "modasa",
+            "population": 58970
+        },
+        "model": "cities.city",
+        "pk": 1262958
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Mendarda",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mendarda",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.4407800000000037 21.3211200000000005)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mendarda",
+            "population": 17166
+        },
+        "model": "cities.city",
+        "pk": 1263142
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Meghr\u0101j",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Meghraj",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.5130900000000054 23.4974099999999986)",
+            "timezone": "Asia/Kolkata",
+            "slug": "meghraj",
+            "population": 10498
+        },
+        "model": "cities.city",
+        "pk": 1263201
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "M\u0101nsa",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mansa",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.6573900000000066 23.4256400000000014)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mansa",
+            "population": 29551
+        },
+        "model": "cities.city",
+        "pk": 1263623
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "M\u0101ngrol",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mangrol",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.1148400000000009 21.1226799999999990)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mangrol",
+            "population": 58989
+        },
+        "model": "cities.city",
+        "pk": 1263752
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "M\u0101ndvi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mandvi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.3523699999999934 22.8328200000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mandvi",
+            "population": 47853
+        },
+        "model": "cities.city",
+        "pk": 1263824
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "M\u0101ndvi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mandvi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.3041199999999975 21.2552599999999998)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mandvi",
+            "population": 18669
+        },
+        "model": "cities.city",
+        "pk": 1263826
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "M\u0101ndal",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mandal",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.9185399999999930 23.2886500000000005)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mandal",
+            "population": 13345
+        },
+        "model": "cities.city",
+        "pk": 1263918
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "M\u0101n\u0101vadar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Manavadar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.1377499999999969 21.4981299999999997)",
+            "timezone": "Asia/Kolkata",
+            "slug": "manavadar",
+            "population": 29105
+        },
+        "model": "cities.city",
+        "pk": 1263943
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "M\u0101lpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Malpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.4659500000000065 23.3603500000000004)",
+            "timezone": "Asia/Kolkata",
+            "slug": "malpur",
+            "population": 6971
+        },
+        "model": "cities.city",
+        "pk": 1264033
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Mahudha",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mahudha",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9403199999999998 22.8208200000000012)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mahudha",
+            "population": 16828
+        },
+        "model": "cities.city",
+        "pk": 1264344
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Mahemd\u0101v\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Mahemdavad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7555100000000010 22.8235899999999994)",
+            "timezone": "Asia/Kolkata",
+            "slug": "mahemdavad",
+            "population": 32504
+        },
+        "model": "cities.city",
+        "pk": 1264398
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "L\u016bn\u0101v\u0101da",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Lunavada",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.6106500000000068 23.1285400000000010)",
+            "timezone": "Asia/Kolkata",
+            "slug": "lunavada",
+            "population": 35431
+        },
+        "model": "cities.city",
+        "pk": 1264700
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Limbdi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Limbdi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.8107600000000019 22.5650699999999986)",
+            "timezone": "Asia/Kolkata",
+            "slug": "limbdi",
+            "population": 41740
+        },
+        "model": "cities.city",
+        "pk": 1264912
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "L\u0101thi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Lathi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.3884299999999996 21.7230999999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "lathi",
+            "population": 22745
+        },
+        "model": "cities.city",
+        "pk": 1265022
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "L\u0101lpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Lalpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.9635099999999994 22.1907299999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "lalpur",
+            "population": 15076
+        },
+        "model": "cities.city",
+        "pk": 1265150
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Lakhtar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Lakhtar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.7884399999999943 22.8568299999999986)",
+            "timezone": "Asia/Kolkata",
+            "slug": "lakhtar",
+            "population": 14534
+        },
+        "model": "cities.city",
+        "pk": 1265225
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kutiy\u0101na",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kutiyana",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.9849399999999946 21.6240999999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kutiyana",
+            "population": 16877
+        },
+        "model": "cities.city",
+        "pk": 1265415
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kundla",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kundla",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.3063300000000027 21.3422200000000011)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kundla",
+            "population": 76809
+        },
+        "model": "cities.city",
+        "pk": 1265605
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kosamba",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kosamba",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9584200000000038 21.4620199999999990)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kosamba",
+            "population": 33221
+        },
+        "model": "cities.city",
+        "pk": 1266087
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kod\u012bnar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kodinar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.7021600000000063 20.7939299999999996)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kodinar",
+            "population": 34930
+        },
+        "model": "cities.city",
+        "pk": 1266397
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kher\u0101lu",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kheralu",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.6186900000000009 23.8853399999999993)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kheralu",
+            "population": 20755
+        },
+        "model": "cities.city",
+        "pk": 1266774
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Khed Brahma",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Khed Brahma",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.0469700000000017 24.0316499999999991)",
+            "timezone": "Asia/Kolkata",
+            "slug": "khed-brahma",
+            "population": 29402
+        },
+        "model": "cities.city",
+        "pk": 1266806
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kheda",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kheda",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.6853299999999933 22.7521799999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kheda",
+            "population": 24767
+        },
+        "model": "cities.city",
+        "pk": 1266809
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Khambh\u0101t",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Khambhat",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.6191599999999937 22.3174400000000013)",
+            "timezone": "Asia/Kolkata",
+            "slug": "khambhat",
+            "population": 81328
+        },
+        "model": "cities.city",
+        "pk": 1267090
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Khambh\u0101liya",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Khambhaliya",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.6503100000000046 22.2068499999999993)",
+            "timezone": "Asia/Kolkata",
+            "slug": "khambhaliya",
+            "population": 38121
+        },
+        "model": "cities.city",
+        "pk": 1267091
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Keshod",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Keshod",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.2486099999999993 21.3032800000000009)",
+            "timezone": "Asia/Kolkata",
+            "slug": "keshod",
+            "population": 68518
+        },
+        "model": "cities.city",
+        "pk": 1267227
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kawant",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kawant",
+            "subregion": null,
+            "location": "SRID=4326;POINT (74.0511500000000069 22.0913299999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kawant",
+            "population": 8618
+        },
+        "model": "cities.city",
+        "pk": 1267370
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Katpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Katpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.7945699999999931 21.0586899999999986)",
+            "timezone": "Asia/Kolkata",
+            "slug": "katpur",
+            "population": 6981
+        },
+        "model": "cities.city",
+        "pk": 1267454
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "K\u0101thor",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kathor",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9407000000000068 21.2885400000000011)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kathor",
+            "population": 15311
+        },
+        "model": "cities.city",
+        "pk": 1267492
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Karamsad",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Karamsad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9039199999999994 22.5424299999999995)",
+            "timezone": "Asia/Kolkata",
+            "slug": "karamsad",
+            "population": 32380
+        },
+        "model": "cities.city",
+        "pk": 1267862
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kapadvanj",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kapadvanj",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.0721300000000014 23.0215299999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kapadvanj",
+            "population": 44764
+        },
+        "model": "cities.city",
+        "pk": 1267939
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kanodar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kanodar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.3937200000000018 24.0892799999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kanodar",
+            "population": 11953
+        },
+        "model": "cities.city",
+        "pk": 1268004
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "K\u0101ndla",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kandla",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.2166699999999935 23.0333299999999994)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kandla",
+            "population": 25845
+        },
+        "model": "cities.city",
+        "pk": 1268124
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "K\u0101lol",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kalol",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.4627200000000045 22.6077699999999986)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kalol",
+            "population": 25929
+        },
+        "model": "cities.city",
+        "pk": 1268339
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "K\u0101l\u0101vad",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kalavad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.3834300000000042 22.2078899999999990)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kalavad",
+            "population": 26287
+        },
+        "model": "cities.city",
+        "pk": 1268450
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kadod",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kadod",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.2197199999999953 21.2171699999999994)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kadod",
+            "population": 16747
+        },
+        "model": "cities.city",
+        "pk": 1268667
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Kadi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Kadi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.3336199999999963 23.2990800000000000)",
+            "timezone": "Asia/Kolkata",
+            "slug": "kadi",
+            "population": 58066
+        },
+        "model": "cities.city",
+        "pk": 1268680
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "J\u016bn\u0101gadh",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Junagadh",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.4598100000000045 21.5196599999999982)",
+            "timezone": "Asia/Kolkata",
+            "slug": "junagadh",
+            "population": 184447
+        },
+        "model": "cities.city",
+        "pk": 1268773
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jodiya Bandar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jodiya Bandar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.2833300000000065 22.7166700000000006)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jodiya-bandar",
+            "population": 15788
+        },
+        "model": "cities.city",
+        "pk": 1268863
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jodhpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jodhpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.0327000000000055 21.9017400000000002)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jodhpur",
+            "population": 47329
+        },
+        "model": "cities.city",
+        "pk": 1268866
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jetpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jetpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.8409300000000002 22.3447199999999988)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jetpur",
+            "population": 8446
+        },
+        "model": "cities.city",
+        "pk": 1269064
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jetpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jetpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.6234699999999975 21.7548199999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jetpur",
+            "population": 118068
+        },
+        "model": "cities.city",
+        "pk": 1269065
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jetalsar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jetalsar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.5769499999999965 21.7089099999999995)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jetalsar",
+            "population": 14771
+        },
+        "model": "cities.city",
+        "pk": 1269070
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jasdan",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jasdan",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.2079399999999936 22.0370899999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jasdan",
+            "population": 43861
+        },
+        "model": "cities.city",
+        "pk": 1269179
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "J\u0101mnagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jamnagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.0667300000000068 22.4729199999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jamnagar",
+            "population": 492056
+        },
+        "model": "cities.city",
+        "pk": 1269317
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jambusar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jambusar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8007400000000047 22.0523600000000002)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jambusar",
+            "population": 41594
+        },
+        "model": "cities.city",
+        "pk": 1269350
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Jal\u0101lpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jalalpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8982900000000029 20.9489599999999996)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jalalpur",
+            "population": 17325
+        },
+        "model": "cities.city",
+        "pk": 1269439
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Himatnagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Himatnagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9660200000000003 23.5989299999999993)",
+            "timezone": "Asia/Kolkata",
+            "slug": "himatnagar",
+            "population": 60634
+        },
+        "model": "cities.city",
+        "pk": 1270099
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "H\u0101rij",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Harij",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.9069999999999965 23.6935600000000015)",
+            "timezone": "Asia/Kolkata",
+            "slug": "harij",
+            "population": 18964
+        },
+        "model": "cities.city",
+        "pk": 1270343
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Hansot",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Hansot",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8076400000000064 21.5849599999999988)",
+            "timezone": "Asia/Kolkata",
+            "slug": "hansot",
+            "population": 12525
+        },
+        "model": "cities.city",
+        "pk": 1270413
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Halvad",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Halvad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.1802899999999994 23.0151600000000016)",
+            "timezone": "Asia/Kolkata",
+            "slug": "halvad",
+            "population": 26205
+        },
+        "model": "cities.city",
+        "pk": 1270466
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "H\u0101lol",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Halol",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.4724199999999996 22.5032099999999993)",
+            "timezone": "Asia/Kolkata",
+            "slug": "halol",
+            "population": 45741
+        },
+        "model": "cities.city",
+        "pk": 1270474
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Gondal",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Gondal",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.8025499999999965 21.9607400000000013)",
+            "timezone": "Asia/Kolkata",
+            "slug": "gondal",
+            "population": 101801
+        },
+        "model": "cities.city",
+        "pk": 1270994
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Godhra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Godhra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.6148799999999994 22.7754699999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "godhra",
+            "population": 131913
+        },
+        "model": "cities.city",
+        "pk": 1271107
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Ghogha",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Ghogha",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.2763000000000062 21.6881300000000010)",
+            "timezone": "Asia/Kolkata",
+            "slug": "ghogha",
+            "population": 11361
+        },
+        "model": "cities.city",
+        "pk": 1271285
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Gariadhar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Gariadhar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.5773700000000019 21.5388899999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "gariadhar",
+            "population": 35692
+        },
+        "model": "cities.city",
+        "pk": 1271533
+    },
+    {
+        "fields": {
+            "kind": "PPLA",
+            "elevation": null,
+            "name": "Ghandinagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Ghandinagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.6833299999999980 23.2166700000000006)",
+            "timezone": "Asia/Kolkata",
+            "slug": "ghandinagar",
+            "population": 195985
+        },
+        "model": "cities.city",
+        "pk": 1271715
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "G\u0101ndh\u012bdh\u0101m",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Gandhidham",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.1333300000000008 23.0833300000000001)",
+            "timezone": "Asia/Kolkata",
+            "slug": "gandhidham",
+            "population": 166388
+        },
+        "model": "cities.city",
+        "pk": 1271717
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Gandevi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Gandevi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9981099999999969 20.8121399999999994)",
+            "timezone": "Asia/Kolkata",
+            "slug": "gandevi",
+            "population": 16240
+        },
+        "model": "cities.city",
+        "pk": 1271722
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Gadhada",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Gadhada",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.5782800000000066 21.9695700000000009)",
+            "timezone": "Asia/Kolkata",
+            "slug": "gadhada",
+            "population": 28611
+        },
+        "model": "cities.city",
+        "pk": 1271839
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dw\u0101rka",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dwarka",
+            "subregion": null,
+            "location": "SRID=4326;POINT (68.9677800000000047 22.2394399999999983)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dwarka",
+            "population": 35837
+        },
+        "model": "cities.city",
+        "pk": 1272140
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dungarpur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dungarpur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.7556000000000012 21.2877699999999983)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dungarpur",
+            "population": 6105
+        },
+        "model": "cities.city",
+        "pk": 1272202
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "D\u012bsa",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Disa",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.1792800000000057 24.2561199999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "disa",
+            "population": 92224
+        },
+        "model": "cities.city",
+        "pk": 1272513
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dhuwaran",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhuwaran",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7591000000000037 22.2377900000000004)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhuwaran",
+            "population": 11473
+        },
+        "model": "cities.city",
+        "pk": 1272660
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dhrol",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhrol",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.4176899999999932 22.5670000000000002)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhrol",
+            "population": 26496
+        },
+        "model": "cities.city",
+        "pk": 1272699
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dhr\u0101ngadhra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhrangadhra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.4679299999999955 22.9916699999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhrangadhra",
+            "population": 75578
+        },
+        "model": "cities.city",
+        "pk": 1272701
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dhor\u0101ji",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhoraji",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.4500400000000013 21.7335899999999995)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhoraji",
+            "population": 81445
+        },
+        "model": "cities.city",
+        "pk": 1272720
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dholka",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dholka",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.4412800000000061 22.7273199999999989)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dholka",
+            "population": 54977
+        },
+        "model": "cities.city",
+        "pk": 1272733
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dhola",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhola",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.7726899999999972 21.8812899999999999)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhola",
+            "population": 8206
+        },
+        "model": "cities.city",
+        "pk": 1272744
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dh\u0101ri",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhari",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.0264499999999970 21.3285499999999999)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhari",
+            "population": 29346
+        },
+        "model": "cities.city",
+        "pk": 1272861
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dharampur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dharampur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.1736800000000045 20.5369300000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dharampur",
+            "population": 21207
+        },
+        "model": "cities.city",
+        "pk": 1272881
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dhanera",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhanera",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.0234300000000047 24.5096699999999998)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhanera",
+            "population": 23656
+        },
+        "model": "cities.city",
+        "pk": 1272962
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dhandhuka",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dhandhuka",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.9866399999999942 22.3818500000000000)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dhandhuka",
+            "population": 30049
+        },
+        "model": "cities.city",
+        "pk": 1272970
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Devgadh B\u0101riya",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Devgadh Bariya",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.9088200000000057 22.7051699999999990)",
+            "timezone": "Asia/Kolkata",
+            "slug": "devgadh-bariya",
+            "population": 19703
+        },
+        "model": "cities.city",
+        "pk": 1273104
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Delv\u0101da",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Delvada",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.0464599999999962 20.7754399999999997)",
+            "timezone": "Asia/Kolkata",
+            "slug": "delvada",
+            "population": 11912
+        },
+        "model": "cities.city",
+        "pk": 1273287
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "D\u0101mnagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Damnagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.5174700000000030 21.6923199999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "damnagar",
+            "population": 17766
+        },
+        "model": "cities.city",
+        "pk": 1273593
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "D\u0101kor",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dakor",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.1496700000000004 22.7526800000000016)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dakor",
+            "population": 25019
+        },
+        "model": "cities.city",
+        "pk": 1273665
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "D\u0101hod",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dahod",
+            "subregion": null,
+            "location": "SRID=4326;POINT (74.2595000000000027 22.8318800000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dahod",
+            "population": 83966
+        },
+        "model": "cities.city",
+        "pk": 1273687
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Daheg\u0101m",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dahegam",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8216100000000068 23.1690299999999993)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dahegam",
+            "population": 40671
+        },
+        "model": "cities.city",
+        "pk": 1273704
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Dabhoi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Dabhoi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.4333299999999980 22.1833300000000015)",
+            "timezone": "Asia/Kolkata",
+            "slug": "dabhoi",
+            "population": 56253
+        },
+        "model": "cities.city",
+        "pk": 1273766
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Chotila",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Chotila",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.1964100000000002 22.4234699999999982)",
+            "timezone": "Asia/Kolkata",
+            "slug": "chotila",
+            "population": 15197
+        },
+        "model": "cities.city",
+        "pk": 1273960
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Chikhli",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Chikhli",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.0626800000000003 20.7575099999999999)",
+            "timezone": "Asia/Kolkata",
+            "slug": "chikhli",
+            "population": 7480
+        },
+        "model": "cities.city",
+        "pk": 1274235
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Chhota Udepur",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Chhota Udepur",
+            "subregion": null,
+            "location": "SRID=4326;POINT (74.0157999999999987 22.3040100000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "chhota-udepur",
+            "population": 24517
+        },
+        "model": "cities.city",
+        "pk": 1274285
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Chhala",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Chhala",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.7740399999999994 23.3077900000000007)",
+            "timezone": "Asia/Kolkata",
+            "slug": "chhala",
+            "population": 17323
+        },
+        "model": "cities.city",
+        "pk": 1274369
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Ch\u0101nasma",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Chanasma",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.1127900000000039 23.7147199999999998)",
+            "timezone": "Asia/Kolkata",
+            "slug": "chanasma",
+            "population": 15572
+        },
+        "model": "cities.city",
+        "pk": 1274807
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Chal\u0101la",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Chalala",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.1662100000000066 21.4107300000000009)",
+            "timezone": "Asia/Kolkata",
+            "slug": "chalala",
+            "population": 17081
+        },
+        "model": "cities.city",
+        "pk": 1274874
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Chakl\u0101si",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Chaklasi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9449699999999979 22.6531999999999982)",
+            "timezone": "Asia/Kolkata",
+            "slug": "chaklasi",
+            "population": 38435
+        },
+        "model": "cities.city",
+        "pk": 1274896
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bot\u0101d",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Botad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.6667099999999948 22.1691700000000012)",
+            "timezone": "Asia/Kolkata",
+            "slug": "botad",
+            "population": 117053
+        },
+        "model": "cities.city",
+        "pk": 1275218
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Borsad",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Borsad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8981699999999933 22.4078799999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "borsad",
+            "population": 60271
+        },
+        "model": "cities.city",
+        "pk": 1275230
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bilkha",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bilkha",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.6006299999999953 21.4415000000000013)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bilkha",
+            "population": 14421
+        },
+        "model": "cities.city",
+        "pk": 1275609
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bilimora",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bilimora",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9613400000000070 20.7695700000000016)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bilimora",
+            "population": 510879
+        },
+        "model": "cities.city",
+        "pk": 1275610
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bhuj",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bhuj",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.6692800000000005 23.2539699999999989)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bhuj",
+            "population": 133459
+        },
+        "model": "cities.city",
+        "pk": 1275812
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bh\u0101y\u0101vadar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bhayavadar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.2479100000000045 21.8552299999999988)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bhayavadar",
+            "population": 19458
+        },
+        "model": "cities.city",
+        "pk": 1276013
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bh\u0101vnagar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bhavnagar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.1525000000000034 21.7744500000000016)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bhavnagar",
+            "population": 554978
+        },
+        "model": "cities.city",
+        "pk": 1276032
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bhar\u016bch",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bharuch",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9805000000000064 21.6948200000000000)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bharuch",
+            "population": 153528
+        },
+        "model": "cities.city",
+        "pk": 1276100
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bh\u0101nvad",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bhanvad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (69.7808100000000024 21.9305300000000010)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bhanvad",
+            "population": 20823
+        },
+        "model": "cities.city",
+        "pk": 1276147
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bhach\u0101u",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bhachau",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.3427899999999937 23.2985800000000012)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bhachau",
+            "population": 24044
+        },
+        "model": "cities.city",
+        "pk": 1276370
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bedi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bedi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.0436299999999932 22.5014299999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bedi",
+            "population": 21327
+        },
+        "model": "cities.city",
+        "pk": 1276627
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "B\u0101rdoli",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bardoli",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.1115099999999956 21.1229699999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bardoli",
+            "population": 57810
+        },
+        "model": "cities.city",
+        "pk": 1277022
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "B\u0101ntva",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bantva",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.0757600000000025 21.4881500000000010)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bantva",
+            "population": 15051
+        },
+        "model": "cities.city",
+        "pk": 1277202
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Bagasra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Bagasra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.9551600000000064 21.4871899999999982)",
+            "timezone": "Asia/Kolkata",
+            "slug": "bagasra",
+            "population": 32944
+        },
+        "model": "cities.city",
+        "pk": 1277924
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "B\u0101bra",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Babra",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.3054400000000044 21.8457700000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "babra",
+            "population": 18993
+        },
+        "model": "cities.city",
+        "pk": 1278054
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Ankleshwar",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Ankleshwar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9900099999999981 21.6323599999999985)",
+            "timezone": "Asia/Kolkata",
+            "slug": "ankleshwar",
+            "population": 74742
+        },
+        "model": "cities.city",
+        "pk": 1278553
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Anj\u0101r",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Anjar",
+            "subregion": null,
+            "location": "SRID=4326;POINT (70.0267099999999942 23.1131600000000006)",
+            "timezone": "Asia/Kolkata",
+            "slug": "anjar",
+            "population": 66888
+        },
+        "model": "cities.city",
+        "pk": 1278573
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "\u0100nand",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Anand",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9552000000000049 22.5525100000000016)",
+            "timezone": "Asia/Kolkata",
+            "slug": "anand",
+            "population": 138009
+        },
+        "model": "cities.city",
+        "pk": 1278685
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Amroli",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Amroli",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8387799999999999 21.2508400000000002)",
+            "timezone": "Asia/Kolkata",
+            "slug": "amroli",
+            "population": 17082
+        },
+        "model": "cities.city",
+        "pk": 1278707
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Amreli",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Amreli",
+            "subregion": null,
+            "location": "SRID=4326;POINT (71.2116900000000044 21.5998300000000008)",
+            "timezone": "Asia/Kolkata",
+            "slug": "amreli",
+            "population": 99742
+        },
+        "model": "cities.city",
+        "pk": 1278715
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Amod",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Amod",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.8704699999999974 21.9931699999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "amod",
+            "population": 18742
+        },
+        "model": "cities.city",
+        "pk": 1278742
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Ahwa",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Ahwa",
+            "subregion": null,
+            "location": "SRID=4326;POINT (73.6862600000000043 20.7571800000000017)",
+            "timezone": "Asia/Kolkata",
+            "slug": "ahwa",
+            "population": 14321
+        },
+        "model": "cities.city",
+        "pk": 1279213
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Ahmedabad",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Ahmedabad",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.5872700000000037 23.0257900000000006)",
+            "timezone": "Asia/Kolkata",
+            "slug": "ahmedabad",
+            "population": 3719710
+        },
+        "model": "cities.city",
+        "pk": 1279233
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Adalaj",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Adalaj",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.5810699999999969 23.1645299999999992)",
+            "timezone": "Asia/Kolkata",
+            "slug": "adalaj",
+            "population": 10423
+        },
+        "model": "cities.city",
+        "pk": 1279373
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": null,
+            "name": "Vapi",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Vapi",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.9049299999999931 20.3717499999999987)",
+            "timezone": "Asia/Kolkata",
+            "slug": "vapi",
+            "population": 71395
+        },
+        "model": "cities.city",
+        "pk": 7279741
+    },
+    {
+        "fields": {
+            "kind": "PPL",
+            "elevation": 11,
+            "name": "Jhulasan",
+            "country": 1269750,
+            "region": 1270770,
+            "alt_names": [],
+            "name_std": "Jhulasan",
+            "subregion": null,
+            "location": "SRID=4326;POINT (72.4731400000000008 23.3286000000000016)",
+            "timezone": "Asia/Kolkata",
+            "slug": "jhulasan",
+            "population": 8000
+        },
+        "model": "cities.city",
+        "pk": 7303983
+    }
+]

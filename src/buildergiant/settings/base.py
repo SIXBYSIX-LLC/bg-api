@@ -65,6 +65,7 @@ LOCAL_APPS = (
     'usr',
     'category',
     'group',
+    'catalog'
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -101,7 +102,7 @@ DATABASES = {
         'CONN_MAX_AGE': 1 * 60 * 60  # 1 hour
     }
 }
-#--------- END Database
+# --------- END Database
 
 
 # -------- REST framework
@@ -119,7 +120,10 @@ REST_FRAMEWORK = {
     'MAX_PAGINATE_BY': 100,  # Maximum limit allowed when using `?page_size=xxx`.
     # exception
     'EXCEPTION_HANDLER': 'common.helper.custom_exception_handler',
-    'DEFAULT_FILTER_BACKENDS': ('rest_framework_filters.backends.DjangoFilterBackend',),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework_filters.backends.DjangoFilterBackend',
+        'common.filters.OwnerFilterBackend'
+    ),
 
 }
 # -------- End REST framework
