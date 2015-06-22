@@ -38,8 +38,11 @@ class Command(BaseCommand):
             # Products
             Permission.objects.get(codename='add_product'),
             Permission.objects.get(codename='change_product'),
-            Permission.objects.get(codename='delete_product'),
             Permission.objects.get(codename='view_product'),
+            # Inventories
+            Permission.objects.get(codename='add_inventory'),
+            Permission.objects.get(codename='change_inventory'),
+            Permission.objects.get(codename='view_inventory'),
         )
 
         # Assign device group permission
