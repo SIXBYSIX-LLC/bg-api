@@ -1,8 +1,9 @@
 import factory
+from factory import fuzzy
 from faker import Factory
 
 from category.factories import Sub2CategoryFactory
-from ..models import Product
+from ..models import Product, Inventory
 from usr.factories import UserFactory, AddressFactory
 
 
@@ -40,3 +41,14 @@ class ProductFactory(factory.DjangoModelFactory, ProductBaseFactory):
     def _create(cls, model_class, *args, **kwargs):
         obj = model_class.objects.create_product(*args, **kwargs)
         return obj
+
+
+class InventoryBaseFactory(factory.DictFactory):
+    serial_no = fuzzy.FuzzyText(length=10)
+    source = fuzzy.FuzzyChoice(['purchased', 'rented'])
+    is_active = fuzzy.FuzzyChoice([True, False])
+
+
+class InventoryFactory(InventoryBaseFactory):
+    class Meta:
+        model = Inventory

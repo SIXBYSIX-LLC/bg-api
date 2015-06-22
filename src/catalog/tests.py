@@ -66,3 +66,52 @@ class ProductTest(TestCase):
         factories.ProductFactory.create_batch(2, user=self.user, qty=30)
         resp = self.user_client.get('/products')
         self.assertEqual(resp.data[0].get('qty'), 30)
+
+
+class InventoryTest(TestCase):
+    def test_add_inventory(self):
+        product = factories.ProductFactory(user=self.user)
+        inventory = factories.InventoryBaseFactory()
+
+        resp = self.user_client.post('/products/%s/inventories' % product.id, data=inventory)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
+
+    def test_list_inventory(self):
+        products = factories.ProductFactory.create_batch(2, user=self.user)
+
+        for i in xrange(10):
+            inventory = factories.InventoryBaseFactory()
+            self.user_client.post('/products/%s/inventories' % products[0].id, data=inventory)
+
+        for i in xrange(5):
+            inventory = factories.InventoryBaseFactory()
+            self.user_client.post('/products/%s/inventories' % products[1].id, data=inventory)
+
+        # check product 1
+        resp = self.user_client.get('/products/%s/inventories' % products[0].id)
+        self.assertEqual(resp.meta.get('count'), 10)
+
+        resp = self.user_client.get('/products/%s/inventories' % products[1].id)
+        self.assertEqual(resp.meta.get('count'), 5)
+
+
+class InventoryPermissionTest(TestCase):
+    def test_create_to_other_user_product(self):
+        product = factories.ProductFactory(user=self.user)
+        inventory = factories.InventoryBaseFactory()
+
+        user = factories.UserFactory()
+        user_client = self.get_client(user)
+
+        resp = user_client.post('/products/%s/inventories' % product.id, data=inventory)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_403_FORBIDDEN)
+
+    def test_list_other_user_inventory(self):
+        product = factories.ProductFactory(user=self.user)
+        factories.InventoryFactory(product=product, user=self.user)
+
+        user = factories.UserFactory()
+        user_client = self.get_client(user)
+
+        resp = user_client.get('/products/%s/inventories' % product.id)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_403_FORBIDDEN)
