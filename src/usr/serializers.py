@@ -54,7 +54,7 @@ class AddressSerializer(serializers.GeoModelSerializer):
         read_only_fields = ('user',)
 
     def create(self, validated_data):
-        user = self.context['request'].parent_user
+        user = self.context['request'].parent_user or self.context['request'].user
         validated_data['user'] = user
 
         return Address.objects.create(**validated_data)
