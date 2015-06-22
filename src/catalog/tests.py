@@ -60,7 +60,6 @@ class ProductTest(TestCase):
 
         resp = self.user_client.post('/products', data=data)
         self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
-        self.assertEqual()
 
     def test_listing_with_qty_field(self):
         factories.ProductFactory.create_batch(2, user=self.user, qty=30)
