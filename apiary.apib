@@ -1,0 +1,1169 @@
+FORMAT: 1A
+HOST: https://api.buildergiant.com/
+
+# BuilderGiant API v1.0
+
+BuilderGiant is the marketplace for equipments. The core architecture has API service to create, manage and views products in platform.
+This documentation is aimed to give in-depth detail of API usage
+
+## Authentication Flow
+To access the resources, Authentication token is required. However few endpoints are not protected with authorization such as `forgot_password`.
+
+There are two main default groups of Users, one is `device` and another is `user`.
+Device user such as *web application / android / ios* will have very limited permissions which are mentioned below.
+
+* POST [/users] - Create a new user.
+* POST [/login] - Login user.
+* GET [/categories] - View category.
+* GET [/products] - View product.
+
+*Note: To get the device token, please contact the administrator.*
+
+To access other resources, device should use user's token received in `/login` response
+
+**You should pass authentication token in header `Authorization: Token AUTH_TOKEN`**
+
+## JSON
+
+We both accept and respond with JSON for all calls made to the API. The console provides additional means for testing other forms of calls. OperationsWe use RESTful verbs for all operations and methods.
+
+| Verb | Description |
+|------|---------------|
+| GET | Used to select one or more items. Success returns 200 status code with json result item(s) in body. |
+| POST | Used to create a new item. Success returns 201 status code with newly created json item in body. |
+| PUT | Used to update an item. Success returns 200 status code with updated json item in body. |
+| DELETE | Used to delete an item. Success returns 204 status code with no body. |
+
+## Response Envelope
+The response will always be in JSON format. You can expect the proper HTTP status code in response header.
+
+### Resource detail response
+When single resource object is returned (eg. /users/1), the following response structure would be expected.
+
+        {
+            "data": {
+                ...
+                ...
+            }
+        }
+
+### Resource list response
+When resource list is returned (eg. /users, /products), the following response structure would be expected.
+
+        {
+            "meta": {
+                "count": <Total number of results that can be fetched>,
+                "next": <URL to browse next page>,
+                "previous": <URL to browse previous page>
+            },
+            "data": [
+                {
+                    ...
+                    ...
+                },
+                {
+                    ...
+                    ...
+                }
+            ]
+        }
+
+
+### Error response
+When any error occurs you would expect the following response structure.
+
+        {
+            "error": {
+                "type": "ValidationError",
+                "detail": "Unable to log in with provided credentials.",
+                "status_code": 400
+            }
+        }
+
+`detail` is human readable response message.
+
+`status_code` is http code
+
+
+## HTTP Status Code
+
+| HTTP Code | Description |
+|-----------|------------------------------------------------------------------------|
+| `200` | Success. Request complete with response |
+| `201` | Success. New resource created. |
+| `204` | Success. No content to return. Only the status code returns. |
+| `400` | Bad Request - The request could not be parsed. Due to validation error |
+| `401` | Unauthorized - access token missed, cannot access resource. |
+| `404` | Not Found - resource doesn't exist. |
+| `500` | Uncaught exception error. |
+| `502` | API Service is down |
+
+
+## Query Parameters
+
+You can add query parameters to your requests, most commonly for GET requests.
+
+*Example: http://www.sitename/com/api/v1/products?page=2&page_size=10 will return page 2, of 10 results per page.*
+
+Note that your query parameters must be uri encoded
+
+
+## Pagination
+When you query the object collection (mostly the GET request),
+you would always expect the paginated result.
+By default the page size is 10 that means you can expect 10 result in each call.
+The pagination parameters are described below.
+
+* page_size: Defines the number of results desired in a page. Maximum value is 100.
+* page: The page number you want to access.
+
+If response is paginated, you would expect the attribute `meta`
+
+    {
+        "meta": {
+            "count": 3,
+            "next": null,
+            "previous": null
+        }
+    }
+
+- count: Total number of results that can be retrieved.
+- next: The URL of next page
+- previous: The URL of previous page
+
+
+For some APIs, pagination is set to off. Such APIs will be explicitely mentioned
+
+## Sorting
+
+### Newest to oldest
+
+By default any paginated result will be sorted oldest to newest order.
+If you want newest to oldest, simply pass `order_by=-id` in query params
+
+
+
+# Group Authentication
+
+Resources related authenticate and de-authenticate the user.
+
+## Login [/v1/login]
+
+Login user and get user's authentication token:
+
+
+### Login [POST]
+
++ Request (application/json)
+
+        {
+            "username": "<email address>",
+            "password": "<user password>"
+        }
+
+
++ Response 200 (application/json)
+
+        {
+            "data": {
+                "date_password_reset": null,
+                "is_staff": false,
+                "user_permissions": [],
+                "timezone": "UTC",
+                "id": 3,
+                "date_joined": "2015-06-18T16:04:29Z",
+                "is_superuser": false,
+                "store_name": null,
+                "last_login": "2015-06-18T16:04:29Z",
+                "is_email_verified": false,
+                "date_password_reset_request": null,
+                "email": "in.abhi9@gmail.com",
+                "zip_code": "360001",
+                "is_active": true,
+                "phone": "+919096028382",
+                "is_admin": false,
+                "groups": [
+                    {
+                        "id": 1,
+                        "name": "User"
+                    }
+                ],
+                "is_password_reset": true,
+                "token": "8215983bf34d56c72ac06439124509ccb89a470e",
+                "fullname": "Abhinav Kotak"
+            }
+        }
+
+## Reset Password [/v1/users/actions/password_reset]
+
+This endpoint is useful for resetting the password in case user forgets.
+
+### Making Reset Password Request [POST]
+
+User will receive an email containing the password reset instruction.
+Typically a unique token is generated and sent to user's email
+
++ Request (application/json)
+
+        {
+            "email": "<email address>"
+        }
+
++ Response 204 (application/json)
+
+
+### Reset the Password using Token [PUT]
+
+When user will receive an email, email will contain the link with reset_key and open to web portal.
+Web portal should extract that key and email address and perform this action.
+
++ Request (application/json)
+
+        {
+            "email": "abc@xyz.com",
+            "new_password": "this is new password",
+            "reset_key": "9bb3bdc1-b08a-4e11-bfaf-d5a16662b6f6"
+        }
+
++ Response 204 (application/json)
+
+
+# Group Users
+
+The users endpoint provides methods to create update and delete user accounts within the system.
+These user accounts are both shoppers and seller, with associated shipping addresses,
+billing addresses, and payment profiles per their ID.
+
+A shopper may need to have an account when making purchases or creating cart on buildergiant.
+When creating an account, you will perform the following steps:
+
+* Create the user ID with the POST method.
+* Add or update data to the account using the appropriate methods for the shipping addresses, billing addresses, and payment profiles. The ID will be required for these calls.
+
+User can immeditely login as soon as sign up. Email verification is not needed for now
+
+
+## Users Collection [/v1/users]
+
+
+### Create [POST]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "phone": "(184)330-2765",
+                "fullname": "Erick Hoeger",
+                "password": "123",
+                "email": "armani.romaguera@collins.com",
+                "zip_code": "950252"
+            }
+
++ Response 201 (application/json)
+
+        {
+            "data": {
+                "id": 9,
+                "groups": [
+                    {
+                        "id": 1,
+                        "name": "User"
+                    }
+                ],
+                "last_login": "2015-06-23T12:50:47.819942Z",
+                "is_superuser": false,
+                "email": "in.abdshi9@gmail.com",
+                "is_active": true,
+                "is_staff": false,
+                "date_joined": "2015-06-23T12:50:47.819942Z",
+                "fullname": "Abhinav Kotak",
+                "zip_code": "360001",
+                "phone": "+919096028382",
+                "store_name": null,
+                "is_email_verified": false,
+                "timezone": "UTC",
+                "password_reset_key": "8de27c28-5785-43c3-8f21-9b7647350ce8",
+                "date_password_reset": null,
+                "date_password_reset_request": null,
+                "is_password_reset": true,
+                "user_permissions": []
+            }
+        }
+
+
+
+### List users [GET]
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
+
++ Response 200 (application/json)
+
+        {
+            "meta": {
+                "count": 5,
+                "next": null,
+                "previous": null
+            },
+            "data": [
+                {
+                    "id": 8,
+                    "groups": [],
+                    "last_login": null,
+                    "is_superuser": false,
+                    "email": "umueller@gmail.com",
+                    "is_active": true,
+                    "is_staff": false,
+                    "date_joined": "2015-06-23T13:10:23.094802Z",
+                    "fullname": "Darrion Prosacco MD",
+                    "zip_code": "583276207",
+                    "phone": "1-966-225-5444x0405",
+                    "store_name": "Koepp and Sons",
+                    "is_email_verified": false,
+                    "timezone": "UTC",
+                    "date_password_reset": null,
+                    "date_password_reset_request": null,
+                    "is_password_reset": true,
+                    "user_permissions": []
+                },
+                {
+                    "id": 7,
+                    "groups": [],
+                    "last_login": null,
+                    "is_superuser": false,
+                    "email": "jerald61@hotmail.com",
+                    "is_active": true,
+                    "is_staff": false,
+                    "date_joined": "2015-06-23T13:10:22.829651Z",
+                    "fullname": "Mr. Fleming Ullrich",
+                    "zip_code": "6326",
+                    "phone": "1-584-868-5351x9986",
+                    "store_name": "Beer-West",
+                    "is_email_verified": false,
+                    "timezone": "UTC",
+                    "date_password_reset": null,
+                    "date_password_reset_request": null,
+                    "is_password_reset": true,
+                    "user_permissions": []
+                },
+                {
+                    "id": 6,
+                    "groups": [],
+                    "last_login": null,
+                    "is_superuser": false,
+                    "email": "kattie.lynch@hotmail.com",
+                    "is_active": true,
+                    "is_staff": false,
+                    "date_joined": "2015-06-23T13:10:22.568129Z",
+                    "fullname": "Tatyanna Lind",
+                    "zip_code": "38723",
+                    "phone": "1-390-437-8301x5538",
+                    "store_name": "Little LLC",
+                    "is_email_verified": false,
+                    "timezone": "UTC",
+                    "date_password_reset": null,
+                    "date_password_reset_request": null,
+                    "is_password_reset": true,
+                    "user_permissions": []
+                },
+                {
+                    "id": 5,
+                    "groups": [],
+                    "last_login": null,
+                    "is_superuser": false,
+                    "email": "brittney60@sawaynhane.biz",
+                    "is_active": true,
+                    "is_staff": false,
+                    "date_joined": "2015-06-23T13:10:22.304881Z",
+                    "fullname": "Jaida Stiedemann",
+                    "zip_code": "12879",
+                    "phone": "+34(6)6109543351",
+                    "store_name": "Predovic Inc",
+                    "is_email_verified": false,
+                    "timezone": "UTC",
+                    "date_password_reset": null,
+                    "date_password_reset_request": null,
+                    "is_password_reset": true,
+                    "user_permissions": []
+                },
+                {
+                    "id": 4,
+                    "groups": [],
+                    "last_login": null,
+                    "is_superuser": false,
+                    "email": "okunze@moenkuhlman.com",
+                    "is_active": true,
+                    "is_staff": false,
+                    "date_joined": "2015-06-23T13:10:22.043156Z",
+                    "fullname": "Gavyn Mohr",
+                    "zip_code": "94089",
+                    "phone": "1-599-695-8896",
+                    "store_name": "Rutherford, Hegmann and Koelpin",
+                    "is_email_verified": false,
+                    "timezone": "UTC",
+                    "date_password_reset": null,
+                    "date_password_reset_request": null,
+                    "is_password_reset": true,
+                    "user_permissions": []
+                }
+            ]
+        }
+
+## User [/v1/users/{id}]
+
++ Parameters
+
+    + id (required, number, `1`) ... Numeric id of user to perform action with
+
+### User detail [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
++ Response 200 (application/json)
+
+        {
+            "data": {
+                "id": 1,
+                "groups": [],
+                "last_login": "2015-06-18T15:57:13.341009Z",
+                "is_superuser": true,
+                "email": "a@bg.com",
+                "is_active": true,
+                "is_staff": true,
+                "date_joined": "2015-06-18T15:46:26.257522Z",
+                "fullname": "Abh",
+                "zip_code": "36001",
+                "phone": "+919096028382",
+                "store_name": null,
+                "is_email_verified": false,
+                "timezone": "UTC",
+                "date_password_reset": null,
+                "date_password_reset_request": null,
+                "is_password_reset": true,
+                "user_permissions": []
+            }
+        }
+
+## Update detail [PATCH]
+
+You can update only following fields.
+
+* fullname
+* zip_code
+* phone
+* store_name
+* timezone
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "fullname": "Erick Zulu"
+            }
+
++ Response 200 (application/json)
+
+        {
+            "data": {
+                "fullname": "Erick Zulu",
+                "zip_code": "36001",
+                "phone": "+919096028382",
+                "store_name": null,
+                "timezone": "UTC"
+            }
+        }
+
+### Delete [DELETE]
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 204 (application/json)
+
+
+## Actions [/v1/users/{id}/actions/{action}]
+
+These are the additional actions that can be performed on user object
+
++ Parameters
+    + id (required, number, `1`) ... User id
+
+### Change Password [POST]
+
++ Parameters
+    + action (required, string, `change_password`) ... Must be `change_password`
+
++ Request (application/json)
+
+    + Body
+
+            {
+                "old_password": "abc",
+                "new_password": "xyz"
+            }
+
+
++ Response 204 (application/json)
+
+
+### Resend Email Verification Email Request [POST]
+
++ Parameters
+    + action (required, string, `resend_email_verification`) ... Must be `resend_email_verification`
+
++ Response 204 (application/json)
+
+
+
+# Group Address
+
+Addresses are generic location added by the user.
+Such addresses are defined as either job site or billing
+User can add as many as addresses they want.
+
+### ENUM
+
+* kind:
+    * job_site
+    * billing
+
+## Address Collection [/v1/users/{id}/addresses{?kind}]
+
++ Parameters
+    + id (optional, number, `1`) ... User id for whome address actions needs to be performed.
+
+
+### Create an Address [POST]
+
++ Attributes
+    + country: 1269750 (number, required) - Country id received from system/countries api
+    + state: 1270770 (number, required) - State id received from system/countries api
+    + city: 1277202 (number, required) - City id received from system/countries api
+    + name: 1269750 (string, required)
+    + kind: billing (string, required) - Either `billing` or `job_site`
+    + coord - Address coordinates in one of WKT / EWKT / HEXEWKB format
+    + zip_code: 07418 (number, required)
+
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
+    + Body
+
+            {
+                "city": 1277202,
+                "kind": "job_site",
+                "name": "Dallas",
+                "country": 1269750,
+                "address1": "1698 Kunde Rue\nSouth Gagebury, VI 41909",
+                "address2": "",
+                "state": 1270770,
+                "zip_code": "07418",
+                "coord": {
+                  "type": "Point",
+                  "coordinates": [
+                    -5,
+                    -4
+                  ]
+                }
+            }
+
+
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 4,
+                    "name": "Office",
+                    "address1": "b3, 1234, o streed",
+                    "address2": null,
+                    "zip_code": "345345",
+                    "coord": null,
+                    "kind": "job_site",
+                    "user": 3,
+                    "city": 1258847,
+                    "state": 1270770,
+                    "country": 1269750
+                }
+            }
+
+
+### List Addresses [GET]
+
++ Parameters
+    + kind (optional, string, `job_site`) ... Filter by address kind.
+
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+        {
+            "meta": {
+                "count": 2,
+                "next": null,
+                "previous": null
+            },
+            "data": [
+                {
+                    "id": 7,
+                    "name": "Dallas",
+                    "address1": "1698 Kunde Rue\nSouth Gagebury, VI 41909",
+                    "address2": "",
+                    "zip_code": "07418",
+                    "coord": {
+                        "type": "Point",
+                        "coordinates": [
+                            -5,
+                            -4
+                        ]
+                    },
+                    "kind": "job_site",
+                    "user": 3,
+                    "country": {
+                        "name": "India",
+                        "id": 1269750
+                    },
+                      "state": {
+                        "name": "Gujarat",
+                        "id": 1270770
+                    },
+                      "city": {
+                        "name": "Rājkot",
+                        "id": 1258847
+                    }
+                },
+                {
+                    "id": 1,
+                    "name": "Office",
+                    "address1": "b3, 1234, o streed",
+                    "address2": null,
+                    "zip_code": "345345",
+                    "coord": null,
+                    "kind": "job_site",
+                    "user": 3,
+                    "country": {
+                        "name": "India",
+                        "id": 1269750
+                    },
+                    "state": {
+                        "name": "Gujarat",
+                        "id": 1270770
+                    },
+                    "city": {
+                        "name": "Bāntva",
+                        "id": 1277202
+                    }
+                }
+            ]
+        }
+
+## Address [/v1/users/{user_id}/addresses/{id}]
+
++ Parameters
+    + user_id (optional, number, `1`) ... User id for whome address actions needs to be performed.
+    + id (optional, number, `1`) ... Address id you want to manipulate
+
+### Get Detail [GET]
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+        {
+            "id": 7,
+            "name": "Dallas",
+            "address1": "1698 Kunde Rue\nSouth Gagebury, VI 41909",
+            "address2": "",
+            "zip_code": "07418",
+            "coord": {
+                "type": "Point",
+                "coordinates": [
+                    -5,
+                    -4
+                ]
+            },
+            "kind": "job_site",
+            "user": 3,
+            "country": {
+                "name": "India",
+                "id": 1269750
+            },
+              "state": {
+                "name": "Gujarat",
+                "id": 1270770
+            },
+              "city": {
+                "name": "Rājkot",
+                "id": 1258847
+            }
+        }
+
+
+### Update [PATCH]
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {"name": "Office2"}
+
++ Response 200 (application/json)
+
+        {
+            "data": {
+                "id": 5,
+                "name": "Office2",
+                "address1": "b3, 1234, o streed",
+                "address2": null,
+                "zip_code": "345345",
+                "coord": null,
+                "kind": "job_site",
+                "user": 3,
+                "city": 1258847,
+                "state": 1270770,
+                "country": 1269750
+            }
+        }
+
+### Delete [DELETE]
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 204 (application/json)
+
+
+# Group Categories
+
+The categories endpoint supports getting specific information about one category, subcategory, or a collection of categories.
+These categories represent a main category, a subcategory, or a specific category page to load and display in the buildergiant.
+Products are associated to only one leaf subcategory. These groupings give shoppers a browsing experience for locating products in marketplace.
+
+To navigate to subcategories for product assignment, categories can be filter by its parent category.
+
+Categories can only be created/updated by Admins only.
+
+## Categories Collection [/v1/categories{?parent}]
+
+### List categories [GET]
+
++ Parameters
+    + parent (optional, number, `1`) ... Filter by parent category id
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "data": [
+                    {
+                        "id": 2,
+                        "image": null,
+                        "name": "Excavators",
+                        "hierarchy": [
+                            1
+                        ],
+                        "parent": 1
+                    },
+                    {
+                        "id": 3,
+                        "image": null,
+                        "name": "abc",
+                        "hierarchy": [],
+                        "parent": null
+                    },
+                    {
+                        "id": 1,
+                        "image": {
+                            "url": "https://res.cloudinary.com/inabhi9/image/upload/v1435079806/local/category_images/1.jpg",
+                            "id": 19
+                        },
+                        "name": "Earth Moving",
+                        "hierarchy": [],
+                        "parent": null
+                    }
+                ]
+            }
+
+
+### Create a Category [POST]
+
+To set an image, see staticfile API.
+
++ Attributes
+    + parent (optional, number) - Parent is the id of parent category. It will define the new category as subcategory of the parent category
+
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+    + Body
+
+            {
+                "name": "Power & HVAC",
+                "parent: 2
+            }
+
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 4,
+                    "image": null,
+                    "name": "Power & HVAC",
+                    "hierarchy": [],
+                    "parent": 2
+                }
+            }
+
+# Group Products
+
+Get all products (i.e. by category, or featured products, etc.), or get a specific product.
+To refine the returned results, the request can specify specific categories, search terms on all products.
+
+Related products share the same subcategory as an entered product code. To get related products you can call the Products Collection endpoint using the category: /products?category={id}.
+When working with images, all image data is served through staticfile collection array. Each image includes attributes for id and URL.
+
+### ENUM
+* condition:
+    * used
+    * new
+
+## Product Collection [/v1/products{?category,is_active}]
+
+### Add a Product [POST]
+
+To add images to product, see staticfile API. Upto 10 images per products are allowed
+
++ Attributes
+    + name: Commercial Walk Behind Mower (required, string) - Name of the product
+    + description (optional, string) - Brief description for product
+    + tags (optional, array) - Array of string for tagging the product. It'll be useful to filter product based on tags
+    + brand (required, string) - Brand of the product
+    + category (required, number) - Category id that product should belongs to. It should be leaf category
+    + condition (required, string) - Product condition any of condition enum
+    + daily_price: 75.45 (required, number) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
+    + weekly_price: 125.14 (required, string) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
+    + monthly_price: 475.25 (required, string) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
+    + sell_price: 4509.56 (required, string) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
+    + sku (optional, string) - SKU for the product. If set blank, system will generate one
+    + location (required, number) - Location id that describe the location of product. If you don't have location create location using address API
+    + qty: 10 (optional, number) - Number of inventories to be generated. Note that serial number would be blank
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "monthly_price": 9767.81,
+                "category": 3,
+                "daily_price": 1670.81,
+                "name": "Track Mini Excavator",
+                "tags": [
+                    "excavator",
+                    "pornition",
+                    "bob builder"
+                ],
+                "brand": "O'Reilly PLC",
+                "weekly_price": 7872.95,
+                "sell_price": 4262.87,
+                "location": 1,
+                "sku": "",
+                "condition": "used",
+                "description": [
+                    "Deleniti dolorem ipsa dolorum vero id quo porro. Numquam eligendi qui maiores dolor dolores asperiores minima et. Earum eveniet minima dicta aut sunt illo perferendis.",
+                    "Eveniet facilis voluptatibus aut saepe ea error voluptas. Libero et aut sapiente quis. Laboriosam dolore reiciendis ea aut omnis dignissimos. Repellendus voluptate ducimus accusantium cum eos natus."
+                ]
+            }
+
++ Response 201 (application/json)
+
+        {
+            "data": {
+                "id": 11,
+                "images": [],
+                "name": "Track Mini Excavator",
+                "description": null,
+                "brand": "JCB",
+                "daily_price": "189.00",
+                "weekly_price": "649.00",
+                "monthly_price": "1739.00",
+                "sell_price": "0.00",
+                "is_active": false,
+                "sku": "2TRA31435083296",
+                "attributes": null,
+                "tags": [],
+                "condition": "used",
+                "date_created_at": "2015-06-23T18:14:56.201463Z",
+                "date_updated_at": "2015-06-23T18:14:56.201481Z",
+                "category": 2,
+                "location": 1,
+                "user": 3
+            }
+        }
+
+### List Products [GET]
+
++ Parameters
+    + category (optional, number, `1`) ... Filter products by category id
+    + is_active (optional, boolean, `true`) ... Filter by product is_active attribute
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 3,
+                    "next": "http://localhost:8000/products?page=2",
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 1,
+                        "qty": 3,
+                        "images": [
+                            {
+                                "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434994716/local/product_images.jpg",
+                                "id": 10
+                            },
+                            {
+                                "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434994716/local/product_images.jpg",
+                                "id": 12
+                            },
+                            {
+                                "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434996576/local/product_images/1.jpg",
+                                "id": 14
+                            }
+                        ],
+                        "name": "Track Mini Excavator, 7,000-9,900 lbs.",
+                        "description": null,
+                        "brand": "JCB",
+                        "daily_price": "189.00",
+                        "weekly_price": "649.00",
+                        "monthly_price": "1739.00",
+                        "sell_price": "0.00",
+                        "is_active": false,
+                        "sku": "2TRA31434965116",
+                        "attributes": null,
+                        "tags": [],
+                        "condition": "used",
+                        "date_created_at": "2015-06-22T09:25:16.467775Z",
+                        "date_updated_at": "2015-06-22T09:25:16.467821Z",
+                        "category": 2,
+                        "location": 1,
+                        "user": 3
+                    },
+                    {
+                        "id": 4,
+                        "qty": 0,
+                        "images": [],
+                        "name": "Track Mini Excavator, 7,000-9,1900 lbs.",
+                        "description": null,
+                        "brand": "JCB",
+                        "daily_price": "189.00",
+                        "weekly_price": "649.00",
+                        "monthly_price": "1739.00",
+                        "sell_price": "0.00",
+                        "is_active": false,
+                        "sku": "2TRA31434983013",
+                        "attributes": null,
+                        "tags": [],
+                        "condition": "used",
+                        "date_created_at": "2015-06-22T14:23:33.691045Z",
+                        "date_updated_at": "2015-06-22T14:23:33.691071Z",
+                        "category": 2,
+                        "location": 1,
+                        "user": 3
+                    },
+                    {
+                        "id": 5,
+                        "qty": 0,
+                        "images": [],
+                        "name": "Track Mini Excavator, 7,000-9,900 lbs.",
+                        "description": null,
+                        "brand": "JCB",
+                        "daily_price": "189.00",
+                        "weekly_price": "649.00",
+                        "monthly_price": "1739.00",
+                        "sell_price": "0.00",
+                        "is_active": false,
+                        "sku": "2TRA31434983091",
+                        "attributes": null,
+                        "tags": [],
+                        "condition": "used",
+                        "date_created_at": "2015-06-22T14:24:51.586335Z",
+                        "date_updated_at": "2015-06-22T14:24:51.586356Z",
+                        "category": 2,
+                        "location": 1,
+                        "user": 3
+                    }
+                ]
+            }
+
+## Product [/v1/products/{id}]
+
++ Parameters
+    + id (required, number, `1`) ... Product id on which you want to perform actions.
+
+### Detail [GET]
+
++ Request
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+        {
+            "data": {
+                "id": 1,
+                "qty": 3,
+                "images": [
+                    {
+                        "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434994716/local/product_images.jpg",
+                        "id": 10
+                    },
+                    {
+                        "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434994716/local/product_images.jpg",
+                        "id": 12
+                    },
+                    {
+                        "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434996576/local/product_images/1.jpg",
+                        "id": 14
+                    }
+                ],
+                "name": "Track Mini Excavator, 7,000-9,900 lbs.",
+                "description": null,
+                "brand": "JCB",
+                "daily_price": "189.00",
+                "weekly_price": "649.00",
+                "monthly_price": "1739.00",
+                "sell_price": "0.00",
+                "is_active": false,
+                "sku": "2TRA31434965116",
+                "attributes": null,
+                "tags": [],
+                "condition": "used",
+                "date_created_at": "2015-06-22T09:25:16.467775Z",
+                "date_updated_at": "2015-06-22T09:25:16.467821Z",
+                "category": 2,
+                "location": 1,
+                "user": 3
+            }
+        }
+
+### Update Detail [PATCH]
+
+You can update all attributes except `qty`. To update the quantity checkout the inventory API.
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {"name": "Excavator"}
+
++ Response 200 (application/json)
+
+        {
+            "data": {
+                "id": 1,
+                "qty": 3,
+                "images": [
+                    {
+                        "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434994716/local/product_images.jpg",
+                        "id": 10
+                    },
+                    {
+                        "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434994716/local/product_images.jpg",
+                        "id": 12
+                    },
+                    {
+                        "url": "https://res.cloudinary.com/inabhi9/image/upload/v1434996576/local/product_images/1.jpg",
+                        "id": 14
+                    }
+                ],
+                "name": "Excavator",
+                "description": null,
+                "brand": "JCB",
+                "daily_price": "189.00",
+                "weekly_price": "649.00",
+                "monthly_price": "1739.00",
+                "sell_price": "0.00",
+                "is_active": false,
+                "sku": "2TRA31434965116",
+                "attributes": null,
+                "tags": [],
+                "condition": "used",
+                "date_created_at": "2015-06-22T09:25:16.467775Z",
+                "date_updated_at": "2015-06-22T09:25:16.467821Z",
+                "category": 2,
+                "location": 1,
+                "user": 3
+            }
+        }
+
+
+### Delete [DELETE]
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 204 (application/json)
