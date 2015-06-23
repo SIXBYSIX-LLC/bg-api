@@ -68,4 +68,6 @@ def resend_email_verification(request, *args, **kwargs):
 class AddressViewSet(NestedViewSetMixin, ModelViewSet):
     queryset = Address.objects.all()
     serializer_class = serializers.AddressSerializer
+    list_serializer_class = retrieve_serializer_class = serializers.AddressListSerializer
+    filter_fields = ('kind',)
 

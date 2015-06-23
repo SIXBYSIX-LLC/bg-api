@@ -1,6 +1,6 @@
 import logging
 
-from cities.models import PostalCode
+from cities.models import PostalCode, Country, City, Region
 
 from .models import Profile, Address
 from common import serializers
@@ -58,3 +58,24 @@ class AddressSerializer(serializers.GeoModelSerializer):
         # raise errors.ValidationError(*messages.ERR_INVALID_ZIP_CODE)
 
         return attrs
+
+
+class AddressListSerializer(AddressSerializer):
+    class CountryRefSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Country
+            fields = ('name', 'id')
+
+    class RegionRefSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = Region
+            fields = ('name', 'id')
+
+    class CityRefSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = City
+            fields = ('name', 'id')
+
+    country = CountryRefSerializer()
+    state = RegionRefSerializer()
+    city = CityRefSerializer()
