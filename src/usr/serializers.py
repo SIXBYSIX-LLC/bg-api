@@ -16,9 +16,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         write_only_fields = ('password',)
-        read_only_fields = ('unverified_email_key', 'is_email_verified', 'is_active',
-                            'is_superuser', 'is_staff', 'last_login', 'groups',
-                            'user_permissions', 'is_admin', 'date_joined', 'id', 'user')
+        read_only_fields = ('is_email_verified', 'is_active', 'is_superuser', 'is_staff',
+                            'last_login', 'groups', 'user_permissions', 'date_joined', 'id')
+        exclude = ('unverified_email_key', 'is_admin', 'user', 'password_reset_key')
         depth = 1
 
     def create(self, validated_data):
@@ -26,13 +26,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(UserSerializer):
-    class Meta(UserSerializer.Meta):
-        exclude = ('unverified_email_key',)
+    pass
 
 
 class UpdateUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         fields = ('fullname', 'zip_code', 'phone', 'store_name', 'timezone')
+        exclude = ()
 
 
 class ChangePasswordSerializer(serializers.Serializer):
