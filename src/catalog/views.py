@@ -7,6 +7,7 @@ from . import serializers, models
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     queryset = models.Product.objects.all()
+    filter_fields = ('category', 'is_active')
 
     def get_queryset(self):
         qs = super(ProductViewSet, self).get_queryset()
