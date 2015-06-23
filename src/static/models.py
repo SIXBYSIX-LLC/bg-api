@@ -15,6 +15,8 @@ class FileManager(BaseManager):
 
         if target == constants.TARGET_PRODUCT_IMAGE:
             file_obj = self._add_to_product_image(f, **kwargs)
+        elif target == constants.TARGET_CATEGORY_IMAGE:
+            file_obj = self._set_category_image(f, **kwargs)
 
         return file_obj
 
@@ -45,10 +47,36 @@ class FileManager(BaseManager):
 
         return file_obj
 
+    def _set_category_image(self, f, **kwargs):
+        from category.models import Category
+
+        target_id = kwargs.pop('target_id')
+        user = kwargs.pop('user')
+        path = '%s/category_images/%s' % (settings.STATIC_FILE_BASE, target_id)
+
+        # Check and get if product with given target id is exists
+        try:
+            category = Category.objects.get(id=target_id)
+        except category.DoesNotExist:
+            raise errors.ValidationError(*messages.ERR_INVALID_TARGET)
+
+        # Upload to cloudinary
+        response = cloudinary.uploader.upload_image(f, public_id=path, use_filename=True)
+        meta = response.metadata
+
+        with transaction.atomic() as t:
+            file_obj = self.create(url=meta.get('secure_url'), upload_resp=meta,
+                                   target=constants.TARGET_CATEGORY_IMAGE, target_id=target_id,
+                                   user=user)
+            category.image = file_obj
+            category.save(update_fields=['image'])
+        return file_obj
+
 
 class File(BaseModel):
     TARGETS = (
-        ('catalog.Product.images', 'Product Image'),
+        (constants.TARGET_PRODUCT_IMAGE, 'Product Image'),
+        (constants.TARGET_CATEGORY_IMAGE, 'Category Image'),
     )
     #: Uploaded url
     url = models.URLField()

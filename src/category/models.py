@@ -12,7 +12,8 @@ class Category(BaseModel):
     #: Category name
     name = models.CharField(max_length=50)
     #: image
-    image = models.URLField(blank=True, null=True)
+    image = models.ForeignKey('static.File', null=True, blank=True, default=None,
+                              on_delete=models.SET_NULL)
     #: Parent category if any
     parent = models.ForeignKey('Category', null=True, blank=True, default=None)
     #: This holds the array of full hierarchy of the category starting from root to last child
