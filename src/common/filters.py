@@ -23,7 +23,7 @@ class OwnerFilterBackend(rf_filters.BaseFilterBackend):
 
         q = Q()
         for field in ownership_fields:
-            q |= Q(**{field: request_user.user_id})
+            q |= Q(**{field: request_user.id})
         queryset = queryset.filter(q)
 
         return queryset
