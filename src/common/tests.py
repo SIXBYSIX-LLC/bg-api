@@ -36,7 +36,7 @@ class APIClient(_APIClient):
 
     @classmethod
     def _fix_response(cls, response):
-        if response.data and response.data.get('count'):
+        if getattr(response, 'data', None) and response.data.get('count'):
             response.meta = response.data
             response.data = json.loads(response.content).get('data')
         return response
