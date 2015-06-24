@@ -1,9 +1,9 @@
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route, api_view, permission_classes
-from rest_framework import status
+from rest_framework import status, mixins
 from rest_framework.permissions import AllowAny
 
-from common.viewsets import ModelViewSet, NestedViewSetMixin
+from common.viewsets import ModelViewSet, NestedViewSetMixin, GenericViewSet
 from common.permissions import CustomActionPermissions
 from . import serializers
 from .models import Profile, Address
@@ -71,3 +71,35 @@ class AddressViewSet(NestedViewSetMixin, ModelViewSet):
     list_serializer_class = retrieve_serializer_class = serializers.AddressListSerializer
     filter_fields = ('kind',)
 
+
+class FavoriteProductViewSet(NestedViewSetMixin, GenericViewSet, mixins.ListModelMixin,
+                             mixins.CreateModelMixin, mixins.DestroyModelMixin):
+    """
+    This is a special class. The actual favorite model doesn't exist but ManyToMany related in
+    Profile class. Hence get_queryset() has to be overridden.
+
+    Moreover, It inherits all Profile model permission so we have to give user to delete object
+    permission to give ability to delete favorite object
+    """
+    from catalog.serializers import ProductRefSerializer
+
+    queryset = Profile.objects.all()
+    serializer_class = ProductRefSerializer
+
+    def create(self, request, *args, **kwargs):
+        user = request.user.profile
+        user.favorite_products.add(request.data.get('id'))
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def destroy(self, request, *args, **kwargs):
+        user = request.user.profile
+        user.favorite_products.remove(kwargs.get('pk'))
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_queryset(self):
+        # to adjust the permission
+        if self.request.method == 'GET':
+            return self.request.user.profile.favorite_products.all()
+        return self.queryset

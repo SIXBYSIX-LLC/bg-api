@@ -155,6 +155,24 @@ class TestUser(TestCase):
         factories.AddressFactory(user=self.user)
         self.assertEqual(self.user.address_set.count(), 1)
 
+    def test_create_favorite_product(self):
+        from catalog.factories import ProductFactory
+
+        user = factories.UserFactory()
+        product = ProductFactory(user=user)
+
+        resp = self.user_client.post('/users/%s/favorite_products' % self.user.id,
+                                     data={'id': product.id})
+        self.assertEqual(resp.status_code, self.status_code.HTTP_204_NO_CONTENT)
+
+        resp = self.user_client.get('/users/%s/favorite_products' % self.user.id)
+        self.assertEqual(resp.meta['count'], 1)
+
+        resp = self.user_client.delete(
+            '/users/%s/favorite_products/%s' % (self.user.id, product.id)
+        )
+        self.assertEqual(resp.status_code, self.status_code.HTTP_204_NO_CONTENT)
+
 
 class PermissionTest(TestCase):
     def test_user_default_group(self):
@@ -166,5 +184,4 @@ class PermissionTest(TestCase):
     def test_user_create_member(self):
         new_user = factories.RegistrationFactory()
         resp = self.user_client.post('/users', data=new_user)
-
-        self.assertEqual(resp.data['user']['id'], self.user.id)
+        self.assertEqual(resp.data['user'], self.user.id)

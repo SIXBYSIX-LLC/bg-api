@@ -16,6 +16,11 @@ class ProductSerializer(serializers.ModelSerializer):
         return Product.objects.create_product(**validated_data)
 
 
+class ProductRefSerializer(ProductSerializer):
+    class Meta(ProductSerializer.Meta):
+        fields = ('name', 'description', 'images', 'id')
+
+
 class InventorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Inventory
