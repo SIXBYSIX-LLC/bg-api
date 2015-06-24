@@ -12,13 +12,15 @@ LOG = logging.getLogger('bgapi.' + __name__)
 
 class UserSerializer(serializers.ModelSerializer):
     groups = GroupRefSerializer(read_only=True, many=True)
+    user = rf_serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Profile
         write_only_fields = ('password',)
         read_only_fields = ('is_email_verified', 'is_active', 'is_superuser', 'is_staff',
-                            'last_login', 'groups', 'user_permissions', 'date_joined', 'id')
-        exclude = ('unverified_email_key', 'is_admin', 'user', 'password_reset_key')
+                            'last_login', 'groups', 'user_permissions', 'date_joined', 'id',
+                            'user',)
+        exclude = ('unverified_email_key', 'is_admin', 'password_reset_key')
         depth = 1
 
     def create(self, validated_data):

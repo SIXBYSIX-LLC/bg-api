@@ -159,6 +159,9 @@ class Profile(User):
     user = models.ForeignKey(User, blank=True, null=True, default=None,
                              on_delete=models.SET_DEFAULT, related_name='members')
 
+    #: Favorited products
+    favorite_products = models.ManyToManyField('catalog.Product')
+
     objects = ProfileManager()
 
     class Meta(User.Meta, BaseModel.Meta):
