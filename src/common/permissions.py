@@ -48,6 +48,11 @@ class IsOwnerPermissions(rf_permissions.BasePermission):
             return True
 
         _u = request.user
+
+        # Requesting user is accessing to himself?
+        if _u.profile == obj:
+            return True
+
         result = any(_u == getattr(obj, field) or _u.id == getattr(obj, field)
                      for field in ownership_fields)
         if result is False:
