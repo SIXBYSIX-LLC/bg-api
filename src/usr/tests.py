@@ -161,15 +161,15 @@ class TestUser(TestCase):
         user = factories.UserFactory()
         product = ProductFactory(user=user)
 
-        resp = self.user_client.post('/users/%s/favorite_products' % self.user.id,
+        resp = self.user_client.post('/users/%s/favorite/products' % self.user.id,
                                      data={'id': product.id})
         self.assertEqual(resp.status_code, self.status_code.HTTP_204_NO_CONTENT)
 
-        resp = self.user_client.get('/users/%s/favorite_products' % self.user.id)
+        resp = self.user_client.get('/users/%s/favorite/products' % self.user.id)
         self.assertEqual(resp.meta['count'], 1)
 
         resp = self.user_client.delete(
-            '/users/%s/favorite_products/%s' % (self.user.id, product.id)
+            '/users/%s/favorite/products/%s' % (self.user.id, product.id)
         )
         self.assertEqual(resp.status_code, self.status_code.HTTP_204_NO_CONTENT)
 
