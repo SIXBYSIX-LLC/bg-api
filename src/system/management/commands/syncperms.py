@@ -47,6 +47,11 @@ class Command(BaseCommand):
             # Staticfiles
             Permission.objects.get(codename='add_file'),
             Permission.objects.get(codename='delete_file'),
+            # Inquiry
+            Permission.objects.get(codename='add_thread'),
+            Permission.objects.get(codename='view_thread'),
+            Permission.objects.get(codename='add_message'),
+            Permission.objects.get(codename='view_message'),
         )
 
         # Assign device group permission

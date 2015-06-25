@@ -66,7 +66,8 @@ LOCAL_APPS = (
     'usr',
     'category',
     'group',
-    'catalog'
+    'catalog',
+    'inquiry'
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -156,7 +157,7 @@ ETPL_VERIFICATION = 'bg-email-verification'
 # --------- End Email (Mandrill) specific
 
 
-#--------- Internationalization
+# --------- Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'

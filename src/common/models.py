@@ -20,3 +20,14 @@ class BaseModel(models.Model):
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
         abstract = True
+
+
+class DateTimeFieldMixin(models.Model):
+    """
+    It adds date_created_at, date_updated_at fields to model
+    """
+    date_created_at = models.DateTimeField(auto_now_add=True)
+    date_updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
