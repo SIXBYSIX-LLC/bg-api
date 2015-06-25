@@ -36,6 +36,14 @@ class UserFactory(RegistrationFactory, factory.DjangoModelFactory):
     store_name = factory.LazyAttribute(lambda x: fake.company())
 
     @factory.post_generation
+    def default_group(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        self.groups.add(Group.objects.get(name='User'))
+
+    @factory.post_generation
     def groups(self, create, groups, **kwargs):
         if not create:
             # Simple build, do nothing.
