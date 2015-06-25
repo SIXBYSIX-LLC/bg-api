@@ -15,9 +15,13 @@ class ThreadViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
     def get_queryset(self):
         user = self.request.parent_user or self.request.user
         qs = super(ThreadViewSet, self).get_queryset()
+        # Unread message count
         qs = qs.annotate(unread_count=Count(Case(When(
             Q(message__is_read=False) & ~Q(message__user=user), then=Value(1)
         ))))
+        # Total message count
+        qs = qs.annotate(message_count=Count('message'))
+
         return qs
 
 
