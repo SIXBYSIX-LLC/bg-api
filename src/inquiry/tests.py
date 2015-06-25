@@ -79,8 +79,13 @@ class InquiryTest(TestCase):
         # Assert 7 when self.user opens the thread
         resp = self.user_client.get('/inquiries/%s/messages' % thread.id)
         self.assertEqual(resp.meta['count'], 7)
+        # Ensure mark as read
+        resp = self.user_client.get('/inquiries')
+        self.assertEqual(resp.data[0]['unread_count'], 0)
 
         # Assert 7 when suser opens the thread
         resp = self.get_client(user).get('/inquiries/%s/messages' % thread.id)
         self.assertEqual(resp.meta['count'], 7)
-
+        # Ensure mark as read
+        resp = self.get_client(user).get('/inquiries')
+        self.assertEqual(resp.data[0]['unread_count'], 0)

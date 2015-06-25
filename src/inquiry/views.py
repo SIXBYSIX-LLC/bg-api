@@ -24,3 +24,8 @@ class ThreadViewSet(GenericViewSet, ListModelMixin, CreateModelMixin):
 class MessageViewSet(NestedViewSetMixin, GenericViewSet, ListModelMixin, CreateModelMixin):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
+
+    def list(self, request, *args, **kwargs):
+        # Auto mark as read
+        self.get_queryset().update(is_read=True)
+        return super(MessageViewSet, self).list(request, *args, **kwargs)
