@@ -69,7 +69,8 @@ LOCAL_APPS = (
     'group',
     'catalog',
     'inquiry',
-    'shipping'
+    'shipping',
+    'tax',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -175,7 +176,7 @@ USE_TZ = True
 # --------- END Internationalization
 
 
-#--------- CUSTOM AUTH CONFIGURATION
+# --------- CUSTOM AUTH CONFIGURATION
 #: Specify the authentication User model, we're using ``miniauth`` module which gives only
 #: email and password fields. `See here <https://github.com/inabhi9/django-miniauth>`_
 AUTH_USER_MODEL = 'miniauth.User'
