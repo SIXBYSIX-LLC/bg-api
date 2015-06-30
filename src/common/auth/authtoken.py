@@ -1,9 +1,13 @@
+import logging
+
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
 from common.renderer import JSONRenderer
 from usr.serializers import LoginSerializer
+
+LOG = logging.getLogger('bgapi.' + __name__)
 
 
 class CustomObtainAuthToken(ObtainAuthToken):
@@ -32,7 +36,7 @@ class CustomObtainAuthToken(ObtainAuthToken):
         token, created = Token.objects.get_or_create(user=user)
         # merging token and user information
         data = dict({'token': token.key}.items() + user_data.items())
-
+        LOG.debug('Login success')
         return Response(data)
 
 #: To bind CustomObtainAuthToken to system's URL
