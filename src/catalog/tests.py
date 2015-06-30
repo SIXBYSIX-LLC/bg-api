@@ -19,7 +19,7 @@ class ProductTest(TestCase):
         member_client = self.get_client(member)
 
         resp = member_client.post('/products', data=data)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_403_FORBIDDEN)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
 
     def test_create_with_sku(self):
         SKU = 'abcxyz'
@@ -113,4 +113,4 @@ class InventoryPermissionTest(TestCase):
         user_client = self.get_client(user)
 
         resp = user_client.get('/products/%s/inventories' % product.id)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_403_FORBIDDEN)
+        self.assertEqual(resp.meta['count'], 0)

@@ -9,6 +9,9 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     filter_fields = ('category', 'is_active')
 
+    ownership_fields = ('user',)
+    skip_owner_filter = True
+
     def get_queryset(self):
         qs = super(ProductViewSet, self).get_queryset()
         qs = qs.annotate(qty=Count(Case(When(inventory__is_active=True, then=Value(1)))))
@@ -19,4 +22,4 @@ class InventoryViewSet(viewsets.NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = serializers.InventorySerializer
     queryset = models.Inventory.objects.all()
 
-
+    ownership_fields = ('user',)
