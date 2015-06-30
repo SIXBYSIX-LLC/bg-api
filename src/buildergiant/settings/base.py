@@ -169,7 +169,7 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-#--------- END Internationalization
+# --------- END Internationalization
 
 
 #--------- CUSTOM AUTH CONFIGURATION
@@ -188,6 +188,39 @@ CLOUDINARY_API_SECRET = 'RugGl4f1ljrs0i50t2rOJbrDvbg'  # Override this
 CLOUDINARY_CLOUD_NAME = 'inabhi9'  # Override this
 STATIC_FILE_BASE = 'local'  # Override this
 # --------- End Cloudinary
+
+
+# --------- Logging Config
+# See: http://raven.readthedocs.org/en/latest/config/django.html
+RAVEN_CONFIG = {'dns': True}
+# See: http://celery.readthedocs.org/en/latest/configuration.html#celeryd-hijack-root-logger
+CELERYD_HIJACK_ROOT_LOGGER = False
+# See: http://raven.readthedocs.org/en/2.0/config/logging.html
+SENTRY_AUTO_LOG_STACKS = True
+# See: https://docs.djangoproject.com/en/1.7/topics/logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['sentry'],
+    },
+    'loggers': {
+        'celery': {
+            'level': 'ERROR',
+            'handlers': ['sentry'],
+            'propagate': False,
+        },
+    },
+    'handlers': {
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'common.handlers.SentryHandler',
+        }
+    }
+}
+# --------- End Logging Config
+
 
 # --------- Misc
 WEB_DOMAIN = 'www.buildergiant.com'
