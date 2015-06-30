@@ -56,7 +56,8 @@ THIRD_PARTY_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'miniauth',
-    'cities'
+    'cities',
+    'corsheaders',
 )
 
 LOCAL_APPS = (
@@ -74,6 +75,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
@@ -220,6 +222,11 @@ LOGGING = {
     }
 }
 # --------- End Logging Config
+
+
+# --------- CORS
+CORS_ORIGIN_ALLOW_ALL = True
+# --------- End CORS
 
 
 # --------- Misc
