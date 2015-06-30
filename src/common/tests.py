@@ -1,4 +1,5 @@
 import json
+import logging
 
 from django.conf import settings
 from rest_framework.test import APITestCase, APIClient as _APIClient
@@ -44,6 +45,13 @@ class APIClient(_APIClient):
 
 class TestCase(APITestCase):
     fixtures = ['country', 'city', 'region']
+
+    def __init__(self, methodName='runTest'):
+        super(TestCase, self).__init__(methodName=methodName)
+
+        # Disable logging
+        logging.disable(logging.CRITICAL)
+
 
     def setUp(self):
         # Syncing permissions
