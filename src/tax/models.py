@@ -8,7 +8,7 @@ class Tax(BaseModel):
         ('pct', 'Percentage'),
         ('flat', 'Flat'),
     )
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, default='Tax')
     value = models.DecimalField(max_digits=4, decimal_places=2)
     unit = models.CharField(choices=UNITS, max_length=30)
 
