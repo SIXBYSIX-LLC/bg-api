@@ -20,7 +20,8 @@ class CartViewSet(GenericViewSet, UpdateModelMixin):
         return Response(serializer.data)
 
 
-class RentalItemViewSet(NestedViewSetMixin, GenericViewSet, CreateModelMixin, DestroyModelMixin):
+class RentalItemViewSet(NestedViewSetMixin, GenericViewSet, CreateModelMixin, DestroyModelMixin,
+                        UpdateModelMixin):
     serializer_class = RentalProductSerializer
     queryset = RentalItem.objects.all()
 
@@ -28,3 +29,13 @@ class RentalItemViewSet(NestedViewSetMixin, GenericViewSet, CreateModelMixin, De
         request.data.update(**self.get_parents_query_dict())
 
         return super(RentalItemViewSet, self).create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        request.data.update(**self.get_parents_query_dict())
+
+        return super(RentalItemViewSet, self).update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        request.data.update(**self.get_parents_query_dict())
+
+        return super(RentalItemViewSet, self).partial_update(request, *args, **kwargs)

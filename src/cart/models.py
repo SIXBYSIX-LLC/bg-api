@@ -3,6 +3,8 @@ import logging
 from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 
+from cart.validators import validate_date_start
+
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
 from . import constants, signals
 from tax.models import SalesTax
@@ -96,7 +98,7 @@ class Item(BaseModel):
 
 class RentalItem(Item):
     # Item to be delivered by
-    date_start = models.DateTimeField()
+    date_start = models.DateTimeField(validators=[validate_date_start])
     # Item to be returned
     date_end = models.DateTimeField()
     #: Rent
