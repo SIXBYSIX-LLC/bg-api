@@ -86,6 +86,14 @@ class Product(BaseModel):
     class Meta(BaseModel.Meta):
         unique_together = ('user', 'sku')
 
+    def get_standard_shipping_method(self, to_location):
+        user = self.user
+        return user.standardmethod_set.filter(
+            origin=self.product.location,
+            country=to_location.country,
+            zipcode_start__lte=int(to_location.zip_code),
+            zipcode_end__gte=int(to_location.zip_code),
+        ).first()
 
 class InventoryManager(BaseManager):
     pass
