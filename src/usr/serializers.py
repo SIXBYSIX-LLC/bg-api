@@ -11,8 +11,9 @@ LOG = logging.getLogger('bgapi.' + __name__)
 
 
 class SettingSerializer(serializers.Serializer):
-    daily_price_till_days = rf_serializers.IntegerField(required=False)
-    weekly_price_till_days = rf_serializers.IntegerField(required=False)
+    daily_price_till_days = rf_serializers.IntegerField(min_value=2, required=False)
+    weekly_price_till_days = rf_serializers.IntegerField(min_value=7, required=False)
+    minimum_contract_period = rf_serializers.IntegerField(min_value=2, required=False)
 
 
 class UserSerializer(serializers.ModelSerializer):

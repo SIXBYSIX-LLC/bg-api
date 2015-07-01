@@ -162,6 +162,7 @@ class Profile(User):
     settings = pg_fields.JSONField(default={
         'daily_price_till_days': 3,
         'weekly_price_till_days': 25,
+        'minimum_contract_period': 5,
     })
 
     #: Favorited products
