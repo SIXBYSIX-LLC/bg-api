@@ -89,6 +89,10 @@ class Item(BaseModel):
     class Meta(BaseModel.Meta):
         abstract = True
 
+    @property
+    def shipping_method(self):
+        self.product.get_standard_shipping_method(self.cart.location)
+
 
 class RentalItem(Item):
     # Item to be delivered by
@@ -125,13 +129,16 @@ class RentalItem(Item):
         if self.shipping_kind == constants.SHIPPING_PICKUP:
             L.info('Shipping cost', extra=data)
             return data
+        if self.is_shippable is False:
+            L.info('Item is not shippable', extra={
+                'cart': self.cart_id, 'product': self.product_id
+            })
+            return data
 
         # Shipping standard method
-        standard_method = self.product.get_standard_shipping_method(self.cart.location)
-
-        data['shipping_cost'] = standard_method.cost
+        data['shipping_cost'] = self.shipping_method.cost * self.qty
         data['shipping_method'] = 'standard_shipping'
-        data['method_id'] = standard_method.id
+        data['method_id'] = self.shipping_method.id
 
         L.info('Shipping cost', extra=data)
 
@@ -167,11 +174,12 @@ class RentalItem(Item):
         # Getting daily rent from unit rent
         daily_rent = rent_per / rent_days
         # Final rent
-        rent = daily_rent * num_days
+        rent = daily_rent * num_days * self.qty
 
         data = {
             'rent_per': rent_per, 'product': self.product.id, 'cart': self.cart.id,
-            'daily_rent': daily_rent, 'rent': rent, 'num_days': num_days, 'rent_days': rent_days
+            'daily_rent': daily_rent, 'rent': rent, 'num_days': num_days, 'rent_days': rent_days,
+            'qty': self.qty
         }
 
         L.info('Rent calculation', extra=data)

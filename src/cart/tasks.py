@@ -1,1 +1,17 @@
-default_app_config = 'cart.apps.CartConfig'
+from django.db.models.signals import pre_save
+
+from cart.models import RentalItem
+from common.dispatch import receiver
+
+
+@receiver(pre_save, sender=RentalItem)
+def is_shippable(sender, **kwargs):
+    """
+    Check if the item is shippable to cart location, if set it sets RentalItem.is_shippable to True
+    """
+    rental_item = kwargs.get('instance')
+    if rental_item.id:
+        return
+
+    if rental_item.shipping_method:
+        rental_item.is_shippable = True
