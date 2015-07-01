@@ -57,6 +57,11 @@ class Command(BaseCommand):
             Permission.objects.get(codename='view_standardmethod'),
             Permission.objects.get(codename='delete_standardmethod'),
             Permission.objects.get(codename='change_standardmethod'),
+            # Cart
+            Permission.objects.get(codename='change_cart'),
+            Permission.objects.get(codename='view_cart'),
+            Permission.objects.get(codename='add_rentalitem'),
+            Permission.objects.get(codename='delete_rentalitem'),
         )
 
         # Assign device group permission
