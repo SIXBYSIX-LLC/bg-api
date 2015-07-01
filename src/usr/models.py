@@ -10,6 +10,7 @@ from django.core import validators
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.contrib.gis.db import models as gis_models
+from djangofuture.contrib.postgres import fields as pg_fields
 
 from common import errors
 from common.models import BaseModel
@@ -158,6 +159,10 @@ class Profile(User):
     #: The user under which the actual user is
     user = models.ForeignKey(User, blank=True, null=True, default=None,
                              on_delete=models.SET_DEFAULT, related_name='members')
+    settings = pg_fields.JSONField(default={
+        'daily_price_till_days': 3,
+        'weekly_price_till_days': 25,
+    })
 
     #: Favorited products
     favorite_products = models.ManyToManyField('catalog.Product')
