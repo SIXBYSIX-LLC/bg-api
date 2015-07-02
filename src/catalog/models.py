@@ -1,9 +1,10 @@
-from django.core.validators import MinValueValidator
 from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 from django.core.exceptions import ValidationError
 
 from common.models import BaseManager, BaseModel
+
+from common import fields as ex_fields
 from . import constats, messages
 
 
@@ -51,17 +52,13 @@ class Product(BaseModel):
     #: Brand
     brand = models.CharField(max_length=100)
     #: Daily rental price
-    daily_price = models.DecimalField(max_digits=10, decimal_places=2,
-                                      validators=[MinValueValidator(0.0)])
+    daily_price = ex_fields.FloatField(min_value=0.0, max_value=99999, precision=2)
     #: Weekly rental price
-    weekly_price = models.DecimalField(max_digits=10, decimal_places=2,
-                                       validators=[MinValueValidator(0.0)])
+    weekly_price = ex_fields.FloatField(min_value=0.0, max_value=999999, precision=2)
     #: Monthly rental price
-    monthly_price = models.DecimalField(max_digits=10, decimal_places=2,
-                                        validators=[MinValueValidator(0.0)])
+    monthly_price = ex_fields.FloatField(min_value=0.0, max_value=9999999, precision=2)
     #: Selling price
-    sell_price = models.DecimalField(max_digits=10, decimal_places=2,
-                                     validators=[MinValueValidator(0.0)])
+    sell_price = ex_fields.FloatField(min_value=0.0, max_value=999999999, precision=2)
     #: Product category
     category = models.ForeignKey('category.Category', validators=[validate_category_is_leaf])
     #: Is active and searchable

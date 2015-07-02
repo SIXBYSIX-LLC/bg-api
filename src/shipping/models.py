@@ -1,6 +1,7 @@
 from django.db import models
 
 from common.models import BaseManager, BaseModel
+from common import fields as ex_fields
 
 
 class ShippingManager(BaseManager):
@@ -37,6 +38,6 @@ class StandardMethod(ShippingBase):
     zipcode_start = models.PositiveIntegerField()
     zipcode_end = models.PositiveIntegerField(default=0)
     # Shipping cost for the rule
-    cost = models.DecimalField(max_digits=10, decimal_places=2)
+    cost = ex_fields.FloatField(min_value=0, max_value=9999, precision=2)
 
     objects = ShippingManager()
