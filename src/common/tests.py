@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase, APIClient as _APIClient
 from rest_framework import status
 from django.core.management import call_command
 
+from common.factories.dataset import TestDataSet
 from usr import factories as usr_factories
 
 
@@ -81,6 +82,9 @@ class TestCase(APITestCase):
         self.user_client.credentials(HTTP_AUTHORIZATION='Token ' + self.user_token)
 
         self.status_code = status
+
+        self.dataset = TestDataSet()
+        self.dataset.generate()
 
     def get_client(self, user):
         c = APIClient()
