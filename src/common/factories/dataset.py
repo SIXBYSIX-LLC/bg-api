@@ -42,6 +42,13 @@ class TestDataSet(object):
                                                 cost=fuzzy.FuzzyDecimal(5000, 7000).fuzz(),
                                                 user=user)
 
+            # rajkot to Vadodara
+            shp_factories.StandardMethodFactory(origin=vad,
+                                                zipcode_start=360001,
+                                                zipcode_end=365480,
+                                                cost=fuzzy.FuzzyDecimal(5000, 7000).fuzz(),
+                                                user=user)
+
             # Vadodara to Surat
             shp_factories.StandardMethodFactory(origin=vad,
                                                 zipcode_start=388710,
