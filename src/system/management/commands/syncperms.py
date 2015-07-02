@@ -61,6 +61,7 @@ class Command(BaseCommand):
             Permission.objects.get(codename='change_cart'),
             Permission.objects.get(codename='view_cart'),
             Permission.objects.get(codename='add_rentalitem'),
+            Permission.objects.get(codename='change_rentalitem'),
             Permission.objects.get(codename='delete_rentalitem'),
         )
 
