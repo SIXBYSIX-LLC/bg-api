@@ -49,8 +49,8 @@ class Cart(BaseModel, DateTimeFieldMixin):
             total['subtotal'] += item.subtotal
 
         total['sales_tax_pct'] = self.get_sales_tax()
-        total['sales_tax'] = (total['subtotal'] * self.get_sales_tax()) / 100
-        total['total'] = total['subtotal'] + total['sales_tax']
+        total['sales_tax'] = round((total['subtotal'] * self.get_sales_tax()) / 100, 2)
+        total['total'] = round(total['subtotal'] + total['sales_tax'], 2)
 
         self.total = total
         self.save()
