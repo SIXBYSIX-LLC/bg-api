@@ -1,6 +1,7 @@
 from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
+from tax.factories import SalesTaxFactory
 
 
 class CartTestCase(TestCase):
@@ -125,3 +126,19 @@ class CartTestCase(TestCase):
         c.delete('/cart/%s/rental_products/%s' % (cart.id, resp.data['id']))
         rmresp = c.get('/cart/current')
         self.assertEqual(rmresp.data['total']['total'], 0)
+
+    def test_cart_sales_tax(self):
+        tax = SalesTaxFactory()
+        # Cart with shipping address to rajkot
+        rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
+        cart = CartFactory(user=self.dataset.users[1], location=rjt)
+
+        # Product from Rajkot
+        prod = self.dataset.users[3].product_set.filter(
+            location__city__name_std='Rajkot').first()
+        rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='delivery')
+        c = self.get_client(self.dataset.users[1])
+        c.post('/cart/%s/rental_products' % cart.id, data=rental_item)
+        resp = c.get('/cart/current')
+        self.assertEqual(resp.data['total']['sales_tax_pct'], tax.value)
+        self.assertGreater(resp.data['total']['sales_tax'], 10)
