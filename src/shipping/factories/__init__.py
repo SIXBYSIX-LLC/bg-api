@@ -3,6 +3,7 @@ import random
 import factory
 
 from common.faker import fake
+from shipping.models import StandardMethod
 from usr.factories import AddressFactory
 
 
@@ -16,5 +17,8 @@ class StandardMethodBaseFactory(factory.DictFactory):
 
 
 class StandardMethodFactory(factory.DjangoModelFactory, StandardMethodBaseFactory):
+    class Meta:
+        model = StandardMethod
+
     country = factory.lazy_attribute(lambda x: fake.cities_country())
     origin = factory.lazy_attribute(lambda o: AddressFactory(user=o.user))
