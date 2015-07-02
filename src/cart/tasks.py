@@ -20,6 +20,6 @@ def is_shippable(sender, **kwargs):
 @receiver(post_delete, sender=RentalItem)
 def update_cart_cost_on_rental_removed(sender, **kwargs):
     rental_item = kwargs.get('instance')
-    rental_item.cart.calculate_cost()
+    rental_item.cart.calculate_cost(force_item_calculation=False)
 
 

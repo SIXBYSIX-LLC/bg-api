@@ -32,7 +32,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
     class Meta(BaseModel.Meta):
         db_table = 'cart'
 
-    def calculate_cost(self, force_item_calculation=False):
+    def calculate_cost(self, force_item_calculation=True):
         """
         Total
         Sales tax

@@ -53,6 +53,6 @@ class CartSerializer(ModelSerializer):
 
     def update(self, instance, validated_data):
         instance = super(CartSerializer, self).update(instance, validated_data)
-        instance.calculate_cost(force_item_calculation=True)
+        instance.calculate_cost()
 
         return instance
