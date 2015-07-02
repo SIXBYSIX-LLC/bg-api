@@ -10,6 +10,12 @@ from group.serializers import GroupRefSerializer
 LOG = logging.getLogger('bgapi.' + __name__)
 
 
+class SettingSerializer(serializers.Serializer):
+    daily_price_till_days = rf_serializers.IntegerField(min_value=2, required=False)
+    weekly_price_till_days = rf_serializers.IntegerField(min_value=7, required=False)
+    minimum_contract_period = rf_serializers.IntegerField(min_value=2, required=False)
+
+
 class UserSerializer(serializers.ModelSerializer):
     groups = GroupRefSerializer(read_only=True, many=True)
     user = rf_serializers.PrimaryKeyRelatedField(read_only=True)
@@ -19,7 +25,7 @@ class UserSerializer(serializers.ModelSerializer):
         write_only_fields = ('password',)
         read_only_fields = ('is_email_verified', 'is_active', 'is_superuser', 'is_staff',
                             'last_login', 'groups', 'user_permissions', 'date_joined', 'id',
-                            'user',)
+                            'user', 'settings')
         exclude = ('unverified_email_key', 'is_admin', 'password_reset_key')
         depth = 1
 

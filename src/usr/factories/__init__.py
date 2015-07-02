@@ -80,7 +80,7 @@ class AddressBaseFactory(factory.DictFactory):
     country = factory.LazyAttribute(lambda x: fake.cities_country().id)
     state = factory.LazyAttribute(lambda o: fake.cities_region(o.country).id)
     city = factory.LazyAttribute(lambda o: fake.cities_city(o.state).id)
-    zip_code = factory.LazyAttribute(lambda o: fake.postcode())
+    zip_code = fuzzy.FuzzyInteger(360001, 396590)
     kind = Address.Const.TYPE_JOB_SITE
 
 

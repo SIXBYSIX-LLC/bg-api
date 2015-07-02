@@ -52,6 +52,17 @@ class Command(BaseCommand):
             Permission.objects.get(codename='view_thread'),
             Permission.objects.get(codename='add_message'),
             Permission.objects.get(codename='view_message'),
+            # Shipping
+            Permission.objects.get(codename='add_standardmethod'),
+            Permission.objects.get(codename='view_standardmethod'),
+            Permission.objects.get(codename='delete_standardmethod'),
+            Permission.objects.get(codename='change_standardmethod'),
+            # Cart
+            Permission.objects.get(codename='change_cart'),
+            Permission.objects.get(codename='view_cart'),
+            Permission.objects.get(codename='add_rentalitem'),
+            Permission.objects.get(codename='change_rentalitem'),
+            Permission.objects.get(codename='delete_rentalitem'),
         )
 
         # Assign device group permission

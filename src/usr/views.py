@@ -7,6 +7,7 @@ from common.viewsets import ModelViewSet, NestedViewSetMixin, GenericViewSet
 from common.permissions import CustomActionPermissions
 from . import serializers
 from .models import Profile, Address
+from usr.serializers import SettingSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -34,6 +35,20 @@ class UserViewSet(ModelViewSet):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @detail_route(methods=['PATCH', 'GET'])
+    def setting(self, request, *args, **kwargs):
+        user = self.get_object()
+        if request.method == 'PATCH':
+            serializer = SettingSerializer(data=request.data, partial=True)
+            serializer.is_valid(True)
+
+            user.settings.update(**serializer.data)
+            user.save(update_fields=['settings'])
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer = SettingSerializer(user.settings)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['POST', 'PUT'])
 @permission_classes((AllowAny,))

@@ -173,6 +173,13 @@ class TestUser(TestCase):
         )
         self.assertEqual(resp.status_code, self.status_code.HTTP_204_NO_CONTENT)
 
+    def test_settings(self):
+        resp = self.user_client.patch('/users/%s/setting' % self.user.id,
+                                      data={'daily_price_till_days': '4'})
+        resp = self.user_client.get('/users/%s/setting' % self.user.id)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
+        self.assertEqual(resp.data['daily_price_till_days'], 4)
+
 
 class PermissionTest(TestCase):
     def test_user_default_group(self):
