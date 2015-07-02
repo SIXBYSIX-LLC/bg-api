@@ -1,6 +1,6 @@
-from django.db.models.signals import pre_save, post_save, post_delete
+from django.db.models.signals import pre_save, post_delete
 
-from cart.models import RentalItem, Cart
+from cart.models import RentalItem
 from common.dispatch import receiver
 
 
@@ -17,28 +17,9 @@ def is_shippable(sender, **kwargs):
         rental_item.is_shippable = True
 
 
-@receiver(pre_save, sender=RentalItem)
-def update_cost(sender, **kwargs):
-    rental_item = kwargs.get('instance')
-    rental_item.calculate_cost()
-
-
-@receiver(post_save, sender=RentalItem)
-def update_cart_cost_on_rental_update(sender, **kwargs):
-    rental_item = kwargs.get('instance')
-    rental_item.cart.calculate_cost()
-
-
 @receiver(post_delete, sender=RentalItem)
 def update_cart_cost_on_rental_removed(sender, **kwargs):
     rental_item = kwargs.get('instance')
     rental_item.cart.calculate_cost()
 
-
-@receiver(pre_save, sender=Cart)
-def update_cart_cost_on_cart_update(sender, **kwargs):
-    cart = kwargs.get('instance')
-    if not cart.id:
-        return
-    cart.calculate_cost()
 

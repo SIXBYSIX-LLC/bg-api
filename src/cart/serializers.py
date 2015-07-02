@@ -4,11 +4,6 @@ from common.serializers import ModelSerializer
 from . import messages
 
 
-class CartSerializer(ModelSerializer):
-    class Meta:
-        model = Cart
-        read_only_fields = ('rental_products', 'user', 'is_active', 'total')
-
 
 class RentalProductSerializer(ModelSerializer):
     class Meta:
@@ -33,8 +28,31 @@ class RentalProductSerializer(ModelSerializer):
 
         return data
 
+    def create(self, validated_data):
+        instance = super(RentalProductSerializer, self).create(validated_data)
+        instance.cart.calculate_cost()
+
+        return instance
+
     def update(self, instance, validated_data):
         # Prevent product attribute from updating
         validated_data.pop('product', None)
 
-        return super(RentalProductSerializer, self).update(instance, validated_data)
+        instance = super(RentalProductSerializer, self).update(instance, validated_data)
+        instance.cart.calculate_cost()
+
+        return instance
+
+
+class CartSerializer(ModelSerializer):
+    rental_products = RentalProductSerializer(source='rentalitem_set', many=True)
+
+    class Meta:
+        model = Cart
+        read_only_fields = ('rental_products', 'user', 'is_active', 'total')
+
+    def update(self, instance, validated_data):
+        instance = super(CartSerializer, self).update(instance, validated_data)
+        instance.calculate_cost(force_item_calculation=True)
+
+        return instance

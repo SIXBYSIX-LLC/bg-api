@@ -32,7 +32,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
     class Meta(BaseModel.Meta):
         db_table = 'cart'
 
-    def calculate_cost(self):
+    def calculate_cost(self, force_item_calculation=False):
         """
         Total
         Sales tax
@@ -43,6 +43,9 @@ class Cart(BaseModel, DateTimeFieldMixin):
 
         # Count products
         for item in self.rentalitem_set.all():
+            if force_item_calculation is True:
+                item.calculate_cost()
+
             total['subtotal'] += item.subtotal
 
         total['sales_tax_pct'] = self.get_sales_tax()
@@ -50,6 +53,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
         total['total'] = total['subtotal'] + total['sales_tax']
 
         self.total = total
+        self.save()
 
     def get_sales_tax(self):
         """
@@ -112,6 +116,8 @@ class RentalItem(Item):
 
         self.shipping_cost = self.cost_breakup['shipping']['shipping_cost']
         self.subtotal = self.shipping_cost + self.cost_breakup['rent']['rent']
+
+        self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
 
     def _calculate_shipping_cost(self):
         data = {'shipping_cost': 0.0}
