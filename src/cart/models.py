@@ -63,6 +63,9 @@ class Cart(BaseModel, DateTimeFieldMixin):
             tax = SalesTax.objects.get(country=self.location.country, state=self.location.state)
         except SalesTax.DoesNotExist:
             return 0
+        except  AttributeError:
+            L.debug('Cart location is not set', extra={'cart': self.id})
+            return 0
         else:
             return tax.value
 
