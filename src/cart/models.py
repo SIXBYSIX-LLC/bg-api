@@ -4,10 +4,10 @@ from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 
 from cart.validators import validate_date_start
-
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
-from . import constants, signals
+from common import fields as ex_fields
 from tax.models import SalesTax
+from . import constants
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -42,20 +42,14 @@ class Cart(BaseModel, DateTimeFieldMixin):
         total = {'subtotal': 0.0}
 
         # Count products
-        for product in self.rental_products:
-            total['subtotal'] += product.subtotal
+        for item in self.rentalitem_set.all():
+            total['subtotal'] += item.subtotal
 
         total['sales_tax_pct'] = self.get_sales_tax()
         total['sales_tax'] = (total['subtotal'] * self.get_sales_tax()) / 100
         total['total'] = total['subtotal'] + total['sales_tax']
 
         self.total = total
-
-        signals.pre_cost_calculation.send(instance=self)
-
-        self.save(update_fields=['total'])
-
-        signals.post_cost_calculation.send(instance=self)
 
     def get_sales_tax(self):
         """
@@ -64,7 +58,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
         try:
             tax = SalesTax.objects.get(country=self.location.country, state=self.location.state)
         except SalesTax.DoesNotExist:
-            return 0.0
+            return 0
         else:
             return tax.value
 
@@ -80,9 +74,9 @@ class Item(BaseModel):
     #: How shipping will be made?
     shipping_kind = models.CharField(max_length=20, choices=SHIPPING_KIND)
     #: Shipping cost
-    shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    shipping_cost = ex_fields.FloatField(min_value=0.0, max_value=999999, precision=2, default=0)
     #: sub total
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    subtotal = ex_fields.FloatField(min_value=0.0, max_value=99999999, precision=2, default=0)
     #: Is the is product shippable to cart location
     is_shippable = models.BooleanField(default=False)
     # Item quantity
@@ -93,7 +87,7 @@ class Item(BaseModel):
 
     @property
     def shipping_method(self):
-        self.product.get_standard_shipping_method(self.cart.location)
+        return self.product.get_standard_shipping_method(self.cart.location)
 
 
 class RentalItem(Item):
@@ -116,14 +110,8 @@ class RentalItem(Item):
         self.cost_breakup['rent'] = self._calculate_rent()
         self.cost_breakup['shipping'] = self._calculate_shipping_cost()
 
-        self.shipping_cost = self.cost_breakup['shipping_cost']
-        self.subtotal = self.shipping_cost + self.cost_breakup['rent']
-
-        signals.pre_cost_calculation.send(instance=self)
-
-        self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
-
-        signals.post_cost_calculation.send(instance=self)
+        self.shipping_cost = self.cost_breakup['shipping']['shipping_cost']
+        self.subtotal = self.shipping_cost + self.cost_breakup['rent']['rent']
 
     def _calculate_shipping_cost(self):
         data = {'shipping_cost': 0.0}
@@ -138,7 +126,7 @@ class RentalItem(Item):
             return data
 
         # Shipping standard method
-        data['shipping_cost'] = self.shipping_method.cost * self.qty
+        data['shipping_cost'] = round(self.shipping_method.cost * self.qty, 2)
         data['shipping_method'] = 'standard_shipping'
         data['method_id'] = self.shipping_method.id
 
@@ -176,15 +164,15 @@ class RentalItem(Item):
         # Getting daily rent from unit rent
         daily_rent = rent_per / rent_days
         # Final rent
-        rent = daily_rent * num_days * self.qty
+        rent = round(daily_rent * num_days * self.qty, 2)
 
         data = {
-            'rent_per': rent_per, 'product': self.product.id, 'cart': self.cart.id,
-            'daily_rent': daily_rent, 'rent': rent, 'num_days': num_days, 'rent_days': rent_days,
-            'qty': self.qty
+            'rent_per': rent_per, 'daily_rent': daily_rent, 'rent': rent, 'num_days': num_days,
+            'rent_days': rent_days
         }
 
-        L.info('Rent calculation', extra=data)
+        ex = dict(data.items() + {'cart': self.cart_id, 'qty': self.qty}.items())
+        L.info('Rent calculation', extra=ex)
 
         return data
 
