@@ -1,9 +1,9 @@
 FORMAT: 1A
-HOST: https://api.buildergiant.com/
+HOST: https://api.marketplace.com/
 
-# BuilderGiant API v1.0
+# Marketplace API v1.0
 
-BuilderGiant is the marketplace for equipments. The core architecture has API service to create, manage and views products in platform.
+It is a marketplace for equipments. The core architecture has API service to create, manage and views products in platform.
 This documentation is aimed to give in-depth detail of API usage
 
 ## Authentication Flow
@@ -235,7 +235,7 @@ The users endpoint provides methods to create update and delete user accounts wi
 These user accounts are both shoppers and seller, with associated shipping addresses, 
 billing addresses, and payment profiles per their ID. 
 
-A shopper may need to have an account when making purchases or creating cart on buildergiant.
+A shopper may need to have an account when making purchases or creating cart on marketplace.
 When creating an account, you will perform the following steps:
 
 * Create the user ID with the POST method.
@@ -867,7 +867,7 @@ This endpoint will allow you to add any product to user's collection
 # Group Categories
 
 The categories endpoint supports getting specific information about one category, subcategory, or a collection of categories.
-These categories represent a main category, a subcategory, or a specific category page to load and display in the buildergiant.
+These categories represent a main category, a subcategory, or a specific category page to load and display in the marketplace.
 Products are associated to only one leaf subcategory. These groupings give shoppers a browsing experience for locating products in marketplace.
 
 To navigate to subcategories for product assignment, categories can be filter by its parent category.
@@ -1260,3 +1260,145 @@ You can update all attributes except `qty`. To update the quantity checkout the 
             Authorization: Token TOKEN_VALUE
 
 + Response 204 (application/json)
+
+
+# Group Inventories
+
+#### Intro
+Inventories are stock information of the particular product.
+So it'll always be related to specific product and generally represents the quantity of the product.
+
+#### Concept
+When you want to add quantity/stock of same product, you can add inventory of that product.
+In backend, each inventory is created as separate entity and allow you to edit each entity independently such as serial number.
+The main reason behind making inventory as separate entity is to reduce the duplication of the product catalog entry when equipment differs just for serial number or other information.
+
+#### Shortcut method to add bulk inventories
+While adding new product to catalog using products API, you can specify `qty` attribute;
+System will generate inventory objects as much as `qty` fields,
+but updation of qty field using product API is not supported.
+You need to using inventory API to update/delete the objects.
+
+### Enum
+
++ source
+    + `purchased`: If you own the inventory
+    + `rented`: if you owe the inventory
+
+## Inventory Collection [/products/{id}/inventories]
+
++ Parameters
+    + id (required, number, `1`) ... Product id for inventories to be added
+
+### Add Inventory [POST]
+
++ Attributes
+    + serial_no (optional, string) - Serial number of the product if any
+    + source (string) - Any of source Enum
+    + is_active (required, boolean) - Is inventory available or not
+
+
++ Request (application/json)
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+    
+            {
+                "serial_no": "123123"
+                "source": "purchased"
+                "is_active": "true"
+            }
+            
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 26,
+                    "serial_no": "456123",
+                    "source": "purchased",
+                    "is_active": true,
+                    "date_created_at": "2015-07-03T17:09:27.090818Z",
+                    "user": 3
+                }
+            }
+            
+### List Inventories [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 4,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 14,
+                        "serial_no": null,
+                        "source": "purchased",
+                        "is_active": true,
+                        "date_created_at": "2015-06-22T12:14:46.193540Z",
+                        "user": 3
+                    },
+                    {
+                        "id": 15,
+                        "serial_no": "123",
+                        "source": "purchased",
+                        "is_active": true,
+                        "date_created_at": "2015-06-22T12:15:36.111680Z",
+                        "user": 3
+                    },
+                    {
+                        "id": 16,
+                        "serial_no": "456",
+                        "source": "purchased",
+                        "is_active": true,
+                        "date_created_at": "2015-06-22T12:15:41.284624Z",
+                        "user": 3
+                    },
+                    {
+                        "id": 26,
+                        "serial_no": "456123",
+                        "source": "purchased",
+                        "is_active": true,
+                        "date_created_at": "2015-07-03T17:09:27.090818Z",
+                        "user": 3
+                    }
+                ]
+            }
+            
+## Inventory [/products/{product_id}/inventories/{id}]
+
++ Parameters
+    + product_id (required, number, `1`) ... Product id for inventories to be added
+    + id (required, number, `1`) ... Inventory id
+    
+### Detail [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 14,
+                    "serial_no": null,
+                    "source": "purchased",
+                    "is_active": true,
+                    "date_created_at": "2015-06-22T12:14:46.193540Z",
+                    "user": 3
+                }
+            }
