@@ -1,4 +1,5 @@
 from cart.models import Cart, RentalItem
+from catalog.serializers import ProductRefSerializer
 from common.errors import ValidationError
 from common.serializers import ModelSerializer
 from . import messages
@@ -44,8 +45,12 @@ class RentalProductSerializer(ModelSerializer):
         return instance
 
 
+class RentalProductListSerializer(RentalProductSerializer):
+    product = ProductRefSerializer()
+
+
 class CartSerializer(ModelSerializer):
-    rental_products = RentalProductSerializer(source='rentalitem_set', many=True)
+    rental_products = RentalProductListSerializer(source='rentalitem_set', many=True)
 
     class Meta:
         model = Cart
