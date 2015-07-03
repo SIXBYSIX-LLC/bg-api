@@ -65,7 +65,9 @@ class JSONRenderer(RFJSONRenderer):
                     if k in ['type', 'error_code', 'status_code']:
                         continue
 
-                    detail[k] = data.pop(k)[0]
+                    detail[k] = data.pop(k)
+                    if isinstance(detail[k], list):
+                        detail[k] = detail[k][0]
 
                 data['detail'] = detail
 
