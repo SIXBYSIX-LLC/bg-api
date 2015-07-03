@@ -1276,7 +1276,7 @@ You need to using inventory API to update/delete the objects.
     + `purchased`: If you own the inventory
     + `rented`: if you owe the inventory
 
-## Inventory Collection [/products/{id}/inventories]
+## Inventory Collection [/v1/products/{id}/inventories]
 
 + Parameters
     + id (required, number, `1`) ... Product id for inventories to be added
@@ -1367,7 +1367,7 @@ You need to using inventory API to update/delete the objects.
                 ]
             }
             
-## Inventory [/products/{product_id}/inventories/{id}]
+## Inventory [/v1/products/{product_id}/inventories/{id}]
 
 + Parameters
     + product_id (required, number, `1`) ... Product id for inventories to be added
@@ -1391,5 +1391,46 @@ You need to using inventory API to update/delete the objects.
                     "is_active": true,
                     "date_created_at": "2015-06-22T12:14:46.193540Z",
                     "user": 3
+                }
+            }
+            
+            
+# Group Staticfile
+#### Intro
+The aim of this resource is to handle static files upload for any object (like product images,
+user credit form, etc...) and store them to cloud.
+
+#### Concept
+The concept of having single endpoint of handling file gives developer the ease of managing the files.
+This single endpoint gives all the operation on file object.
+
+### Enum
+
++ target
+    + category.Category.image: Use this when you want to set/upload image to category
+    + catalog.Product.images: Add image to the product images
+
+## Staticfile Collection [/v1/staticfile]
+
+### Uploading the file [POST]
+
++ Attributes
+    + target: category.Category.image (required, string) - Any of target enum
+    + target_id (required, number) - Target object id
+
++ Request (multipart/form-data)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+    
++ Response
+
+            {
+                "data": {
+                    "target": "category.Category.image",
+                    "target_id": "1",
+                    "url": "https://res.cloudinary.com/inabhi9/image/upload/v1435951592/local/category_images/1.jpg",
+                    "id": 20
                 }
             }
