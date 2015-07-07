@@ -8,6 +8,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     queryset = models.Product.objects.all()
     filter_fields = ('category', 'is_active', 'user')
+    ordering_fields = ('name', 'daily_price', 'sell_price')
 
     ownership_fields = ('user',)
     skip_owner_filter = True
