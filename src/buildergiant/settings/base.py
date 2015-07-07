@@ -188,9 +188,9 @@ CITIES_LOCALES = ['en']
 
 
 # --------- Cloudinary
-CLOUDINARY_API_KEY = '428851893232781'  # Override this
-CLOUDINARY_API_SECRET = 'RugGl4f1ljrs0i50t2rOJbrDvbg'  # Override this
-CLOUDINARY_CLOUD_NAME = 'inabhi9'  # Override this
+CLOUDINARY_API_KEY = 'OVERRIDE THIS'  # Override this
+CLOUDINARY_API_SECRET = 'OVERRIDE THIS'  # Override this
+CLOUDINARY_CLOUD_NAME = 'buildergiant'  # Override this
 STATIC_FILE_BASE = 'local'  # Override this
 # --------- End Cloudinary
 
