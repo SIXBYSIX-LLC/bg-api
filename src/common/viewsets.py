@@ -2,6 +2,7 @@
 ViewSet
 ~~~~~~~
 """
+from django.contrib.auth.models import AnonymousUser
 from rest_framework import generics as rf_generics, viewsets as rf_viewsets
 from rest_framework_extensions.mixins import NestedViewSetMixin as _NestedViewSetMixin
 
@@ -12,10 +13,11 @@ class GenericAPIView(rf_generics.GenericAPIView):
         Add parent_user object request if current user belongs to User group
         """
         request.user
-        parent = request.parent_user = request.user.profile.parent
-        # Assign parent user only if they belongs to user group
-        if parent and (parent.is_superuser is True or parent.is_staff is True):
-            request.parent_user = None
+        if isinstance(request.user, AnonymousUser) is False:
+            parent = request.parent_user = request.user.profile.parent
+            # Assign parent user only if they belongs to user group
+            if parent and (parent.is_superuser is True or parent.is_staff is True):
+                request.parent_user = None
 
 
 class GenericViewSet(GenericAPIView, rf_viewsets.GenericViewSet):
