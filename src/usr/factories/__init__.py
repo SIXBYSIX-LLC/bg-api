@@ -75,7 +75,7 @@ class DeviceUserFactory(UserFactory):
 
 
 class AddressBaseFactory(factory.DictFactory):
-    name = factory.LazyAttribute(lambda x: fake.name() + fuzzy.FuzzyText().fuzz())
+    name = factory.LazyAttribute(lambda x: fake.name())
     address1 = factory.LazyAttribute(lambda x: fake.address())
     country = factory.LazyAttribute(lambda x: fake.cities_country().id)
     state = factory.LazyAttribute(lambda o: fake.cities_region(o.country).id)
