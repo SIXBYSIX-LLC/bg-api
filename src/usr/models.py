@@ -249,3 +249,6 @@ class Address(BaseModel):
 
     Const = constants
 
+    class Meta(BaseModel.Meta):
+        unique_together = ('name', 'user')
+

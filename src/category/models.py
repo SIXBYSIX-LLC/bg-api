@@ -24,6 +24,7 @@ class Category(BaseModel):
 
     class Meta(BaseModel.Meta):
         db_table = 'category'
+        unique_together = ('name', 'parent')
 
     def build_hierarchy(self):
         cats = []
