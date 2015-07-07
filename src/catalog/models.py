@@ -1,10 +1,8 @@
 from django.db import models
-
 from djangofuture.contrib.postgres import fields as pg_fields
 from django.core.exceptions import ValidationError
 
 from common.models import BaseManager, BaseModel
-
 from common import fields as ex_fields
 from . import constats, messages
 
@@ -71,7 +69,7 @@ class Product(BaseModel):
     #: Additional attributes
     attributes = pg_fields.JSONField(null=True, blank=True)
     #: Search tags
-    tags = pg_fields.ArrayField(models.CharField(max_length=30), blank=True, null=True)
+    tags = pg_fields.ArrayField(models.CharField(max_length=100), blank=True, null=True)
     #: User
     user = models.ForeignKey('miniauth.User', editable=False, blank=True, default=None)
     #: Condition
