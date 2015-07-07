@@ -12,10 +12,11 @@ class OwnerFilterBackend(rf_filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         ownership_fields = getattr(view, 'ownership_fields', False)
+        skip_owner_filter = getattr(view, 'skip_owner_filter', False)
         # Define user, as requested user is either owner or any member
         request_user = request.parent_user or request.user
 
-        if view.action != 'list' or not ownership_fields:
+        if view.action != 'list' or not ownership_fields or skip_owner_filter is True:
             return queryset
 
         if request.user.is_staff or request.user.is_superuser:
