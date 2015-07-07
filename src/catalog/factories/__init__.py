@@ -49,6 +49,6 @@ class InventoryBaseFactory(factory.DictFactory):
     is_active = fuzzy.FuzzyChoice([True, False])
 
 
-class InventoryFactory(InventoryBaseFactory):
+class InventoryFactory(factory.DjangoModelFactory, InventoryBaseFactory):
     class Meta:
         model = Inventory
