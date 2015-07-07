@@ -7,7 +7,7 @@ from . import serializers, models
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     queryset = models.Product.objects.all()
-    filter_fields = ('category', 'is_active')
+    filter_fields = ('category', 'is_active', 'user')
 
     ownership_fields = ('user',)
     skip_owner_filter = True

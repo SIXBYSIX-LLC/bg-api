@@ -63,7 +63,7 @@ class ProductTest(TestCase):
 
     def test_listing_with_qty_field(self):
         factories.ProductFactory.create_batch(2, user=self.user, qty=30)
-        resp = self.user_client.get('/products')
+        resp = self.user_client.get('/products', data={'user': self.user.id})
         self.assertEqual(resp.data[0].get('qty'), 30)
 
 
