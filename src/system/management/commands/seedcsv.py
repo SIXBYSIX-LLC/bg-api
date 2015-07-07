@@ -36,14 +36,14 @@ class Command(BaseCommand):
         try:
             address = Address.objects.get(name='Jobsite 1', user=user)
         except Address.DoesNotExist:
-            # address = usr_factories.AddressFactory(name='Jobsite 1',
-            # user=user,
-            #                                        country=Country.objects.get(id=6252001),
-            #                                        state=Region.objects.get(id=4736286))
             address = usr_factories.AddressFactory(name='Jobsite 1',
-                                                   country=Country.objects.get(id=1269750),
-                                                   state=Region.objects.get(id=1270770),
-                                                   user=user)
+                                                   user=user,
+                                                   country=Country.objects.get(id=6252001),
+                                                   state=Region.objects.get(id=4736286))
+            # address = usr_factories.AddressFactory(name='Jobsite 1',
+            # country=Country.objects.get(id=1269750),
+            #                                        state=Region.objects.get(id=1270770),
+            #                                        user=user)
 
         return address
 
