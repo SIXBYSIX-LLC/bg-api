@@ -1,5 +1,5 @@
 from common.viewsets import ModelViewSet
-from . import serializers, models
+from . import serializers, models, filters
 
 
 class CategoryViewSet(ModelViewSet):
@@ -9,5 +9,7 @@ class CategoryViewSet(ModelViewSet):
     paginate_by = 0
     paginate_by_param = ''
 
-    filter_fields = {'parent': ['exact', 'isnull']}
+    filter_class = filters.CategoryFilter
+
+
 
