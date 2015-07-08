@@ -8,6 +8,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     queryset = models.Product.objects.all()
     filter_fields = ('category', 'is_active', 'user')
+    search_manager = models.Product.objects
+
     ordering_fields = ('name', 'daily_price', 'sell_price')
     ordering = ('-id',)
 

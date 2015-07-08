@@ -31,6 +31,15 @@ class ProductManager(BaseManager):
 
         return product
 
+    def search(self, query, raw=False):
+        function = "to_tsquery" if raw else "plainto_tsquery"
+        search_vector = "name || ' ' || array_to_string(tags, ' ')"
+        ts_query = "%s('%s')" % (function, query)
+        where = "to_tsvector(%s) @@ %s" % (search_vector, ts_query)
+
+        return self.extra(where=[where])
+
+
 
 class Product(BaseModel):
     """

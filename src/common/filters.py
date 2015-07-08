@@ -28,3 +28,21 @@ class OwnerFilterBackend(rf_filters.BaseFilterBackend):
         queryset = queryset.filter(q)
 
         return queryset
+
+
+class SearchFilter(rf_filters.SearchFilter):
+    def get_search_terms(self, request):
+        """
+        Search terms are set by a ?search=... query parameter.
+        The while space or comma delimited has been removed and whole string will be returned
+        """
+        params = request.query_params.get(self.search_param, '')
+        return params.replace(',', ' ')
+
+    def filter_queryset(self, request, queryset, view):
+        search_manager = getattr(view, 'search_manager', None)
+        term = self.get_search_terms(request).strip()
+        if search_manager and term:
+            return queryset & search_manager.search(term)
+
+        return super(SearchFilter, self).filter_queryset(request, queryset, view)

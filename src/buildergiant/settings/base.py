@@ -131,6 +131,7 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'rest_framework_filters.backends.DjangoFilterBackend',
         'rest_framework.filters.OrderingFilter',
+        'common.filters.SearchFilter',
         'common.filters.OwnerFilterBackend'
     ),
 
@@ -183,7 +184,7 @@ USE_TZ = True
 #: Specify the authentication User model, we're using ``miniauth`` module which gives only
 #: email and password fields. `See here <https://github.com/inabhi9/django-miniauth>`_
 AUTH_USER_MODEL = 'miniauth.User'
-#--------- END CUSTOM AUTH CONFIGURATION
+# --------- END CUSTOM AUTH CONFIGURATION
 
 CITIES_POSTAL_CODES = ['US']
 CITIES_LOCALES = ['en']
