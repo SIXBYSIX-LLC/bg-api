@@ -9,6 +9,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = models.Product.objects.all()
     filter_fields = ('category', 'is_active', 'user')
     ordering_fields = ('name', 'daily_price', 'sell_price')
+    ordering = ('-id',)
 
     ownership_fields = ('user',)
     skip_owner_filter = True
