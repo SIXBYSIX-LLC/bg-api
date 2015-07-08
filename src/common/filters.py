@@ -37,11 +37,11 @@ class SearchFilter(rf_filters.SearchFilter):
         The while space or comma delimited has been removed and whole string will be returned
         """
         params = request.query_params.get(self.search_param, '')
-        return params.replace(',', ' ')
+        return params.replace(',', ' ').strip()
 
     def filter_queryset(self, request, queryset, view):
         search_manager = getattr(view, 'search_manager', None)
-        term = self.get_search_terms(request).strip()
+        term = self.get_search_terms(request)
         if search_manager and term:
             return queryset & search_manager.search(term)
 
