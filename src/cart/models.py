@@ -40,7 +40,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
         Environment fee
         :return:
         """
-        total = {'subtotal': 0.0}
+        total = {'subtotal': 0.0, 'sales_tax': 0.0}
 
         # Count products
         for item in self.rentalitem_set.all():
@@ -48,9 +48,9 @@ class Cart(BaseModel, DateTimeFieldMixin):
                 item.calculate_cost()
 
             total['subtotal'] += item.subtotal
+            total['sales_tax'] += item.cost_breakup['sales_tax']
 
         total['sales_tax_pct'] = self.get_sales_tax()
-        total['sales_tax'] = round((total['subtotal'] * self.get_sales_tax()) / 100, 2)
         total['total'] = round(total['subtotal'] + total['sales_tax'], 2)
 
         self.total = total
@@ -64,7 +64,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
             tax = SalesTax.objects.get(country=self.location.country, state=self.location.state)
         except SalesTax.DoesNotExist:
             return 0
-        except  AttributeError:
+        except AttributeError:
             L.debug('Cart location is not set', extra={'cart': self.id})
             return 0
         else:
@@ -121,12 +121,14 @@ class RentalItem(Item):
         self.shipping_cost = self.cost_breakup['shipping']['shipping_cost']
         self.subtotal = self.shipping_cost + self.cost_breakup['rent']['rent']
 
+        self.cost_breakup['sales_tax'] = round((self.subtotal * self.cart.get_sales_tax()) / 100, 2)
+
         self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
 
     def _calculate_shipping_cost(self):
         data = {'shipping_cost': 0.0}
 
-        if self.shipping_kind == constants.SHIPPING_PICKUP:
+        if self.shipping_kind == ship_const.SHIPPING_PICKUP:
             L.info('Shipping cost', extra=data)
             return data
         if self.is_shippable is False:
