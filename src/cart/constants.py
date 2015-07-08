@@ -1,2 +1,0 @@
-SHIPPING_PICKUP = 'pickup'
-SHIPPING_DELIVERY = 'delivery'

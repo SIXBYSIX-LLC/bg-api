@@ -8,6 +8,7 @@ from common.models import BaseManager, BaseModel, DateTimeFieldMixin
 from common import fields as ex_fields
 from tax.models import SalesTax
 from . import constants
+from shipping import constants as ship_const
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -72,8 +73,8 @@ class Cart(BaseModel, DateTimeFieldMixin):
 
 class Item(BaseModel):
     SHIPPING_KIND = (
-        (constants.SHIPPING_PICKUP, 'Pickup'),
-        (constants.SHIPPING_DELIVERY, 'Delivery'),
+        (ship_const.SHIPPING_PICKUP, 'Pickup'),
+        (ship_const.SHIPPING_DELIVERY, 'Delivery'),
     )
 
     cart = models.ForeignKey('Cart')
