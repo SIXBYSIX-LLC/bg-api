@@ -70,6 +70,10 @@ class Cart(BaseModel, DateTimeFieldMixin):
         else:
             return tax.value
 
+    def deactivate(self):
+        self.is_active = False
+        self.save(update_fields=['is_active'])
+
 
 class Item(BaseModel):
     SHIPPING_KIND = (
