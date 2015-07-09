@@ -48,10 +48,10 @@ class Cart(BaseModel, DateTimeFieldMixin):
                 item.calculate_cost()
 
             total['subtotal'] += item.subtotal
-            total['sales_tax'] += item.cost_breakup['sales_tax']
+            total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
             total['shipping'] += item.shipping_cost
 
-        total['sales_tax_pct'] = self.get_sales_tax()
+        total['sales_tax_pct'] = getattr(self.get_sales_tax(), 'value', 0)
         total['total'] = round(total['subtotal'] + total['sales_tax'] + total['shipping'], 2)
 
         self.total = total
@@ -64,12 +64,12 @@ class Cart(BaseModel, DateTimeFieldMixin):
         try:
             tax = SalesTax.objects.get(country=self.location.country, state=self.location.state)
         except SalesTax.DoesNotExist:
-            return 0
+            return None
         except AttributeError:
             L.debug('Cart location is not set', extra={'cart': self.id})
-            return 0
+            return None
         else:
-            return tax.value
+            return tax
 
     def deactivate(self):
         self.is_active = False
@@ -118,21 +118,22 @@ class RentalItem(Item):
         """
         Calculates the cost of rent, shipping (according to qty) and sales tax
         """
-        self.shipping_cost = self._calculate_shipping_cost()
-        self.subtotal = self._calculate_rent()
-        sales_taxable_amt = self.shipping_cost + self.subtotal
+        rent = self._calculate_rent()
+        shipping = self._calculate_shipping_cost()
+        sales_taxable_amt = rent['amt'] + shipping['amt']
+        sales_tax = self._calculate_sales_tax(sales_taxable_amt)
 
-        self.cost_breakup['sales_pct'] = self.cart.get_sales_tax()
-        self.cost_breakup['rent'] = self.subtotal
-        self.cost_breakup['shipping'] = self.shipping_cost
-        self.cost_breakup['sales_tax'] = round(
-            (sales_taxable_amt * self.cost_breakup['sales_pct']) / 100, 2
-        )
+        self.cost_breakup['rent'] = rent
+        self.cost_breakup['shipping'] = shipping
+        self.cost_breakup['sales_tax'] = sales_tax
+
+        self.subtotal = rent['amt']
+        self.shipping_cost = shipping['amt']
 
         self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
 
     def _calculate_shipping_cost(self):
-        data = {'shipping_cost': 0.0}
+        data = {'amt': 0.0}
 
         if self.shipping_kind == ship_const.SHIPPING_PICKUP:
             L.info('Shipping cost', extra=data)
@@ -144,9 +145,9 @@ class RentalItem(Item):
             return data
 
         # Shipping standard method
-        data['shipping_cost'] = round(self.shipping_method.cost * self.qty, 2)
-        data['shipping_method'] = 'standard_shipping'
-        data['method_id'] = self.shipping_method.id
+        data['amt'] = round(self.shipping_method.cost * self.qty, 2)
+        data['method'] = 'standard_shipping'
+        data['id'] = self.shipping_method.id
 
         L.info('Shipping cost', extra=data)
 
@@ -185,12 +186,24 @@ class RentalItem(Item):
         rent = round(daily_rent * num_days * self.qty, 2)
 
         data = {
-            'rent_per': rent_per, 'daily_rent': daily_rent, 'rent': rent, 'num_days': num_days,
-            'rent_days': rent_days
+            'rent_per': rent_per, 'daily_rent': daily_rent, 'amt': rent, 'num_days': num_days,
+            'rent_unit_days': rent_days
         }
 
         ex = dict(data.items() + {'cart': self.cart_id, 'qty': self.qty}.items())
         L.info('Rent calculation', extra=ex)
 
         return data
+
+    def _calculate_sales_tax(self, amt):
+        tax = {'pct': 0, 'amt': 0.0}
+        sales_tax = self.cart.get_sales_tax()
+
+        if sales_tax:
+            tax['taxable_amt'] = amt
+            tax['id'] = sales_tax.id
+            tax['pct'] = sales_tax.value
+            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
+
+        return tax
 
