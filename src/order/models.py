@@ -4,7 +4,6 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from shipping import constants as ship_const
 from . import errors, messages
-from common import fields as ex_fields
 
 
 class OrderManager(BaseManager):
@@ -26,17 +25,21 @@ class OrderManager(BaseManager):
             for item in cart.rentalitem_set.all():
                 # Check if not any non-shippable item
                 if (item.is_shippable is False
-                    and cart.shipping_kind == ship_const.SHIPPING_DELIVERY):
+                    and item.shipping_kind == ship_const.SHIPPING_DELIVERY):
                     raise errors.OrderError(*messages.ERR_NON_SHIPPABLE)
+
+                if not item.shipping_kind:
+                    raise errors.OrderError(messages.ERR_MISS_SHIPPING_KIND[0] % item.product.name,
+                                            messages.ERR_MISS_SHIPPING_KIND[1])
 
                 product_serializer = ProductSerializer(item.product)
                 RentalItem.objects.create(
                     order=order,
                     to_user=item.product.user,
                     qty=item.qty,
-                    shipping_kind=cart.shipping_kind,
+                    shipping_kind=item.shipping_kind,
                     detail=product_serializer.data,
-                    shipping_method=item.shipping_method.name,
+                    shipping_method=item.shipping_method.name if item.shipping_method else None,
                     date_start=item.date_start,
                     date_end=item.date_end,
                     subtotal=item.subtotal,
@@ -44,7 +47,7 @@ class OrderManager(BaseManager):
                 )
 
             # Make cart inactive
-            cart.deactiveate()
+            cart.deactivate()
 
         return order
 
@@ -61,7 +64,7 @@ class Order(BaseModel, DateTimeFieldMixin):
     city = models.ForeignKey('cities.City')
     zip_code = models.CharField(max_length=15)
     #: total order value
-    total = ex_fields.FloatField(min_value=0.0, max_value=99999999, precision=2, default=0.0)
+    total = pg_fields.JSONField()
 
     objects = OrderManager()
 
@@ -93,7 +96,7 @@ class Item(BaseModel):
     #: Shipping kind
     shipping_kind = models.CharField(max_length=20)
     #: Shipping method
-    shipping_method = models.CharField(max_length=30)
+    shipping_method = models.CharField(max_length=30, null=True)
     #: Payment method, postpaid for now
     payment_method = models.CharField(max_length=20, default='postpaid')
 
@@ -101,7 +104,7 @@ class Item(BaseModel):
         abstract = True
 
 
-class RentalItem(BaseModel):
+class RentalItem(Item):
     #: Rental period
     date_start = models.DateTimeField()
     date_end = models.DateTimeField()
