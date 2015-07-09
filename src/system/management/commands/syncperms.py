@@ -60,9 +60,15 @@ class Command(BaseCommand):
             # Cart
             Permission.objects.get(codename='change_cart'),
             Permission.objects.get(codename='view_cart'),
-            Permission.objects.get(codename='add_rentalitem'),
-            Permission.objects.get(codename='change_rentalitem'),
-            Permission.objects.get(codename='delete_rentalitem'),
+            Permission.objects.get(codename='add_rentalitem', content_type__app_label='cart'),
+            Permission.objects.get(codename='change_rentalitem', content_type__app_label='cart'),
+            Permission.objects.get(codename='delete_rentalitem', content_type__app_label='cart'),
+            # Order
+            Permission.objects.get(codename='add_order'),
+            Permission.objects.get(codename='view_order'),
+            Permission.objects.get(codename='change_order'),
+            Permission.objects.get(codename='view_orderline'),
+            Permission.objects.get(codename='change_orderline'),
         )
 
         # Assign device group permission
