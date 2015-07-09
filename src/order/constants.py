@@ -1,0 +1,5 @@
+STATUS_REQUEST = 'requested'
+STATUS_APPROVE = 'approved'
+STATUS_READY = 'ready_to_shipp'
+STATUS_DISPATCH = 'dispatched'
+STATUS_DELIVERED = 'delivered'

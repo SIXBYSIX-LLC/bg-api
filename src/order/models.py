@@ -3,7 +3,7 @@ from djangofuture.contrib.postgres import fields as pg_fields
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from shipping import constants as ship_const
-from . import errors, messages
+from . import errors, messages, constants
 
 
 class OrderManager(BaseManager):
@@ -107,6 +107,13 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
 
 
 class Item(BaseModel):
+    STATUS = (
+        (constants.STATUS_REQUEST, 'Requested'),
+        (constants.STATUS_APPROVE, 'Approved'),
+        (constants.STATUS_DISPATCH, 'Dispatched'),
+        (constants.STATUS_READY, 'Ready to ship'),
+        (constants.STATUS_DELIVERED, 'Delivered'),
+    )
     #: Reference to order
     order = models.ForeignKey(Order)
     orderline = models.ForeignKey(OrderLine)
@@ -117,10 +124,7 @@ class Item(BaseModel):
     #: Product detail, copied from cart rental item
     detail = pg_fields.JSONField()
     #: The rental item status order
-    is_approved = models.NullBooleanField(default=None)
-    is_prepared = models.BooleanField(default=False)
-    is_dispatched = models.BooleanField(default=False)
-    is_delivered = models.BooleanField(default=False)
+    status = models.CharField(max_length=30, default=constants.STATUS_REQUEST, choices=STATUS)
     #: Subtotal, only includes rent for quantity
     subtotal = models.FloatField()
     #: Subtotal breakup

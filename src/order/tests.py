@@ -27,7 +27,6 @@ class OrderTest(TestCase):
 
         c = self.get_client(self.dataset.users[1])
         resp = c.post('/orders', data={'cart': self.cart.id})
-
         self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED, resp)
 
         # Ensure that user's current cart is empty
@@ -42,3 +41,8 @@ class OrderTest(TestCase):
 
         resp = c.get('/orders/%s' % order_resp.data['id'])
         self.assertEqual(len(resp.data['rental_items']), 2)
+
+        c = self.get_client(self.dataset.users[2])
+        print self.dataset.users[2].id
+        resp = c.get('/orderlines')
+        print resp

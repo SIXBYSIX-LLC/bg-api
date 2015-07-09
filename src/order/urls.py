@@ -2,6 +2,7 @@ from common import routers
 from . import views
 
 router = routers.CustomExtendedSimpleRouter()
-user_router = router.register(r'orders', views.OrderViewSet)
+router.register(r'orders', views.OrderViewSet)
+router.register(r'orderlines', views.OrderLineViewSet)
 
 urlpatterns = router.urls
