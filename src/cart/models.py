@@ -40,7 +40,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
         Environment fee
         :return:
         """
-        total = {'subtotal': 0.0, 'sales_tax': 0.0}
+        total = {'subtotal': 0.0, 'sales_tax': 0.0, 'shipping': 0.0}
 
         # Count products
         for item in self.rentalitem_set.all():
@@ -49,9 +49,10 @@ class Cart(BaseModel, DateTimeFieldMixin):
 
             total['subtotal'] += item.subtotal
             total['sales_tax'] += item.cost_breakup['sales_tax']
+            total['shipping'] += item.shipping_cost
 
         total['sales_tax_pct'] = self.get_sales_tax()
-        total['total'] = round(total['subtotal'] + total['sales_tax'], 2)
+        total['total'] = round(total['subtotal'] + total['sales_tax'] + total['shipping'], 2)
 
         self.total = total
         self.save()
@@ -115,17 +116,18 @@ class RentalItem(Item):
 
     def calculate_cost(self):
         """
-        Shipping cost
-        Rent according to date range
-        :return:
+        Calculates the cost of rent, shipping (according to qty) and sales tax
         """
-        self.cost_breakup['rent'] = self._calculate_rent()
-        self.cost_breakup['shipping'] = self._calculate_shipping_cost()
+        self.shipping_cost = self._calculate_shipping_cost()
+        self.subtotal = self._calculate_rent()
+        sales_taxable_amt = self.shipping_cost + self.subtotal
 
-        self.shipping_cost = self.cost_breakup['shipping']['shipping_cost']
-        self.subtotal = self.shipping_cost + self.cost_breakup['rent']['rent']
-
-        self.cost_breakup['sales_tax'] = round((self.subtotal * self.cart.get_sales_tax()) / 100, 2)
+        self.cost_breakup['sales_pct'] = self.cart.get_sales_tax()
+        self.cost_breakup['rent'] = self.subtotal
+        self.cost_breakup['shipping'] = self.shipping_cost
+        self.cost_breakup['sales_tax'] = round(
+            (sales_taxable_amt * self.cost_breakup['sales_pct']) / 100, 2
+        )
 
         self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
 
