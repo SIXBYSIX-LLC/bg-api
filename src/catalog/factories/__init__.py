@@ -12,7 +12,7 @@ fake = Factory.create(locale='en_US')
 
 class ProductBaseFactory(factory.DictFactory):
     name = factory.LazyAttribute(lambda x: fake.first_name())
-    description = factory.LazyAttribute(lambda x: fake.paragraphs(nb=2))
+    description = factory.LazyAttribute(lambda x: ' '.join(fake.paragraphs(nb=2)))
     brand = factory.lazy_attribute(lambda x: fake.company())
     daily_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=4, right_digits=2,
                                                                 positive=True))
