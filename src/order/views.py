@@ -8,4 +8,4 @@ from order.serializers import OrderSerializer
 class OrderViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMixin):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
-    ownershipe_fields = ('user', 'rentalitem_set__to_user')
+    ownershipe_fields = ('user',)

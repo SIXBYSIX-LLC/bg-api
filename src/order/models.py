@@ -32,11 +32,14 @@ class OrderManager(BaseManager):
                     raise errors.OrderError(messages.ERR_MISS_SHIPPING_KIND[0] % item.product.name,
                                             messages.ERR_MISS_SHIPPING_KIND[1])
 
+                orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
+
                 product_serializer = ProductSerializer(item.product)
                 RentalItem.objects.create(
                     order=order,
-                    to_user=item.product.user,
+                    orderline=orderline,
                     qty=item.qty,
+                    user=cart.user,
                     shipping_kind=item.shipping_kind,
                     detail=product_serializer.data,
                     shipping_method=item.shipping_method.name if item.shipping_method else None,
@@ -48,6 +51,10 @@ class OrderManager(BaseManager):
 
             # Make cart inactive
             cart.deactivate()
+
+            # Calculate orderline cost
+            for orderline in order.orderline_set.all():
+                orderline.calculate_cost()
 
         return order
 
@@ -73,11 +80,38 @@ class Order(BaseModel, DateTimeFieldMixin):
         ordering = ['-id']
 
 
+class OrderLine(BaseModel, DateTimeFieldMixin):
+    """
+    This class represents the order to be fulfilled by the seller, i.e. it has items grouped by
+    seller
+    """
+    #: Seller user id
+    user = models.ForeignKey('miniauth.User')
+    #: Order id
+    order = models.ForeignKey('Order')
+    #: Total amount of this line
+    total = pg_fields.JSONField(null=True, default=None)
+
+    def calculate_cost(self):
+        total = {'subtotal': 0.0, 'sales_tax': 0.0, 'shipping': 0.0}
+
+        for item in self.rentalitem_set.all():
+            total['subtotal'] += item.subtotal
+            total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
+            total['shipping'] += item.cost_breakup['shipping']['amt']
+
+        total['total'] = round(total['subtotal'] + total['sales_tax'] + total['shipping'], 2)
+
+        self.total = total
+        self.save(update_fields=['total'])
+
+
 class Item(BaseModel):
     #: Reference to order
     order = models.ForeignKey(Order)
-    #: The user who is going to fulfill the item
-    to_user = models.ForeignKey('miniauth.User')
+    orderline = models.ForeignKey(OrderLine)
+    #: The user who has ordered
+    user = models.ForeignKey('miniauth.User')
     #: Inventory that is assigned to the item
     inventory = models.ForeignKey('catalog.Inventory', null=True, default=None)
     #: Product detail, copied from cart rental item
@@ -87,7 +121,7 @@ class Item(BaseModel):
     is_prepared = models.BooleanField(default=False)
     is_dispatched = models.BooleanField(default=False)
     is_delivered = models.BooleanField(default=False)
-    #: Subtotal including tax
+    #: Subtotal, only includes rent for quantity
     subtotal = models.FloatField()
     #: Subtotal breakup
     cost_breakup = pg_fields.JSONField()
