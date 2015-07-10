@@ -35,7 +35,7 @@ class OrderManager(BaseManager):
                 orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
 
                 product_serializer = ProductSerializer(item.product)
-                RentalItem.objects.create(
+                rental_item = RentalItem.objects.create(
                     order=order,
                     orderline=orderline,
                     qty=item.qty,
@@ -48,6 +48,7 @@ class OrderManager(BaseManager):
                     subtotal=item.subtotal,
                     cost_breakup=item.cost_breakup
                 )
+                rental_item.statuses.add(Status.objects.create(status=constants.STATUS_REQUEST))
 
             # Make cart inactive
             cart.deactivate()
@@ -107,13 +108,6 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
 
 
 class Item(BaseModel):
-    STATUS = (
-        (constants.STATUS_REQUEST, 'Requested'),
-        (constants.STATUS_APPROVE, 'Approved'),
-        (constants.STATUS_DISPATCH, 'Dispatched'),
-        (constants.STATUS_READY, 'Ready to ship'),
-        (constants.STATUS_DELIVERED, 'Delivered'),
-    )
     #: Reference to order
     order = models.ForeignKey(Order)
     orderline = models.ForeignKey(OrderLine)
@@ -123,8 +117,8 @@ class Item(BaseModel):
     inventory = models.ForeignKey('catalog.Inventory', null=True, default=None)
     #: Product detail, copied from cart rental item
     detail = pg_fields.JSONField()
-    #: The rental item status order
-    status = models.CharField(max_length=30, default=constants.STATUS_REQUEST, choices=STATUS)
+    #: Item status
+    statuses = models.ManyToManyField('Status')
     #: Subtotal, only includes rent for quantity
     subtotal = models.FloatField()
     #: Subtotal breakup
@@ -141,8 +135,24 @@ class Item(BaseModel):
     class Meta(BaseModel.Meta):
         abstract = True
 
+    @property
+    def current_status(self):
+        return self.statuses.last()
+
 
 class RentalItem(Item):
     #: Rental period
     date_start = models.DateTimeField()
     date_end = models.DateTimeField()
+
+
+class Status(BaseModel, DateTimeFieldMixin):
+    STATUS = (
+        (constants.STATUS_REQUEST, 'Requested'),
+        (constants.STATUS_APPROVE, 'Approved'),
+        (constants.STATUS_DISPATCH, 'Dispatched'),
+        (constants.STATUS_READY, 'Ready to ship'),
+        (constants.STATUS_DELIVERED, 'Delivered'),
+    )
+    #: The rental item status order
+    status = models.CharField(max_length=30, default=constants.STATUS_REQUEST, choices=STATUS)
