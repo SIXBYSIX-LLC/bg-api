@@ -1,9 +1,11 @@
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
+from django.db.models import Q
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
+from order.errors import OrderCancelError
 from shipping import constants as ship_const
-from . import errors, messages, constants
+from . import errors, messages, constants, signals
 
 
 class OrderManager(BaseManager):
@@ -48,7 +50,8 @@ class OrderManager(BaseManager):
                     subtotal=item.subtotal,
                     cost_breakup=item.cost_breakup
                 )
-                rental_item.statuses.add(Status.objects.create(status=constants.STATUS_REQUEST))
+                rental_item.statuses.add(
+                    Status.objects.create(status=constants.STATUS_NOT_CONFIRMED))
 
             # Make cart inactive
             cart.deactivate()
@@ -79,6 +82,32 @@ class Order(BaseModel, DateTimeFieldMixin):
     class Meta(BaseModel.Meta):
         db_table = 'order'
         ordering = ['-id']
+
+        # def cancel(self):
+        # """
+        #     Cancel the whole order line
+        #
+        #     :raise: OrderCancelError
+        #     """
+        #     signals.orderline_pre_cancel.send(instance=self)
+        #
+        #     is_cancel_request = False
+        #     for rental_item in self.rentalitem_set.all():
+        #         try:
+        #             rental_item.cancel()
+        #         except OrderCancelError:
+        #             is_cancel_request = True
+        #
+        #     if is_cancel_request is False:
+        #         self.statuses.add(Status.objects.create(status=constants.STATUS_CANCEL))
+        #         signals.orderline_post_cancel.send(instance=self)
+        #     else:
+        #         self.statuses.add(
+        #             Status.objects.create(
+        #                 status=constants.STATUS_CANCEL_REQUEST, comment=messages.COMMENT_CANCEL
+        #             )
+        #         )
+        #         raise OrderCancelError(*messages.ERR_CANCEL_ITEM_DISPATCHED)
 
 
 class OrderLine(BaseModel, DateTimeFieldMixin):
@@ -139,6 +168,25 @@ class Item(BaseModel):
     def current_status(self):
         return self.statuses.last()
 
+    def cancel(self):
+        """
+        Cancel the item if not yet dispatched.
+
+        :raise: OrderCancelError
+        :signal:
+            + item_pre_cancel(instance)
+            + item_post_cancel(instance)
+        """
+        signals.item_pre_cancel.send(instance=self)
+
+        q = Q(status=constants.STATUS_DISPATCH) | Q(status=constants.STATUS_PICKUP)
+        if self.statuses.filter(q).exists():
+            raise OrderCancelError(*messages.ERR_CANCEL_ITEM_DISPATCHED)
+
+        self.statuses.add(Status.objects.create(status=constants.STATUS_CANCEL))
+
+        signals.item_post_cancel.send(instance=self)
+
 
 class RentalItem(Item):
     #: Rental period
@@ -147,12 +195,6 @@ class RentalItem(Item):
 
 
 class Status(BaseModel, DateTimeFieldMixin):
-    STATUS = (
-        (constants.STATUS_REQUEST, 'Requested'),
-        (constants.STATUS_APPROVE, 'Approved'),
-        (constants.STATUS_DISPATCH, 'Dispatched'),
-        (constants.STATUS_READY, 'Ready to ship'),
-        (constants.STATUS_DELIVERED, 'Delivered'),
-    )
     #: The rental item status order
-    status = models.CharField(max_length=30, default=constants.STATUS_REQUEST, choices=STATUS)
+    status = models.CharField(max_length=30, default=constants.STATUS_REQUEST)
+    comment = models.TextField(null=True, default=None)

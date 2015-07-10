@@ -1,5 +1,13 @@
+STATUS_CONFIRMED = 'confirmed'
+STATUS_NOT_CONFIRMED = 'not_confirmed'
 STATUS_REQUEST = 'requested'
 STATUS_APPROVE = 'approved'
 STATUS_READY = 'ready_to_shipp'
 STATUS_DISPATCH = 'dispatched'
 STATUS_DELIVERED = 'delivered'
+STATUS_PICKUP = 'picked_up'
+
+STATUS_CANCEL = 'cancelled'
+STATUS_CANCEL_REQUEST = 'request_cancel'
+STATUS_RETURN_REQUEST = 'return_cancel'
+STATUS_RETURN = 'returned'

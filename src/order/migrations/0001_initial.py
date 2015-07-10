@@ -85,12 +85,7 @@ class Migration(migrations.Migration):
                                         primary_key=True)),
                 ('date_created_at', models.DateTimeField(auto_now_add=True)),
                 ('date_updated_at', models.DateTimeField(auto_now=True)),
-                ('status', models.CharField(default=b'requested', max_length=30,
-                                            choices=[(b'requested', b'Requested'),
-                                                     (b'approved', b'Approved'),
-                                                     (b'dispatched', b'Dispatched'),
-                                                     (b'ready_to_shipp', b'Ready to ship'),
-                                                     (b'delivered', b'Delivered')])),
+                ('status', models.CharField(default=b'requested', max_length=30)),
                 ('comment', models.TextField(default=None, null=True)),
             ],
             options={
