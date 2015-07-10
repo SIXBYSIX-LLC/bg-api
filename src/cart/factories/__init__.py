@@ -37,6 +37,7 @@ class RentalItemFactory(factory.DjangoModelFactory, factory.DictFactory):
             start_date=o.date_start + timedelta(days=3), end_date="+60d"
         )
     )
+    shipping_kind = 'delivery'
 
 
 class CartFactory(factory.DjangoModelFactory):

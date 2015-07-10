@@ -24,6 +24,8 @@ class ShippingBase(BaseModel):
     #: Source location
     origin = models.ForeignKey('usr.Address')
 
+    name = 'Generic shipping'
+
     class Meta(BaseModel.Meta):
         abstract = True
 
@@ -41,3 +43,5 @@ class StandardMethod(ShippingBase):
     cost = ex_fields.FloatField(min_value=0, max_value=9999, precision=2)
 
     objects = ShippingManager()
+
+    name = 'Standard shipping'

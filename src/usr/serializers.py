@@ -33,6 +33,12 @@ class UserSerializer(serializers.ModelSerializer):
         return Profile.objects.create_user(**validated_data)
 
 
+class UserRefSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('fullname', 'id')
+
+
 class LoginSerializer(UserSerializer):
     pass
 

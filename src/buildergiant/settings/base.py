@@ -72,6 +72,7 @@ LOCAL_APPS = (
     'shipping',
     'tax',
     'cart',
+    'order',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -237,4 +238,4 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # --------- Misc
 WEB_DOMAIN = 'www.buildergiant.com'
-#--------- End Misc
+# --------- End Misc
