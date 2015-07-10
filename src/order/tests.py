@@ -43,6 +43,4 @@ class OrderTest(TestCase):
         self.assertEqual(len(resp.data['rental_items']), 2)
 
         c = self.get_client(self.dataset.users[2])
-        print self.dataset.users[2].id
         resp = c.get('/orderlines')
-        print resp
