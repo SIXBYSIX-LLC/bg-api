@@ -44,3 +44,5 @@ class OrderTest(TestCase):
 
         c = self.get_client(self.dataset.users[2])
         resp = c.get('/orderlines')
+        self.assertEqual(resp.meta['count'], 1)
+        print resp

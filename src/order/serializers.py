@@ -1,4 +1,4 @@
-from common.serializers import ModelSerializer
+from common.serializers import ModelSerializer, rf_serializers
 from .models import Order, RentalItem, OrderLine
 from order import messages
 from order.errors import OrderError
@@ -9,11 +9,13 @@ from catalog.serializers import ProductRefSerializer
 
 
 class RentalItemSerializer(ModelSerializer):
+    current_status = rf_serializers.CharField(source='current_status.status')
     user = UserRefSerializer(source='user.profile')
 
     class Meta:
         model = RentalItem
         exclude = ('order', 'orderline', 'inventory')
+        depth = 1
 
 
 class RentalItemListSerializer(RentalItemSerializer):
@@ -23,6 +25,9 @@ class RentalItemListSerializer(RentalItemSerializer):
                       'images')
 
     detail = DetailSerializer()
+
+    class Meta(RentalItemSerializer.Meta):
+        depth = 0
 
 
 class OrderSerializer(ModelSerializer):
