@@ -10,3 +10,7 @@ class OrderError(APIException):
 
 class OrderCancelError(OrderError):
     pass
+
+
+class ChangeStatusError(APIException):
+    pass

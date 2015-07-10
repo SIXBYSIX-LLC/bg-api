@@ -1,11 +1,11 @@
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
-from django.db.models import Q
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
-from order.errors import OrderCancelError
+from order.errors import ChangeStatusError
 from shipping import constants as ship_const
-from . import errors, messages, constants, signals
+from . import errors, messages, signals
+from constants import Status as sts_const
 
 
 class OrderManager(BaseManager):
@@ -50,8 +50,7 @@ class OrderManager(BaseManager):
                     subtotal=item.subtotal,
                     cost_breakup=item.cost_breakup
                 )
-                rental_item.statuses.add(
-                    Status.objects.create(status=constants.STATUS_NOT_CONFIRMED))
+                rental_item.change_status(sts_const.NOT_CONFIRMED)
 
             # Make cart inactive
             cart.deactivate()
@@ -168,24 +167,24 @@ class Item(BaseModel):
     def current_status(self):
         return self.statuses.last()
 
-    def cancel(self):
+    def change_status(self, status, comment=None):
         """
-        Cancel the item if not yet dispatched.
+        Change item status
 
-        :raise: OrderCancelError
-        :signal:
-            + item_pre_cancel(instance)
-            + item_post_cancel(instance)
+        :param status: New status
+        :param comment: Comment if any
+        :raise ChangeStatusError:
         """
-        signals.item_pre_cancel.send(instance=self)
+        old_status = self.current_status
+        signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
 
-        q = Q(status=constants.STATUS_DISPATCH) | Q(status=constants.STATUS_PICKUP)
-        if self.statuses.filter(q).exists():
-            raise OrderCancelError(*messages.ERR_CANCEL_ITEM_DISPATCHED)
+        changeable_to = Status.CHANGEABLE_TO.get(getattr(self.current_status, 'status', None), [])
+        if self.current_status and status not in changeable_to:
+            raise ChangeStatusError(*messages.ERR_NOT_CHANGEABLE)
 
-        self.statuses.add(Status.objects.create(status=constants.STATUS_CANCEL))
+        self.statuses.add(Status.objects.create(status=status, comment=comment))
 
-        signals.item_post_cancel.send(instance=self)
+        signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
 
 
 class RentalItem(Item):
@@ -195,6 +194,23 @@ class RentalItem(Item):
 
 
 class Status(BaseModel, DateTimeFieldMixin):
+    CHANGEABLE_TO = {
+        sts_const.NOT_CONFIRMED: [sts_const.CONFIRMED],
+        sts_const.CONFIRMED: [sts_const.APPROVED, sts_const.CANCEL],
+        sts_const.APPROVED: [sts_const.PICKED_UP, sts_const.READY_TO_SHIP,
+                             sts_const.READY_TO_PICKUP, sts_const.CANCEL],
+        sts_const.READY_TO_SHIP: [sts_const.DISPATCHED, sts_const.CANCEL],
+        sts_const.DISPATCHED: [sts_const.DELIVERED],
+        sts_const.READY_TO_PICKUP: [sts_const.PICKED_UP],
+        sts_const.CANCEL: [],
+        sts_const.PICKED_UP: [],
+        sts_const.DELIVERED: [],
+    }
+    STATUS = [(getattr(sts_const, prop), getattr(sts_const, prop))
+              for prop in dir(sts_const) if prop.startswith('_') is False]
+
     #: The rental item status order
-    status = models.CharField(max_length=30, default=constants.STATUS_REQUEST)
+    status = models.CharField(max_length=30, choices=STATUS)
     comment = models.TextField(null=True, default=None)
+
+    Const = sts_const

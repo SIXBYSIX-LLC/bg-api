@@ -1,11 +1,12 @@
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.decorators import detail_route
 
 from common.viewsets import GenericViewSet, NestedViewSetMixin
 from models import Order, OrderLine, RentalItem
 from order.serializers import (OrderSerializer, OrderLineSerializer, OrderLineListSerializer,
-                               OrderListSerializer)
+                               OrderListSerializer, ChangeStatusSerializer)
 
 
 class OrderViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMixin):
@@ -25,15 +26,13 @@ class OrderLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
 class RentalItem(NestedViewSetMixin, GenericViewSet):
     queryset = RentalItem.objects.all()
 
-    def action_cancel(self, request, *args, **kwargs):
+    @detail_route(methods=['PUT'])
+    def action_change_status(self, request, *args, **kwargs):
         rental_item = self.get_object()
-        rental_item.cancel()
+
+        serializer = ChangeStatusSerializer(data=request.data)
+        serializer.is_valid(True)
+
+        rental_item.change_status(serializer.data)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-        # @detail_route(methods=['PUT'])
-        # def action_change_status(self, request, *args, **kwargs):
-        # rental_item = self.get_object()
-        #     rental_item.change_status()
-        #
-        #     return Response(status=status.HTTP_204_NO_CONTENT)

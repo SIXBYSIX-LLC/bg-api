@@ -1,4 +1,4 @@
-from common.serializers import ModelSerializer, rf_serializers
+from common.serializers import ModelSerializer, rf_serializers, Serializer
 from .models import Order, RentalItem, OrderLine
 from order import messages
 from order.errors import OrderError
@@ -74,3 +74,8 @@ class OrderLineSerializer(ModelSerializer):
 
 class OrderLineListSerializer(OrderLineSerializer):
     rental_items = RentalItemListSerializer(many=True, source='rentalitem_set')
+
+
+class ChangeStatusSerializer(Serializer):
+    status = rf_serializers.CharField()
+    comment = rf_serializers.CharField(required=False)
