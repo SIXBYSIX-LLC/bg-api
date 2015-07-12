@@ -10,15 +10,17 @@ class Serializer(rf_serializers.Serializer):
     """
 
     def __init__(self, *args, **kwargs):
+        _fields = kwargs.pop('fields', None)
         super(Serializer, self).__init__(*args, **kwargs)
 
         # Dynamically allow selection of fields
         try:
             fields = self.context.get('request').GET.get('fields')
         except AttributeError:
-            fields = None
+            fields = _fields
         if fields:
-            fields = fields.split(',')
+            if isinstance(fields, basestring):
+                fields = fields.split(',')
             allowed = set(fields)
             existing = set(self.fields.keys())
             for field_name in existing - allowed:

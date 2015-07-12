@@ -2,6 +2,8 @@ from common import serializers
 from common.serializers import rf_serializers
 from models import Product, Inventory
 from static.serializers import FileRefSerializer
+from usr.serializers import AddressListSerializer
+from usr.models import Address
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -14,6 +16,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Product.objects.create_product(**validated_data)
+
+
+class ProductListSerializer(ProductSerializer):
+    location = AddressListSerializer(read_only=True, fields=['city', 'country', 'state',
+                                                             'zip_code'])
 
 
 class ProductRefSerializer(ProductSerializer):
@@ -34,3 +41,17 @@ class InventorySerializer(serializers.ModelSerializer):
         read_only_fields = ('date_created_at', 'user')
 
 
+class FacetSerializer(object):
+    class LocationSerializer(serializers.Serializer):
+        count = serializers.rf_serializers.IntegerField()
+        location = serializers.rf_serializers.SerializerMethodField()
+
+        class Meta:
+            model = Product
+            fields = ('location',)
+
+        def get_location(self, obj):
+            loc_id = obj.get('location')
+
+            return AddressListSerializer(Address.objects.get(id=loc_id),
+                                         fields=['city', 'country', 'state']).data

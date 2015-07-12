@@ -90,6 +90,9 @@ class AddressListSerializer(AddressSerializer):
             model = City
             fields = ('name', 'id')
 
-    country = CountryRefSerializer()
-    state = RegionRefSerializer()
-    city = CityRefSerializer()
+    country = CountryRefSerializer(read_only=True)
+    state = RegionRefSerializer(read_only=True)
+    city = CityRefSerializer(read_only=True)
+
+    class Meta(AddressSerializer.Meta):
+        read_only_fields = ()
