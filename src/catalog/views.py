@@ -7,7 +7,8 @@ from . import serializers, models
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     queryset = models.Product.objects.all()
-    filter_fields = ('category', 'is_active', 'user')
+    filter_fields = {'category': ['exact'], 'is_active': ['exact'], 'user': ['exact'],
+                     'daily_price': ['gte', 'lte'], 'sell_price': ['gte', 'lte']}
     search_manager = models.Product.objects
 
     ordering_fields = ('name', 'daily_price', 'sell_price')
