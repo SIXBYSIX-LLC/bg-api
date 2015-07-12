@@ -92,7 +92,7 @@ class Item(BaseModel):
     subtotal = ex_fields.FloatField(min_value=0.0, max_value=99999999, precision=2, default=0)
     #: Is the is product shippable to cart location
     is_shippable = models.BooleanField(default=False)
-    # Item quantity
+    #: Item quantity
     qty = models.PositiveSmallIntegerField(default=1)
 
     class Meta(BaseModel.Meta):
@@ -102,6 +102,9 @@ class Item(BaseModel):
     def shipping_method(self):
         return self.product.get_standard_shipping_method(self.cart.location)
 
+    def calculate_cost(self):
+        raise NotImplementedError
+
 
 class RentalItem(Item):
     # Item to be delivered by
@@ -110,6 +113,8 @@ class RentalItem(Item):
     date_end = models.DateTimeField()
     #: Rent
     cost_breakup = pg_fields.JSONField(default={}, editable=False)
+    #: Should pay later?
+    is_postpaid = models.BooleanField(default=False)
 
     class Meta(Item.Meta):
         unique_together = ('cart', 'product', 'date_start', 'date_end')
@@ -207,3 +212,7 @@ class RentalItem(Item):
 
         return tax
 
+
+class PurchaseItem(Item):
+    def calculate_cost(self):
+        pass
