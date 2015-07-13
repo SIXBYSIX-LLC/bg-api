@@ -16,9 +16,12 @@ class OrderTest(TestCase):
             location__city__name_std='Rajkot').order_by('?').first()
         prod2 = self.dataset.users[3].product_set.filter(
             location__city__name_std='Vadodara').order_by('?').first()
+        prod3 = self.dataset.users[2].product_set.filter(
+            location__city__name_std='Rajkot').order_by('?').first()
 
-        cart_factories.RentalItemFactory(cart=self.cart, product=prod1)
-        cart_factories.RentalItemFactory(cart=self.cart, product=prod2)
+        cart_factories.RentalItemFactory(cart=self.cart, product=prod1, is_postpaid=True)
+        cart_factories.RentalItemFactory(cart=self.cart, product=prod2, is_postpaid=False)
+        cart_factories.PurchaseItemFactory(cart=self.cart, product=prod3)
 
         self.cart.calculate_cost(force_item_calculation=True)
 
@@ -45,4 +48,4 @@ class OrderTest(TestCase):
         c = self.get_client(self.dataset.users[2])
         resp = c.get('/orderlines')
         self.assertEqual(resp.meta['count'], 1)
-        print resp
+        print list

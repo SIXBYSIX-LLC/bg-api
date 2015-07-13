@@ -10,6 +10,17 @@ from constants import Status as sts_const
 
 class OrderManager(BaseManager):
     def create_order(self, cart):
+
+        def check_shipping(item):
+            # Check if not any non-shippable item
+            if (item.is_shippable is False
+                and item.shipping_kind == ship_const.SHIPPING_DELIVERY):
+                raise errors.OrderError(*messages.ERR_NON_SHIPPABLE)
+
+            if not item.shipping_kind:
+                raise errors.OrderError(messages.ERR_MISS_SHIPPING_KIND[0] % item.product.name,
+                                        messages.ERR_MISS_SHIPPING_KIND[1])
+
         with transaction.atomic():
             # Creating order
             order = self.model(cart=cart, user=cart.user)
@@ -24,19 +35,14 @@ class OrderManager(BaseManager):
             # Creating RentalItem
             from catalog.serializers import ProductSerializer
 
+            # Rental Item
             for item in cart.rentalitem_set.all():
-                # Check if not any non-shippable item
-                if (item.is_shippable is False
-                    and item.shipping_kind == ship_const.SHIPPING_DELIVERY):
-                    raise errors.OrderError(*messages.ERR_NON_SHIPPABLE)
-
-                if not item.shipping_kind:
-                    raise errors.OrderError(messages.ERR_MISS_SHIPPING_KIND[0] % item.product.name,
-                                            messages.ERR_MISS_SHIPPING_KIND[1])
+                check_shipping(item)
 
                 orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
 
                 product_serializer = ProductSerializer(item.product)
+
                 rental_item = RentalItem.objects.create(
                     order=order,
                     orderline=orderline,
@@ -48,9 +54,30 @@ class OrderManager(BaseManager):
                     date_start=item.date_start,
                     date_end=item.date_end,
                     subtotal=item.subtotal,
-                    cost_breakup=item.cost_breakup
+                    cost_breakup=item.cost_breakup,
+                    is_postpaid=item.is_postpaid
                 )
                 rental_item.change_status(sts_const.NOT_CONFIRMED)
+
+            # Purchase Item
+            for item in cart.purchaseitem_set.all():
+                check_shipping(item)
+
+                orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
+
+                product_serializer = ProductSerializer(item.product)
+
+                PurchaseItem.objects.create(
+                    order=order,
+                    orderline=orderline,
+                    qty=item.qty,
+                    user=cart.user,
+                    shipping_kind=item.shipping_kind,
+                    detail=product_serializer.data,
+                    shipping_method=item.shipping_method.name if item.shipping_method else None,
+                    subtotal=item.subtotal,
+                    cost_breakup=item.cost_breakup
+                )
 
             # Make cart inactive
             cart.deactivate()
@@ -58,7 +85,6 @@ class OrderManager(BaseManager):
             # Calculate orderline cost
             for orderline in order.orderline_set.all():
                 orderline.calculate_cost()
-
         return order
 
 
@@ -84,7 +110,7 @@ class Order(BaseModel, DateTimeFieldMixin):
 
         # def cancel(self):
         # """
-        #     Cancel the whole order line
+        # Cancel the whole order line
         #
         #     :raise: OrderCancelError
         #     """
@@ -125,6 +151,14 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
         total = {'subtotal': 0.0, 'sales_tax': 0.0, 'shipping': 0.0}
 
         for item in self.rentalitem_set.all():
+            if item.is_postpaid:
+                continue
+
+            total['subtotal'] += item.subtotal
+            total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
+            total['shipping'] += item.cost_breakup['shipping']['amt']
+
+        for item in self.purchaseitem_set.all():
             total['subtotal'] += item.subtotal
             total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
             total['shipping'] += item.cost_breakup['shipping']['amt']
@@ -157,8 +191,6 @@ class Item(BaseModel):
     shipping_kind = models.CharField(max_length=20)
     #: Shipping method
     shipping_method = models.CharField(max_length=30, null=True)
-    #: Payment method, postpaid for now
-    payment_method = models.CharField(max_length=20, default='postpaid')
 
     class Meta(BaseModel.Meta):
         abstract = True
@@ -191,6 +223,12 @@ class RentalItem(Item):
     #: Rental period
     date_start = models.DateTimeField()
     date_end = models.DateTimeField()
+    #: Is payment is postpaid
+    is_postpaid = models.BooleanField()
+
+
+class PurchaseItem(Item):
+    pass
 
 
 class Status(BaseModel, DateTimeFieldMixin):

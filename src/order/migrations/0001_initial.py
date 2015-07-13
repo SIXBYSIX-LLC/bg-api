@@ -8,10 +8,10 @@ import djangofuture.contrib.postgres.fields.jsonb
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('cities', '__first__'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('cart', '0001_initial'),
         ('catalog', '0007_auto_20150707_1401'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('cart', '0003_purchaseitem_cost_breakup'),
+        ('cities', '__first__'),
     ]
 
     operations = [
@@ -56,6 +56,26 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='PurchaseItem',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True,
+                                        primary_key=True)),
+                ('detail', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
+                ('subtotal', models.FloatField()),
+                ('cost_breakup', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
+                ('qty', models.PositiveSmallIntegerField()),
+                ('shipping_kind', models.CharField(max_length=20)),
+                ('shipping_method', models.CharField(max_length=30, null=True)),
+                ('inventory', models.ForeignKey(default=None, to='catalog.Inventory', null=True)),
+                ('order', models.ForeignKey(to='order.Order')),
+                ('orderline', models.ForeignKey(to='order.OrderLine')),
+            ],
+            options={
+                'default_permissions': ('add', 'change', 'delete', 'view'),
+                'abstract': False,
+            },
+        ),
+        migrations.CreateModel(
             name='RentalItem',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True,
@@ -66,9 +86,9 @@ class Migration(migrations.Migration):
                 ('qty', models.PositiveSmallIntegerField()),
                 ('shipping_kind', models.CharField(max_length=20)),
                 ('shipping_method', models.CharField(max_length=30, null=True)),
-                ('payment_method', models.CharField(default=b'postpaid', max_length=20)),
                 ('date_start', models.DateTimeField()),
                 ('date_end', models.DateTimeField()),
+                ('is_postpaid', models.BooleanField()),
                 ('inventory', models.ForeignKey(default=None, to='catalog.Inventory', null=True)),
                 ('order', models.ForeignKey(to='order.Order')),
                 ('orderline', models.ForeignKey(to='order.OrderLine')),
@@ -109,6 +129,16 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='rentalitem',
+            name='user',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='purchaseitem',
+            name='statuses',
+            field=models.ManyToManyField(to='order.Status'),
+        ),
+        migrations.AddField(
+            model_name='purchaseitem',
             name='user',
             field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
