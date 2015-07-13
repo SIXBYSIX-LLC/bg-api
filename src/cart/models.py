@@ -108,6 +108,8 @@ class Item(BaseModel):
     is_shippable = models.BooleanField(default=False)
     #: Item quantity
     qty = models.PositiveSmallIntegerField(default=1)
+    #: Cost breakup
+    cost_breakup = pg_fields.JSONField(default={}, editable=False)
 
     class Meta(BaseModel.Meta):
         abstract = True
@@ -161,8 +163,6 @@ class RentalItem(Item):
     date_start = models.DateTimeField(validators=[validate_date_start])
     # Item to be returned
     date_end = models.DateTimeField()
-    #: Rent
-    cost_breakup = pg_fields.JSONField(default={}, editable=False)
     #: Should pay later?
     is_postpaid = models.BooleanField(default=False)
 
@@ -178,7 +178,7 @@ class RentalItem(Item):
         sales_taxable_amt = rent['amt'] + shipping['amt']
         sales_tax = self._calculate_sales_tax(sales_taxable_amt)
 
-        self.cost_breakup['rent'] = rent
+        self.cost_breakup['subtotal'] = rent
         self.cost_breakup['shipping'] = shipping
         self.cost_breakup['sales_tax'] = sales_tax
 
@@ -240,7 +240,7 @@ class PurchaseItem(Item):
         sales_taxable_amt = purchase['amt'] + shipping['amt']
         sales_tax = self._calculate_sales_tax(sales_taxable_amt)
 
-        self.cost_breakup['purchase'] = purchase
+        self.cost_breakup['subtotal'] = purchase
         self.cost_breakup['shipping'] = shipping
         self.cost_breakup['sales_tax'] = sales_tax
 
