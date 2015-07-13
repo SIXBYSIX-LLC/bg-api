@@ -23,16 +23,22 @@ class OrderLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     ownership_fields = ('user',)
 
 
-class RentalItem(NestedViewSetMixin, GenericViewSet):
+class Item(NestedViewSetMixin, GenericViewSet):
     queryset = RentalItem.objects.all()
 
     @detail_route(methods=['PUT'])
     def action_change_status(self, request, *args, **kwargs):
-        rental_item = self.get_object()
+        item = self.get_object()
 
         serializer = ChangeStatusSerializer(data=request.data)
         serializer.is_valid(True)
 
-        rental_item.change_status(serializer.data)
+        item.change_status(serializer.data)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @detail_route(methods=['PUT'])
+    def inventories(self, request, *args, **kwargs):
+        item = self.get_object()
+
+        item.add_inventories()

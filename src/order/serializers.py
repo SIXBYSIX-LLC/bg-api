@@ -1,5 +1,5 @@
 from common.serializers import ModelSerializer, rf_serializers, Serializer
-from .models import Order, RentalItem, OrderLine, PurchaseItem
+from .models import Order, OrderLine, Item, RentalItem
 from order import messages
 from order.errors import OrderError
 from usr.serializers import UserRefSerializer
@@ -9,12 +9,19 @@ from catalog.serializers import ProductRefSerializer
 
 
 class ItemSerializer(ModelSerializer):
+    class RentalItemSerializer(ModelSerializer):
+        class Meta:
+            model = RentalItem
+            fields = ('date_start', 'date_end', 'is_postpaid')
+
     current_status = rf_serializers.CharField(source='current_status.status')
     user = UserRefSerializer(source='user.profile')
+    rent_details = RentalItemSerializer(source='rentalitem', read_only=True)
 
     class Meta:
-        exclude = ('order', 'orderline', 'inventory')
-        depth = 1
+        model = Item
+        exclude = ('order', 'orderline', 'inventories', 'statuses')
+        depth = 2
 
 
 class ItemListSerializer(ItemSerializer):
@@ -29,29 +36,8 @@ class ItemListSerializer(ItemSerializer):
         depth = 0
 
 
-class RentalItemSerializer(ItemSerializer):
-    class Meta(ItemSerializer.Meta):
-        model = RentalItem
-
-
-class RentalItemListSerializer(RentalItemSerializer, ItemListSerializer):
-    class Meta(RentalItemSerializer.Meta, ItemListSerializer.Meta):
-        pass
-
-
-class PurchaseItemSerializer(ItemSerializer):
-    class Meta(ItemSerializer.Meta):
-        model = PurchaseItem
-
-
-class PurchaseItemListSerializer(ItemListSerializer, PurchaseItemSerializer):
-    class Meta(PurchaseItemSerializer.Meta, ItemListSerializer.Meta):
-        pass
-
-
 class OrderSerializer(ModelSerializer):
-    rental_items = RentalItemSerializer(many=True, source='rentalitem_set')
-    purchase_items = PurchaseItemSerializer(many=True, source='purchaseitem_set')
+    items = ItemSerializer(many=True, source='item_set')
     country = AddressListSerializer.CountryRefSerializer(read_only=True)
     state = AddressListSerializer.RegionRefSerializer(read_only=True)
     city = AddressListSerializer.CityRefSerializer(read_only=True)
@@ -74,8 +60,7 @@ class OrderSerializer(ModelSerializer):
 
 
 class OrderListSerializer(OrderSerializer):
-    rental_items = RentalItemListSerializer(many=True, source='rentalitem_set')
-    purchase_items = PurchaseItemListSerializer(many=True, source='purchaseitem_set')
+    items = ItemListSerializer(many=True, source='rentalitem_set')
 
 
 class OrderLineSerializer(ModelSerializer):
@@ -84,10 +69,9 @@ class OrderLineSerializer(ModelSerializer):
 
         class Meta:
             model = Order
-            exclude = ('cart', 'rental_items')
+            exclude = ('cart', 'items', 'total')
 
-    rental_items = RentalItemSerializer(many=True, source='rentalitem_set')
-    purchase_items = PurchaseItemSerializer(many=True, source='purchaseitem_set')
+    items = ItemSerializer(many=True, source='item_set')
     order = OrderRefSerializer()
 
     class Meta:
@@ -95,8 +79,7 @@ class OrderLineSerializer(ModelSerializer):
 
 
 class OrderLineListSerializer(OrderLineSerializer):
-    rental_items = RentalItemListSerializer(many=True, source='rentalitem_set')
-    purchase_items = PurchaseItemListSerializer(many=True, source='purchaseitem_set')
+    items = ItemListSerializer(many=True, source='item_set')
 
 
 class ChangeStatusSerializer(Serializer):

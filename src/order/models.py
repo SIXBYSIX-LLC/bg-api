@@ -1,5 +1,6 @@
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
+from model_utils.managers import InheritanceManager
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from order.errors import ChangeStatusError
@@ -67,7 +68,7 @@ class OrderManager(BaseManager):
 
                 product_serializer = ProductSerializer(item.product)
 
-                PurchaseItem.objects.create(
+                purchase_item = PurchaseItem.objects.create(
                     order=order,
                     orderline=orderline,
                     qty=item.qty,
@@ -78,6 +79,7 @@ class OrderManager(BaseManager):
                     subtotal=item.subtotal,
                     cost_breakup=item.cost_breakup
                 )
+                purchase_item.change_status(sts_const.NOT_CONFIRMED)
 
             # Make cart inactive
             cart.deactivate()
@@ -108,31 +110,13 @@ class Order(BaseModel, DateTimeFieldMixin):
         db_table = 'order'
         ordering = ['-id']
 
-        # def cancel(self):
-        # """
-        # Cancel the whole order line
-        #
-        #     :raise: OrderCancelError
-        #     """
-        #     signals.orderline_pre_cancel.send(instance=self)
-        #
-        #     is_cancel_request = False
-        #     for rental_item in self.rentalitem_set.all():
-        #         try:
-        #             rental_item.cancel()
-        #         except OrderCancelError:
-        #             is_cancel_request = True
-        #
-        #     if is_cancel_request is False:
-        #         self.statuses.add(Status.objects.create(status=constants.STATUS_CANCEL))
-        #         signals.orderline_post_cancel.send(instance=self)
-        #     else:
-        #         self.statuses.add(
-        #             Status.objects.create(
-        #                 status=constants.STATUS_CANCEL_REQUEST, comment=messages.COMMENT_CANCEL
-        #             )
-        #         )
-        #         raise OrderCancelError(*messages.ERR_CANCEL_ITEM_DISPATCHED)
+    @property
+    def rentalitem_set(self):
+        return RentalItem.objects.filter(order=self)
+
+    @property
+    def purchaseitem_set(self):
+        return PurchaseItem.objects.filter(order=self)
 
 
 class OrderLine(BaseModel, DateTimeFieldMixin):
@@ -150,15 +134,11 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
     def calculate_cost(self):
         total = {'subtotal': 0.0, 'sales_tax': 0.0, 'shipping': 0.0}
 
-        for item in self.rentalitem_set.all():
-            if item.is_postpaid:
-                continue
+        for item in self.item_set.select_related('rentalitem').all():
+            if getattr(item, 'rentalitem', None):
+                if item.rentalitem.is_postpaid:
+                    continue
 
-            total['subtotal'] += item.subtotal
-            total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
-            total['shipping'] += item.cost_breakup['shipping']['amt']
-
-        for item in self.purchaseitem_set.all():
             total['subtotal'] += item.subtotal
             total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
             total['shipping'] += item.cost_breakup['shipping']['amt']
@@ -168,6 +148,14 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
         self.total = total
         self.save(update_fields=['total'])
 
+    @property
+    def rentalitem_set(self):
+        return RentalItem.objects.filter(orderline=self)
+
+    @property
+    def purchaseitem_set(self):
+        return PurchaseItem.objects.filter(orderline=self)
+
 
 class Item(BaseModel):
     #: Reference to order
@@ -176,7 +164,7 @@ class Item(BaseModel):
     #: The user who has ordered
     user = models.ForeignKey('miniauth.User')
     #: Inventory that is assigned to the item
-    inventory = models.ForeignKey('catalog.Inventory', null=True, default=None)
+    inventories = models.ManyToManyField('catalog.Inventory')
     #: Product detail, copied from cart rental item
     detail = pg_fields.JSONField()
     #: Item status
@@ -192,14 +180,13 @@ class Item(BaseModel):
     #: Shipping method
     shipping_method = models.CharField(max_length=30, null=True)
 
-    class Meta(BaseModel.Meta):
-        abstract = True
+    objects = InheritanceManager()
 
     @property
     def current_status(self):
         return self.statuses.last()
 
-    def change_status(self, status, comment=None):
+    def change_status(self, status, comment=None, **kwargs):
         """
         Change item status
 
@@ -217,6 +204,12 @@ class Item(BaseModel):
         self.statuses.add(Status.objects.create(status=status, comment=comment))
 
         signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
+
+    def add_inventories(self, *inventory):
+        self.inventories.update(is_available=True)
+        self.inventories.clear()
+
+        self.inventories.add(*inventory)
 
 
 class RentalItem(Item):

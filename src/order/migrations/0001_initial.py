@@ -8,13 +8,30 @@ import djangofuture.contrib.postgres.fields.jsonb
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('catalog', '0007_auto_20150707_1401'),
+        ('cities', '__first__'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('cart', '0003_purchaseitem_cost_breakup'),
-        ('cities', '__first__'),
+        ('catalog', '0007_auto_20150707_1401'),
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='Item',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True,
+                                        primary_key=True)),
+                ('detail', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
+                ('subtotal', models.FloatField()),
+                ('cost_breakup', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
+                ('qty', models.PositiveSmallIntegerField()),
+                ('shipping_kind', models.CharField(max_length=20)),
+                ('shipping_method', models.CharField(max_length=30, null=True)),
+            ],
+            options={
+                'default_permissions': ('add', 'change', 'delete', 'view'),
+                'abstract': False,
+            },
+        ),
         migrations.CreateModel(
             name='Order',
             fields=[
@@ -56,49 +73,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='PurchaseItem',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True,
-                                        primary_key=True)),
-                ('detail', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
-                ('subtotal', models.FloatField()),
-                ('cost_breakup', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
-                ('qty', models.PositiveSmallIntegerField()),
-                ('shipping_kind', models.CharField(max_length=20)),
-                ('shipping_method', models.CharField(max_length=30, null=True)),
-                ('inventory', models.ForeignKey(default=None, to='catalog.Inventory', null=True)),
-                ('order', models.ForeignKey(to='order.Order')),
-                ('orderline', models.ForeignKey(to='order.OrderLine')),
-            ],
-            options={
-                'default_permissions': ('add', 'change', 'delete', 'view'),
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
-            name='RentalItem',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True,
-                                        primary_key=True)),
-                ('detail', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
-                ('subtotal', models.FloatField()),
-                ('cost_breakup', djangofuture.contrib.postgres.fields.jsonb.JSONField()),
-                ('qty', models.PositiveSmallIntegerField()),
-                ('shipping_kind', models.CharField(max_length=20)),
-                ('shipping_method', models.CharField(max_length=30, null=True)),
-                ('date_start', models.DateTimeField()),
-                ('date_end', models.DateTimeField()),
-                ('is_postpaid', models.BooleanField()),
-                ('inventory', models.ForeignKey(default=None, to='catalog.Inventory', null=True)),
-                ('order', models.ForeignKey(to='order.Order')),
-                ('orderline', models.ForeignKey(to='order.OrderLine')),
-            ],
-            options={
-                'default_permissions': ('add', 'change', 'delete', 'view'),
-                'abstract': False,
-            },
-        ),
-        migrations.CreateModel(
             name='Status',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True,
@@ -122,23 +96,57 @@ class Migration(migrations.Migration):
                 'abstract': False,
             },
         ),
+        migrations.CreateModel(
+            name='PurchaseItem',
+            fields=[
+                ('item_ptr',
+                 models.OneToOneField(parent_link=True, auto_created=True, primary_key=True,
+                                      serialize=False, to='order.Item')),
+            ],
+            options={
+                'default_permissions': ('add', 'change', 'delete', 'view'),
+                'abstract': False,
+            },
+            bases=('order.item',),
+        ),
+        migrations.CreateModel(
+            name='RentalItem',
+            fields=[
+                ('item_ptr',
+                 models.OneToOneField(parent_link=True, auto_created=True, primary_key=True,
+                                      serialize=False, to='order.Item')),
+                ('date_start', models.DateTimeField()),
+                ('date_end', models.DateTimeField()),
+                ('is_postpaid', models.BooleanField()),
+            ],
+            options={
+                'default_permissions': ('add', 'change', 'delete', 'view'),
+                'abstract': False,
+            },
+            bases=('order.item',),
+        ),
         migrations.AddField(
-            model_name='rentalitem',
+            model_name='item',
+            name='inventories',
+            field=models.ManyToManyField(to='catalog.Inventory'),
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='order',
+            field=models.ForeignKey(to='order.Order'),
+        ),
+        migrations.AddField(
+            model_name='item',
+            name='orderline',
+            field=models.ForeignKey(to='order.OrderLine'),
+        ),
+        migrations.AddField(
+            model_name='item',
             name='statuses',
             field=models.ManyToManyField(to='order.Status'),
         ),
         migrations.AddField(
-            model_name='rentalitem',
-            name='user',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='purchaseitem',
-            name='statuses',
-            field=models.ManyToManyField(to='order.Status'),
-        ),
-        migrations.AddField(
-            model_name='purchaseitem',
+            model_name='item',
             name='user',
             field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
