@@ -18,7 +18,10 @@ class CartManager(BaseManager):
 
 
 class Cart(BaseModel, DateTimeFieldMixin):
-    rental_products = models.ManyToManyField('catalog.Product', through='RentalItem')
+    rental_products = models.ManyToManyField('catalog.Product', through='RentalItem',
+                                             related_name='+')
+    purchase_products = models.ManyToManyField('catalog.Product', through='PurchaseItem',
+                                               related_name='+')
     #: Shipping Location
     location = models.ForeignKey('usr.Address', null=True, default=None)
     #: Cart owner
@@ -42,8 +45,19 @@ class Cart(BaseModel, DateTimeFieldMixin):
         """
         total = {'subtotal': 0.0, 'sales_tax': 0.0, 'shipping': 0.0}
 
-        # Count products
+        # Count rental products
         for item in self.rentalitem_set.all():
+            if force_item_calculation is True:
+                item.calculate_cost()
+            if item.is_postpaid is True:
+                continue
+
+            total['subtotal'] += item.subtotal
+            total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
+            total['shipping'] += item.shipping_cost
+
+        # Count purchase products
+        for item in self.purchaseitem_set.all():
             if force_item_calculation is True:
                 item.calculate_cost()
 
@@ -103,7 +117,43 @@ class Item(BaseModel):
         return self.product.get_standard_shipping_method(self.cart.location)
 
     def calculate_cost(self):
+        """
+        Override this method
+        """
         raise NotImplementedError
+
+    def _calculate_shipping_cost(self):
+        data = {'amt': 0.0}
+
+        if self.shipping_kind == ship_const.SHIPPING_PICKUP:
+            L.info('Shipping cost', extra=data)
+            return data
+        if self.is_shippable is False:
+            L.info('Item is not shippable', extra={
+                'cart': self.cart_id, 'product': self.product_id
+            })
+            return data
+
+        # Shipping standard method
+        data['amt'] = round(self.shipping_method.cost * self.qty, 2)
+        data['method'] = 'standard_shipping'
+        data['id'] = self.shipping_method.id
+
+        L.info('Shipping cost', extra=data)
+
+        return data
+
+    def _calculate_sales_tax(self, amt):
+        tax = {'pct': 0, 'amt': 0.0}
+        sales_tax = self.cart.get_sales_tax()
+
+        if sales_tax:
+            tax['taxable_amt'] = amt
+            tax['id'] = sales_tax.id
+            tax['pct'] = sales_tax.value
+            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
+
+        return tax
 
 
 class RentalItem(Item):
@@ -136,27 +186,6 @@ class RentalItem(Item):
         self.shipping_cost = shipping['amt']
 
         self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
-
-    def _calculate_shipping_cost(self):
-        data = {'amt': 0.0}
-
-        if self.shipping_kind == ship_const.SHIPPING_PICKUP:
-            L.info('Shipping cost', extra=data)
-            return data
-        if self.is_shippable is False:
-            L.info('Item is not shippable', extra={
-                'cart': self.cart_id, 'product': self.product_id
-            })
-            return data
-
-        # Shipping standard method
-        data['amt'] = round(self.shipping_method.cost * self.qty, 2)
-        data['method'] = 'standard_shipping'
-        data['id'] = self.shipping_method.id
-
-        L.info('Shipping cost', extra=data)
-
-        return data
 
     def _calculate_rent(self):
         """
@@ -200,19 +229,22 @@ class RentalItem(Item):
 
         return data
 
-    def _calculate_sales_tax(self, amt):
-        tax = {'pct': 0, 'amt': 0.0}
-        sales_tax = self.cart.get_sales_tax()
-
-        if sales_tax:
-            tax['taxable_amt'] = amt
-            tax['id'] = sales_tax.id
-            tax['pct'] = sales_tax.value
-            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
-
-        return tax
-
 
 class PurchaseItem(Item):
     def calculate_cost(self):
-        pass
+        """
+        Calculates the cost of item, shipping (according to qty) and sales tax
+        """
+        purchase = {'amt': self.product.sell_price}
+        shipping = self._calculate_shipping_cost()
+        sales_taxable_amt = purchase['amt'] + shipping['amt']
+        sales_tax = self._calculate_sales_tax(sales_taxable_amt)
+
+        self.cost_breakup['purchase'] = purchase
+        self.cost_breakup['shipping'] = shipping
+        self.cost_breakup['sales_tax'] = sales_tax
+
+        self.subtotal = purchase['amt']
+        self.shipping_cost = shipping['amt']
+
+        self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
