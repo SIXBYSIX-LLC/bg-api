@@ -3,7 +3,6 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import InheritanceManager
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
-from common.errors import ChangeStatusError
 from shipping import constants as ship_const
 from . import messages, signals
 from common import errors
@@ -198,9 +197,14 @@ class Item(BaseModel):
         old_status = self.current_status
         signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
 
+        # Check if new status can be changed from old status
         changeable_to = Status.CHANGEABLE_TO.get(getattr(self.current_status, 'status', None), [])
         if self.current_status and status not in changeable_to:
-            raise ChangeStatusError(*messages.ERR_NOT_CHANGEABLE)
+            raise errors.ChangeStatusError(*messages.ERR_NOT_CHANGEABLE)
+
+        # Validate and modify if new status is approved
+        if status == sts_const.APPROVED:
+            self.__change_status_approve()
 
         self.statuses.add(Status.objects.create(status=status, comment=comment))
 
@@ -220,6 +224,10 @@ class Item(BaseModel):
 
         self.inventories.add(*inventories)
         self.inventories.update(is_active=False)
+
+    def __change_status_approve(self):
+        if self.inventories.count() != self.qty:
+            raise errors.ChangeStatusError(*messages.ERR_NO_INVENTORIES)
 
 
 class RentalItem(Item):

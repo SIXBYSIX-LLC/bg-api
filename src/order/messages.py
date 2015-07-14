@@ -9,3 +9,4 @@ ERR_CANCEL_ITEM_DISPATCHED = _("This item cannot be cancelled as it's been dispa
 ERR_INVALID_STATUS = _("Invalid status"), 7201
 ERR_NOT_CHANGEABLE = _("Current status is not changeable to this status"), 7202
 ERR_INACTIVE_INVENTORY = _('This inventory is already occupied'), 7301
+ERR_NO_INVENTORIES = _('You cannot approve the order item until you assign the inventories'), 7102
