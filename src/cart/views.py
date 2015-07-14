@@ -2,8 +2,8 @@ from rest_framework.decorators import list_route
 from rest_framework.mixins import UpdateModelMixin, CreateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 
-from cart.models import RentalItem
-from cart.serializers import CartSerializer, RentalProductSerializer
+from cart.models import RentalItem, PurchaseItem
+from cart.serializers import CartSerializer, RentalProductSerializer, PurchaseProductSerializer
 from common.viewsets import GenericViewSet, NestedViewSetMixin
 from .models import Cart
 
@@ -39,3 +39,8 @@ class RentalItemViewSet(NestedViewSetMixin, GenericViewSet, CreateModelMixin, De
         request.data.update(**self.get_parents_query_dict())
 
         return super(RentalItemViewSet, self).partial_update(request, *args, **kwargs)
+
+
+class PurchaseItemViewSet(RentalItemViewSet):
+    queryset = PurchaseItem.objects.all()
+    serializer_class = PurchaseProductSerializer

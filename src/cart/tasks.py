@@ -1,9 +1,10 @@
 from django.db.models.signals import pre_save, post_delete
 
-from cart.models import RentalItem
+from cart.models import RentalItem, PurchaseItem
 from common.dispatch import receiver
 
 
+@receiver(pre_save, sender=PurchaseItem)
 @receiver(pre_save, sender=RentalItem)
 def is_shippable(sender, **kwargs):
     """
@@ -18,6 +19,7 @@ def is_shippable(sender, **kwargs):
 
 
 @receiver(post_delete, sender=RentalItem)
+@receiver(post_delete, sender=PurchaseItem)
 def update_cart_cost_on_rental_removed(sender, **kwargs):
     rental_item = kwargs.get('instance')
     rental_item.cart.calculate_cost(force_item_calculation=False)

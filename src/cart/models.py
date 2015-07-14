@@ -18,7 +18,10 @@ class CartManager(BaseManager):
 
 
 class Cart(BaseModel, DateTimeFieldMixin):
-    rental_products = models.ManyToManyField('catalog.Product', through='RentalItem')
+    rental_products = models.ManyToManyField('catalog.Product', through='RentalItem',
+                                             related_name='+')
+    purchase_products = models.ManyToManyField('catalog.Product', through='PurchaseItem',
+                                               related_name='+')
     #: Shipping Location
     location = models.ForeignKey('usr.Address', null=True, default=None)
     #: Cart owner
@@ -42,8 +45,19 @@ class Cart(BaseModel, DateTimeFieldMixin):
         """
         total = {'subtotal': 0.0, 'sales_tax': 0.0, 'shipping': 0.0}
 
-        # Count products
+        # Count rental products
         for item in self.rentalitem_set.all():
+            if force_item_calculation is True:
+                item.calculate_cost()
+            if item.is_postpaid is True:
+                continue
+
+            total['subtotal'] += item.subtotal
+            total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
+            total['shipping'] += item.shipping_cost
+
+        # Count purchase products
+        for item in self.purchaseitem_set.all():
             if force_item_calculation is True:
                 item.calculate_cost()
 
@@ -92,8 +106,10 @@ class Item(BaseModel):
     subtotal = ex_fields.FloatField(min_value=0.0, max_value=99999999, precision=2, default=0)
     #: Is the is product shippable to cart location
     is_shippable = models.BooleanField(default=False)
-    # Item quantity
+    #: Item quantity
     qty = models.PositiveSmallIntegerField(default=1)
+    #: Cost breakup
+    cost_breakup = pg_fields.JSONField(default={}, editable=False)
 
     class Meta(BaseModel.Meta):
         abstract = True
@@ -102,35 +118,11 @@ class Item(BaseModel):
     def shipping_method(self):
         return self.product.get_standard_shipping_method(self.cart.location)
 
-
-class RentalItem(Item):
-    # Item to be delivered by
-    date_start = models.DateTimeField(validators=[validate_date_start])
-    # Item to be returned
-    date_end = models.DateTimeField()
-    #: Rent
-    cost_breakup = pg_fields.JSONField(default={}, editable=False)
-
-    class Meta(Item.Meta):
-        unique_together = ('cart', 'product', 'date_start', 'date_end')
-
     def calculate_cost(self):
         """
-        Calculates the cost of rent, shipping (according to qty) and sales tax
+        Override this method
         """
-        rent = self._calculate_rent()
-        shipping = self._calculate_shipping_cost()
-        sales_taxable_amt = rent['amt'] + shipping['amt']
-        sales_tax = self._calculate_sales_tax(sales_taxable_amt)
-
-        self.cost_breakup['rent'] = rent
-        self.cost_breakup['shipping'] = shipping
-        self.cost_breakup['sales_tax'] = sales_tax
-
-        self.subtotal = rent['amt']
-        self.shipping_cost = shipping['amt']
-
-        self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
+        raise NotImplementedError
 
     def _calculate_shipping_cost(self):
         data = {'amt': 0.0}
@@ -152,6 +144,48 @@ class RentalItem(Item):
         L.info('Shipping cost', extra=data)
 
         return data
+
+    def _calculate_sales_tax(self, amt):
+        tax = {'pct': 0, 'amt': 0.0}
+        sales_tax = self.cart.get_sales_tax()
+
+        if sales_tax:
+            tax['taxable_amt'] = amt
+            tax['id'] = sales_tax.id
+            tax['pct'] = sales_tax.value
+            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
+
+        return tax
+
+
+class RentalItem(Item):
+    # Item to be delivered by
+    date_start = models.DateTimeField(validators=[validate_date_start])
+    # Item to be returned
+    date_end = models.DateTimeField()
+    #: Should pay later?
+    is_postpaid = models.BooleanField(default=False)
+
+    class Meta(Item.Meta):
+        unique_together = ('cart', 'product', 'date_start', 'date_end')
+
+    def calculate_cost(self):
+        """
+        Calculates the cost of rent, shipping (according to qty) and sales tax
+        """
+        rent = self._calculate_rent()
+        shipping = self._calculate_shipping_cost()
+        sales_taxable_amt = rent['amt'] + shipping['amt']
+        sales_tax = self._calculate_sales_tax(sales_taxable_amt)
+
+        self.cost_breakup['subtotal'] = rent
+        self.cost_breakup['shipping'] = shipping
+        self.cost_breakup['sales_tax'] = sales_tax
+
+        self.subtotal = rent['amt']
+        self.shipping_cost = shipping['amt']
+
+        self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])
 
     def _calculate_rent(self):
         """
@@ -195,15 +229,22 @@ class RentalItem(Item):
 
         return data
 
-    def _calculate_sales_tax(self, amt):
-        tax = {'pct': 0, 'amt': 0.0}
-        sales_tax = self.cart.get_sales_tax()
 
-        if sales_tax:
-            tax['taxable_amt'] = amt
-            tax['id'] = sales_tax.id
-            tax['pct'] = sales_tax.value
-            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
+class PurchaseItem(Item):
+    def calculate_cost(self):
+        """
+        Calculates the cost of item, shipping (according to qty) and sales tax
+        """
+        purchase = {'amt': self.product.sell_price}
+        shipping = self._calculate_shipping_cost()
+        sales_taxable_amt = purchase['amt'] + shipping['amt']
+        sales_tax = self._calculate_sales_tax(sales_taxable_amt)
 
-        return tax
+        self.cost_breakup['subtotal'] = purchase
+        self.cost_breakup['shipping'] = shipping
+        self.cost_breakup['sales_tax'] = sales_tax
 
+        self.subtotal = purchase['amt']
+        self.shipping_cost = shipping['amt']
+
+        self.save(update_fields=['cost_breakup', 'shipping_cost', 'subtotal'])

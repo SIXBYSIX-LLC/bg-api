@@ -69,6 +69,7 @@ class Command(BaseCommand):
             Permission.objects.get(codename='change_order'),
             Permission.objects.get(codename='view_orderline'),
             Permission.objects.get(codename='change_orderline'),
+            Permission.objects.get(codename='change_item', content_type__app_label='order'),
         )
 
         # Assign device group permission

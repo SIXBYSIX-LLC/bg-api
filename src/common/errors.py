@@ -25,3 +25,22 @@ class ValidationError(APIException):
 
 class NotFound(APIException):
     status_code = 404
+
+
+class OrderError(APIException):
+    """
+    This includes all kind of validation errors
+    """
+    status_code = 422
+
+
+class OrderCancelError(OrderError):
+    pass
+
+
+class ChangeStatusError(APIException):
+    pass
+
+
+class InventoryError(APIException):
+    status_code = 422

@@ -1,22 +1,33 @@
-from common.serializers import ModelSerializer
-from .models import Order, RentalItem, OrderLine
+from rest_framework.exceptions import PermissionDenied
+
+from catalog.models import Inventory
+from common.serializers import ModelSerializer, rf_serializers, Serializer
+from .models import Order, OrderLine, Item, RentalItem
 from order import messages
-from order.errors import OrderError
+from common.errors import OrderError
 from usr.serializers import UserRefSerializer
 from usr.serializers import AddressListSerializer
-
 from catalog.serializers import ProductRefSerializer
+from constants import Status as sts_const
 
 
-class RentalItemSerializer(ModelSerializer):
+class ItemSerializer(ModelSerializer):
+    class RentalItemSerializer(ModelSerializer):
+        class Meta:
+            model = RentalItem
+            fields = ('date_start', 'date_end', 'is_postpaid')
+
+    current_status = rf_serializers.CharField(source='current_status.status')
     user = UserRefSerializer(source='user.profile')
+    rent_details = RentalItemSerializer(source='rentalitem', read_only=True)
 
     class Meta:
-        model = RentalItem
-        exclude = ('order', 'orderline', 'inventory')
+        model = Item
+        exclude = ('order', 'orderline', 'inventories', 'statuses')
+        depth = 2
 
 
-class RentalItemListSerializer(RentalItemSerializer):
+class ItemListSerializer(ItemSerializer):
     class DetailSerializer(ProductRefSerializer):
         class Meta(ProductRefSerializer.Meta):
             fields = ('id', 'name', 'daily_price', 'sell_price', 'weekly_price', 'monthly_price',
@@ -24,9 +35,12 @@ class RentalItemListSerializer(RentalItemSerializer):
 
     detail = DetailSerializer()
 
+    class Meta(ItemSerializer.Meta):
+        depth = 0
+
 
 class OrderSerializer(ModelSerializer):
-    rental_items = RentalItemSerializer(many=True, source='rentalitem_set')
+    items = ItemSerializer(many=True, source='item_set')
     country = AddressListSerializer.CountryRefSerializer(read_only=True)
     state = AddressListSerializer.RegionRefSerializer(read_only=True)
     city = AddressListSerializer.CityRefSerializer(read_only=True)
@@ -49,7 +63,7 @@ class OrderSerializer(ModelSerializer):
 
 
 class OrderListSerializer(OrderSerializer):
-    rental_items = RentalItemListSerializer(many=True, source='rentalitem_set')
+    items = ItemListSerializer(many=True, source='rentalitem_set')
 
 
 class OrderLineSerializer(ModelSerializer):
@@ -58,9 +72,9 @@ class OrderLineSerializer(ModelSerializer):
 
         class Meta:
             model = Order
-            exclude = ('cart', 'rental_items')
+            exclude = ('cart', 'items', 'total')
 
-    rental_items = RentalItemSerializer(many=True, source='rentalitem_set')
+    items = ItemSerializer(many=True, source='item_set')
     order = OrderRefSerializer()
 
     class Meta:
@@ -68,4 +82,35 @@ class OrderLineSerializer(ModelSerializer):
 
 
 class OrderLineListSerializer(OrderLineSerializer):
-    rental_items = RentalItemListSerializer(many=True, source='rentalitem_set')
+    items = ItemListSerializer(many=True, source='item_set')
+
+
+class ChangeStatusSerializer(Serializer):
+    status = rf_serializers.CharField()
+    comment = rf_serializers.CharField(required=False)
+
+    def validate(self, validated_data):
+        item = self.context['item']
+        request = self.context['request']
+        user = request.parent_user or request.user
+
+        # Ensure that order user can only change status to cancel and delivered status
+        if item.order.user == user:
+            if validated_data['status'] not in [sts_const.CANCEL, sts_const.DELIVERED]:
+                raise PermissionDenied
+
+        return validated_data
+
+
+class AddInventorySerializer(Serializer):
+    inventories = rf_serializers.PrimaryKeyRelatedField(many=True,
+                                                        queryset=Inventory.objects.all())
+
+    def create(self, validated_data):
+        item = self.context['item']
+
+        item.inventories.update(is_active=True)
+        item.inventories.clear()
+
+        item.add_inventories(*validated_data.get('inventories'))
+        return item
