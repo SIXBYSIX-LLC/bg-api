@@ -150,4 +150,4 @@ class CartTestCase(TestCase):
         product = ProductFactory()
         new_rental = RentalItemBaseFactory(product=product.id)
         resp = self.user_client.post('/carts/%s/purchases' % cart_id, data=new_rental)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED, resp)

@@ -77,7 +77,6 @@ class OrderTest(TestCase):
 
         c = self.get_client(self.dataset.users[1])
         order_resp = c.post('/orders', data={'cart': self.cart.id})
-
         c = self.get_client(self.dataset.users[2])
         resp = c.get('/orderlines')
         orderline_id = resp.data[0]['id']
@@ -92,10 +91,10 @@ class OrderTest(TestCase):
 
         c.put('/orderlines/%s/items/%s/inventories' % (orderline_id, item_id), data=data)
 
-        return orderline_id, item_id
+        return orderline_id, item_id, order_resp.data['id']
 
     def test_seller_change_approved_status(self):
-        orderline_id, item_id = self.data_test_for_change_status()
+        orderline_id, item_id, order_id = self.data_test_for_change_status()
 
         c = self.get_client(self.dataset.users[2])
         resp = c.put('/orderlines/%s/items/%s/actions/change_status' % (orderline_id, item_id),
@@ -108,7 +107,7 @@ class OrderTest(TestCase):
         Ensures user should not be able to change to approved status
         """
 
-        orderline_id, item_id = self.data_test_for_change_status()
+        orderline_id, item_id, order_id = self.data_test_for_change_status()
 
         c = self.get_client(self.dataset.users[1])
         resp = c.put('/orderlines/%s/items/%s/actions/change_status' % (orderline_id, item_id),
@@ -116,15 +115,14 @@ class OrderTest(TestCase):
 
         self.assertEqual(resp.status_code, self.status_code.HTTP_403_FORBIDDEN)
 
-        c = self.get_client(self.dataset.users[1])
-        resp = c.put('/orders/%s/items/%s/actions/change_status' % (orderline_id, item_id),
+        resp = c.put('/orders/%s/items/%s/actions/change_status' % (order_id, item_id),
                      data={'status': sts_const.APPROVED})
         self.assertEqual(resp.status_code, self.status_code.HTTP_403_FORBIDDEN)
 
     def test_user_cancel(self):
-        orderline_id, item_id = self.data_test_for_change_status()
+        orderline_id, item_id, order_id = self.data_test_for_change_status()
 
         c = self.get_client(self.dataset.users[1])
-        resp = c.put('/orders/%s/items/%s/actions/change_status' % (orderline_id, item_id),
+        resp = c.put('/orders/%s/items/%s/actions/change_status' % (order_id, item_id),
                      data={'status': sts_const.CANCEL})
         self.assertEqual(resp.status_code, self.status_code.HTTP_204_NO_CONTENT)

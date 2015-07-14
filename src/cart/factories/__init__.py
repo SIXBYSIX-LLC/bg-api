@@ -19,6 +19,9 @@ class RentalItemBaseFactory(factory.DictFactory):
             start_date=dateutil.parser.parse(o.date_start) + timedelta(days=3),
             end_date="+60d").isoformat()
     )
+    shipping_kind = factory.lazy_attribute(
+        lambda x: fuzzy.FuzzyChoice(RentalItem.SHIPPING_KIND).fuzz()[0]
+    )
 
 
 class ItemFactory(factory.DjangoModelFactory):
