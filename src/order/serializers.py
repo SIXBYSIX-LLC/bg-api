@@ -1,3 +1,5 @@
+from rest_framework.exceptions import PermissionDenied
+
 from catalog.models import Inventory
 from common.serializers import ModelSerializer, rf_serializers, Serializer
 from .models import Order, OrderLine, Item, RentalItem
@@ -5,8 +7,8 @@ from order import messages
 from common.errors import OrderError
 from usr.serializers import UserRefSerializer
 from usr.serializers import AddressListSerializer
-
 from catalog.serializers import ProductRefSerializer
+from constants import Status as sts_const
 
 
 class ItemSerializer(ModelSerializer):
@@ -86,6 +88,18 @@ class OrderLineListSerializer(OrderLineSerializer):
 class ChangeStatusSerializer(Serializer):
     status = rf_serializers.CharField()
     comment = rf_serializers.CharField(required=False)
+
+    def validate(self, validated_data):
+        item = self.context['item']
+        request = self.context['request']
+        user = request.parent_user or request.user
+
+        # Ensure that order user can only change status to cancel and delivered status
+        if item.order.user == user:
+            if validated_data['status'] not in [sts_const.CANCEL, sts_const.DELIVERED]:
+                raise PermissionDenied
+
+        return validated_data
 
 
 class AddInventorySerializer(Serializer):

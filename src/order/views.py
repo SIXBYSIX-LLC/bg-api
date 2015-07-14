@@ -29,11 +29,11 @@ class ItemViewSet(NestedViewSetMixin, GenericViewSet):
     @detail_route(methods=['PUT'])
     def action_change_status(self, request, *args, **kwargs):
         item = self.get_object()
-
-        serializer = ChangeStatusSerializer(data=request.data)
+        serializer = ChangeStatusSerializer(data=request.data, context={'request': request,
+                                                                        'item': item})
         serializer.is_valid(True)
 
-        item.change_status(serializer.data)
+        item.change_status(**serializer.data)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

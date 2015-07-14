@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import InheritanceManager
@@ -7,6 +9,8 @@ from shipping import constants as ship_const
 from . import messages, signals
 from common import errors
 from constants import Status as sts_const
+
+L = logging.getLogger('bgapi.' + __name__)
 
 
 class OrderManager(BaseManager):
@@ -194,12 +198,18 @@ class Item(BaseModel):
         :param comment: Comment if any
         :raise ChangeStatusError:
         """
-        old_status = self.current_status
-        signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
+        old_status_obj = self.current_status
+        old_status = getattr(old_status_obj, 'status', None)
+
+        signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status_obj)
+        L.debug('Changing status', extra={'new_status': status, 'old_status': old_status})
 
         # Check if new status can be changed from old status
-        changeable_to = Status.CHANGEABLE_TO.get(getattr(self.current_status, 'status', None), [])
+        changeable_to = Status.CHANGEABLE_TO.get(old_status, [])
+
         if self.current_status and status not in changeable_to:
+            L.warning('Cannot change to new status',
+                      extra={'changeable_to': changeable_to, 'new_status': status, 'item': self.id})
             raise errors.ChangeStatusError(*messages.ERR_NOT_CHANGEABLE)
 
         # Validate and modify if new status is approved
@@ -220,6 +230,7 @@ class Item(BaseModel):
         """
         for inventory in inventories:
             if inventory.is_active is False:
+                L.warning('Trying to add pre-occupied inventory')
                 raise errors.InventoryError(*messages.ERR_INACTIVE_INVENTORY)
 
         self.inventories.add(*inventories)
