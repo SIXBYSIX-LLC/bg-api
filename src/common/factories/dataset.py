@@ -24,10 +24,16 @@ class TestDataSet(object):
             srt = self.add_address(user, 'Surat')[0]
             rjt = self.add_address(user, 'Rajkot')[0]
 
-            self.products += self.add_product(user, ahm, 5)
-            self.products += self.add_product(user, vad, 5)
-            self.products += self.add_product(user, srt, 5)
-            self.products += self.add_product(user, rjt, 5)
+            prods_ahm = self.add_product(user, ahm, 5)
+            prods_vad = self.add_product(user, vad, 5)
+            prods_srt = self.add_product(user, srt, 5)
+            prods_rjt = self.add_product(user, rjt, 5)
+
+            self.products += prods_ahm
+            self.products += prods_vad
+            self.products += prods_srt
+            self.products += prods_rjt
+
 
             # Rajkot to Rajkot
             shp_factories.StandardMethodFactory(origin=rjt,
@@ -55,6 +61,9 @@ class TestDataSet(object):
                                                 zipcode_end=396510,
                                                 cost=fuzzy.FuzzyDecimal(6000, 10000).fuzz(),
                                                 user=user)
+        for product in self.products:
+            self.add_inventory(product, is_active=True, batch_size=4)
+            self.add_inventory(product, is_active=False, batch_size=1)
 
     def add_address(self, to_user, city_name, batch_size=1):
         zip_code = getattr(self, 'ZIP_RANGE_%s' % city_name.upper())
@@ -71,3 +80,7 @@ class TestDataSet(object):
             user=to_user,
             location=location
         )
+
+    def add_inventory(self, to_proudct, batch_size=1, **kwargs):
+        return cat_factories.InventoryFactory.create_batch(batch_size, product=to_proudct,
+                                                           user=to_proudct.user, **kwargs)
