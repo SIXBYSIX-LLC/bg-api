@@ -3,9 +3,10 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import InheritanceManager
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
-from order.errors import ChangeStatusError
+from common.errors import ChangeStatusError
 from shipping import constants as ship_const
-from . import errors, messages, signals
+from . import messages, signals
+from common import errors
 from constants import Status as sts_const
 
 
@@ -205,11 +206,20 @@ class Item(BaseModel):
 
         signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
 
-    def add_inventories(self, *inventory):
-        self.inventories.update(is_available=True)
-        self.inventories.clear()
+    def add_inventories(self, *inventories):
+        """
+        Add inventories to this item
 
-        self.inventories.add(*inventory)
+        :param Inventory inventories: Inventory object
+        :return: None
+        :raise InventoryError:
+        """
+        for inventory in inventories:
+            if inventory.is_active is False:
+                raise errors.InventoryError(*messages.ERR_INACTIVE_INVENTORY)
+
+        self.inventories.add(*inventories)
+        self.inventories.update(is_active=False)
 
 
 class RentalItem(Item):

@@ -1,7 +1,8 @@
+from catalog.models import Inventory
 from common.serializers import ModelSerializer, rf_serializers, Serializer
 from .models import Order, OrderLine, Item, RentalItem
 from order import messages
-from order.errors import OrderError
+from common.errors import OrderError
 from usr.serializers import UserRefSerializer
 from usr.serializers import AddressListSerializer
 
@@ -85,3 +86,17 @@ class OrderLineListSerializer(OrderLineSerializer):
 class ChangeStatusSerializer(Serializer):
     status = rf_serializers.CharField()
     comment = rf_serializers.CharField(required=False)
+
+
+class AddInventorySerializer(Serializer):
+    inventories = rf_serializers.PrimaryKeyRelatedField(many=True,
+                                                        queryset=Inventory.objects.all())
+
+    def create(self, validated_data):
+        item = self.context['item']
+
+        item.inventories.update(is_active=True)
+        item.inventories.clear()
+
+        item.add_inventories(*validated_data.get('inventories'))
+        return item

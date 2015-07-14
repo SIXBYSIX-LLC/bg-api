@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.decorators import detail_route
 
 from common.viewsets import GenericViewSet, NestedViewSetMixin
-from models import Order, OrderLine, RentalItem
+from models import Order, OrderLine, Item
 from order.serializers import (OrderSerializer, OrderLineSerializer, OrderLineListSerializer,
-                               OrderListSerializer, ChangeStatusSerializer)
+                               OrderListSerializer, ChangeStatusSerializer, AddInventorySerializer)
 
 
 class OrderViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveModelMixin):
@@ -23,8 +23,8 @@ class OrderLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     ownership_fields = ('user',)
 
 
-class Item(NestedViewSetMixin, GenericViewSet):
-    queryset = RentalItem.objects.all()
+class ItemViewSet(NestedViewSetMixin, GenericViewSet):
+    queryset = Item.objects.all()
 
     @detail_route(methods=['PUT'])
     def action_change_status(self, request, *args, **kwargs):
@@ -40,5 +40,8 @@ class Item(NestedViewSetMixin, GenericViewSet):
     @detail_route(methods=['PUT'])
     def inventories(self, request, *args, **kwargs):
         item = self.get_object()
+        serializer = AddInventorySerializer(data=request.data, context={'item': item})
+        serializer.is_valid(True)
+        serializer.save()
 
-        item.add_inventories()
+        return Response(status=status.HTTP_204_NO_CONTENT)
