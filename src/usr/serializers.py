@@ -6,6 +6,7 @@ from .models import Profile, Address
 from common import serializers
 from common.serializers import rf_serializers
 from group.serializers import GroupRefSerializer
+from static.serializers import FileRefSerializer
 
 LOG = logging.getLogger('bgapi.' + __name__)
 
@@ -19,13 +20,14 @@ class SettingSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     groups = GroupRefSerializer(read_only=True, many=True)
     user = rf_serializers.PrimaryKeyRelatedField(read_only=True)
+    credit_form = FileRefSerializer(read_only=True)
 
     class Meta:
         model = Profile
         write_only_fields = ('password',)
         read_only_fields = ('is_email_verified', 'is_active', 'is_superuser', 'is_staff',
                             'last_login', 'groups', 'user_permissions', 'date_joined', 'id',
-                            'user', 'settings')
+                            'user', 'settings', 'credit_form')
         exclude = ('unverified_email_key', 'is_admin', 'password_reset_key')
         depth = 1
 

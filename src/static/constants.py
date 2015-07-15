@@ -1,2 +1,4 @@
-TARGET_PRODUCT_IMAGE = 'catalog.Product.images'
-TARGET_CATEGORY_IMAGE = 'category.Category.image'
+class Target:
+    PRODUCT_IMAGE = 'catalog.Product.images'
+    CATEGORY_IMAGE = 'category.Category.image'
+    CREDIT_FORM = 'usr.Profile.credit_form'

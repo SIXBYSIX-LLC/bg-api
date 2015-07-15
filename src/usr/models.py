@@ -164,7 +164,9 @@ class Profile(User):
         'weekly_price_till_days': 25,
         'minimum_contract_period': 5,
     })
-
+    #: User's credit form, usually a PDF that contains account other personal information about
+    # user. It helps to seller to authentic the user
+    credit_form = models.ForeignKey('static.File', null=True, default=None)
     #: Favorited products
     favorite_products = models.ManyToManyField('catalog.Product')
 
