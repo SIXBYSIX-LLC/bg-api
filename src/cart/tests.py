@@ -83,14 +83,14 @@ class CartTestCase(TestCase):
         rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='delivery')
         c = self.get_client(self.dataset.users[1])
         resp = c.post('/carts/%s/rentals' % cart.id, data=rental_item)
-        self.assertTrue(resp.data['is_shippable'], resp)
+        self.assertTrue(resp.data.get('is_shippable'), resp)
 
         # Product from Ahmedabad
         prod = self.dataset.users[3].product_set.filter(
             location__city__name_std='Ahmedabad').first()
         rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='delivery')
         resp = c.post('/carts/%s/rentals' % cart.id, data=rental_item)
-        self.assertFalse(resp.data['is_shippable'])
+        self.assertFalse(resp.data.get('is_shippable'))
 
     def test_no_shipping_cost_when_pickup(self):
         rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
