@@ -102,7 +102,7 @@ class CartTestCase(TestCase):
         rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='pickup')
         c = self.get_client(self.dataset.users[1])
         resp = c.post('/carts/%s/rentals' % cart.id, data=rental_item)
-        self.assertEqual(resp.data['shipping_cost'], 0.0)
+        self.assertEqual(resp.data.get('shipping_cost'), 0.0, resp)
 
     def test_cost_update_on_location_change(self):
         srt = self.dataset.users[1].address_set.filter(city__name_std='Surat').first()
