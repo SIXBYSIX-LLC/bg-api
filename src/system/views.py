@@ -1,4 +1,5 @@
 from rest_framework import decorators
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from cities.models import Country, Region, City
 
@@ -7,6 +8,7 @@ from common import viewsets
 
 class CitiesViewSet(viewsets.GenericViewSet):
     queryset = Country.objects.all()
+    permission_classes = (IsAuthenticated,)
 
     def list(self, request, *args, **kwargs):
         data = {country.id: country.name for country in Country.objects.all()}
