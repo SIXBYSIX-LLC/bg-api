@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.decorators import list_route
 from rest_framework.mixins import UpdateModelMixin, CreateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
@@ -28,17 +29,29 @@ class RentalItemViewSet(NestedViewSetMixin, GenericViewSet, CreateModelMixin, De
     def create(self, request, *args, **kwargs):
         request.data.update(**self.get_parents_query_dict())
 
-        return super(RentalItemViewSet, self).create(request, *args, **kwargs)
+        super(RentalItemViewSet, self).create(request, *args, **kwargs)
+
+        cart = self.get_parent_object()
+        serializer = CartSerializer(cart)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def update(self, request, *args, **kwargs):
         request.data.update(**self.get_parents_query_dict())
 
-        return super(RentalItemViewSet, self).update(request, *args, **kwargs)
+        super(RentalItemViewSet, self).update(request, *args, **kwargs)
+
+        cart = self.get_parent_object()
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
         request.data.update(**self.get_parents_query_dict())
 
-        return super(RentalItemViewSet, self).partial_update(request, *args, **kwargs)
+        super(RentalItemViewSet, self).partial_update(request, *args, **kwargs)
+
+        cart = self.get_parent_object()
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
 
 
 class PurchaseItemViewSet(RentalItemViewSet):

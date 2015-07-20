@@ -83,7 +83,7 @@ class CartTestCase(TestCase):
         rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='delivery')
         c = self.get_client(self.dataset.users[1])
         resp = c.post('/carts/%s/rentals' % cart.id, data=rental_item)
-        self.assertTrue(resp.data.get('is_shippable'), resp)
+        self.assertTrue(resp.data['rental_products'][0].get('is_shippable'), resp)
 
         # Product from Ahmedabad
         prod = self.dataset.users[3].product_set.filter(
@@ -102,7 +102,7 @@ class CartTestCase(TestCase):
         rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='pickup')
         c = self.get_client(self.dataset.users[1])
         resp = c.post('/carts/%s/rentals' % cart.id, data=rental_item)
-        self.assertEqual(resp.data.get('shipping_cost'), 0.0, resp)
+        self.assertEqual(resp.data['rental_products'][0].get('shipping_cost'), 0.0, resp)
 
     def test_cost_update_on_location_change(self):
         srt = self.dataset.users[1].address_set.filter(city__name_std='Surat').first()
@@ -121,12 +121,12 @@ class CartTestCase(TestCase):
         upresp = c.patch('/carts/%s' % cart.id, data={'location': rjt.id})
         self.assertEqual(upresp.status_code, self.status_code.HTTP_200_OK)
         self.assertNotEqual(upresp.data['rental_products'][0]['shipping_cost'],
-                            resp.data['shipping_cost'])
+                            resp.data['rental_products'][0]['shipping_cost'])
 
         # Delete item entirely
-        c.delete('/carts/%s/rentals/%s' % (cart.id, resp.data['id']))
+        c.delete('/carts/%s/rentals/%s' % (cart.id, resp.data['rental_products'][0]['id']))
         rmresp = c.get('/carts/current')
-        self.assertEqual(rmresp.data['total']['total'], 0)
+        self.assertEqual(rmresp.data['total']['total'], 0, rmresp)
 
     def test_cart_sales_tax(self):
         tax = SalesTaxFactory()
