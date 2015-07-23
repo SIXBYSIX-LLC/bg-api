@@ -53,6 +53,13 @@ class RentalItemViewSet(NestedViewSetMixin, GenericViewSet, CreateModelMixin, De
         serializer = CartSerializer(cart)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        super(RentalItemViewSet, self).destroy(request, *args, **kwargs)
+
+        cart = self.get_parent_object()
+        serializer = CartSerializer(cart)
+        return Response(serializer.data)
+
 
 class PurchaseItemViewSet(RentalItemViewSet):
     queryset = PurchaseItem.objects.all()
