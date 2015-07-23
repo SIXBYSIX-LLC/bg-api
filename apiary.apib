@@ -142,6 +142,14 @@ By default any paginated result will be sorted oldest to newest order.
 If you want newest to oldest, simply pass `order_by=-id` in query params
 
 
+## Selective Fields
+
+You can select fields in response by specifying the `fields` parameter.
+It's a best practice to select only those fields that you really need in response.
+It'll reduce the response time and the amount of data to be returned.
+For eg, `/v1/products?fields=name,id,images`
+
+
 
 # Group Authentication
 
@@ -955,7 +963,7 @@ When working with images, all image data is served through staticfile collection
     * used
     * new
 
-## Product Collection [/v1/products{?category,is_active}]
+## Product Collection [/v1/products{?category,is_active,search,user,order_by,daily_price__gte,daily_price__lte,sell_price__gte,sell_price__lte}]
 
 ### Add a Product [POST]
 
@@ -1037,6 +1045,13 @@ To add images to product, see staticfile API. Upto 10 images per products are al
 + Parameters
     + category (optional, number, `1`) ... Filter products by category id
     + is_active (optional, boolean, `true`) ... Filter by product is_active attribute
+    + user (optional, number, `1`) ... Filter by user id
+    + search (optional, string, `Excavator`) ... Full text search for products. It searches in `name` and `tags`
+    + daily_price__gte (optional, float, `59.56`) ... Filter by daily price great or equal
+    + daily_price__lte (optional, float, `59.56`) ... Filter by daily price less or equal
+    + sell_price__gte (optional, float, `59.56`) ... Filter by sell price great or equal
+    + sell_price__lte (optional, float, `59.56`) ... Filter by sell price less or equal
+    + order_by (optional, string, `name`) ... Order ascending/descending currently `name`, `daily_price`, `sell_price` fields are supported. Default ordering is set to id
 
 + Request (application/json)
 
@@ -1050,7 +1065,26 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                 "meta": {
                     "count": 3,
                     "next": "http://localhost:8000/products?page=2",
-                    "previous": null
+                    "previous": null,
+                    "facets": [
+                        {
+                            "count": 33,
+                            "location": {
+                                "country": {
+                                    "name": "India",
+                                    "id": 1269750
+                                },
+                                "state": {
+                                    "name": "Gujarat",
+                                    "id": 1270770
+                                },
+                                "city": {
+                                    "name": "Pālanpur",
+                                    "id": 1260777
+                                }
+                            }
+                        }
+                    ]
                 },
                 "data": [
                     {
@@ -1085,7 +1119,21 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "date_created_at": "2015-06-22T09:25:16.467775Z",
                         "date_updated_at": "2015-06-22T09:25:16.467821Z",
                         "category": 2,
-                        "location": 1,
+                        "location": {
+                            "country": {
+                                "name": "India",
+                                "id": 1269750
+                            },
+                            "state": {
+                                "name": "Gujarat",
+                                "id": 1270770
+                            },
+                            "city": {
+                                "name": "Pālanpur",
+                                "id": 1260777
+                            },
+                            "zip_code": "367175"
+                        },
                         "user": 3
                     },
                     {
@@ -1107,7 +1155,21 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "date_created_at": "2015-06-22T14:23:33.691045Z",
                         "date_updated_at": "2015-06-22T14:23:33.691071Z",
                         "category": 2,
-                        "location": 1,
+                        "location": {
+                            "country": {
+                                "name": "India",
+                                "id": 1269750
+                            },
+                            "state": {
+                                "name": "Gujarat",
+                                "id": 1270770
+                            },
+                            "city": {
+                                "name": "Pālanpur",
+                                "id": 1260777
+                            },
+                            "zip_code": "367175"
+                        },
                         "user": 3
                     },
                     {
@@ -1129,7 +1191,21 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "date_created_at": "2015-06-22T14:24:51.586335Z",
                         "date_updated_at": "2015-06-22T14:24:51.586356Z",
                         "category": 2,
-                        "location": 1,
+                        "location": {
+                            "country": {
+                                "name": "India",
+                                "id": 1269750
+                            },
+                            "state": {
+                                "name": "Gujarat",
+                                "id": 1270770
+                            },
+                            "city": {
+                                "name": "Pālanpur",
+                                "id": 1260777
+                            },
+                            "zip_code": "367175"
+                        },
                         "user": 3
                     }
                 ]
@@ -1183,7 +1259,21 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                 "date_created_at": "2015-06-22T09:25:16.467775Z",
                 "date_updated_at": "2015-06-22T09:25:16.467821Z",
                 "category": 2,
-                "location": 1,
+                "location": {
+                    "country": {
+                        "name": "India",
+                        "id": 1269750
+                    },
+                    "state": {
+                        "name": "Gujarat",
+                        "id": 1270770
+                    },
+                    "city": {
+                        "name": "Pālanpur",
+                        "id": 1260777
+                    },
+                    "zip_code": "367175"
+                },
                 "user": 3
             }
         }
@@ -1407,16 +1497,18 @@ This single endpoint gives all the operation on file object.
 ### Enum
 
 + target
-    + category.Category.image: Use this when you want to set/upload image to category
-    + catalog.Product.images: Add image to the product images
+    + `category.Category.image`: Use this when you want to set/upload image to category
+    + `catalog.Product.images`: Add image to the product images
+    + `usr.Profile.credit_form`: Set credit form (a PDF file) to user account
 
-## Staticfile Collection [/v1/staticfile]
+## Staticfile Collection [/v1/staticfiles]
 
 ### Uploading the file [POST]
 
 + Attributes
     + target: category.Category.image (required, string) - Any of target enum
     + target_id (required, number) - Target object id
+    + file (required) - File to be uploaded
 
 + Request (multipart/form-data)
 
@@ -1424,7 +1516,7 @@ This single endpoint gives all the operation on file object.
 
             Authorization: Token TOKEN_VALUE
     
-+ Response
++ Response 201 (application/json)
 
             {
                 "data": {
@@ -1434,3 +1526,476 @@ This single endpoint gives all the operation on file object.
                     "id": 20
                 }
             }
+            
+## Staticfile [/v1/staticfiles/{id}]
+
++ Parameters
+    + id (required, number, `1`) ... Staticfile id
+
+### Delete file [DELETE]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+    
++ Response 204 (application/json)
+
+
+# Group Cart
+
+Cart allows customers to accumulate a list of items for purchase or rent, described metaphorically as “placing items in the shopping cart” or “add to cart.”
+Upon checkout, system calculates a total for the order, including shipping and handling (i.e., postage and packing) charges and the associated taxes, as applicable.
+
+Typical process of purchasing or renting the item is to add them into the cart. User will be having only single cart a time and it'll be preserved untill checkout or manual clear process.
+
+## The Current Cart [/v1/carts/current]
+
+This endpoing will return the current cart of the user. Response will contain the cart id; That cart id should be used when updating the cart items
+
+### Get the Current Cart [GET]
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+    
++ Response 200 (application/json)
+
+
+            {
+                "data": {
+                    "id": 1,
+                    "rental_products": [{
+                        "id": 1,
+                        "product": {
+                            "name": "Marissa",
+                            "image": null,
+                            "id": 56
+                        },
+                        "shipping_kind": "delivery",
+                        "shipping_cost": 2673.06,
+                        "subtotal": 3338.95,
+                        "is_shippable": true,
+                        "qty": 1,
+                        "cost_breakup": {
+                            "subtotal": {
+                                "rent_unit_days": 30,
+                                "rent_per": 3709.95,
+                                "amt": 3338.95,
+                                "num_days": 27,
+                                "daily_rent": 123.66499999999999
+                            },
+                            "shipping": {
+                                "method": "standard_shipping",
+                                "id": 9,
+                                "amt": 2673.06
+                            },
+                            "sales_tax": {
+                                "taxable_amt": 6012.01,
+                                "id": 1,
+                                "pct": 1.11,
+                                "amt": 66.73
+                            }
+                        },
+                        "date_start": "2015-07-26T07:32:49.981145Z",
+                        "date_end": "2015-08-22T07:32:49.981152Z",
+                        "is_postpaid": true,
+                        "cart": 1
+                    }, {
+                        "id": 2,
+                        "product": {
+                            "name": "Lina",
+                            "image": null,
+                            "id": 68
+                        },
+                        "shipping_kind": "delivery",
+                        "shipping_cost": 5860.28,
+                        "subtotal": 787.98,
+                        "is_shippable": true,
+                        "qty": 1,
+                        "cost_breakup": {
+                            "subtotal": {
+                                "rent_unit_days": 30,
+                                "rent_per": 875.53,
+                                "amt": 787.98,
+                                "num_days": 27,
+                                "daily_rent": 29.18433333333333
+                            },
+                            "shipping": {
+                                "method": "standard_shipping",
+                                "id": 15,
+                                "amt": 5860.28
+                            },
+                            "sales_tax": {
+                                "taxable_amt": 6648.26,
+                                "id": 1,
+                                "pct": 1.11,
+                                "amt": 73.8
+                            }
+                        },
+                        "date_start": "2015-07-26T07:32:49.981145Z",
+                        "date_end": "2015-08-22T07:32:49.981152Z",
+                        "is_postpaid": false,
+                        "cart": 1
+                    }],
+                    "purchase_products": [{
+                        "id": 1,
+                        "product": {
+                            "name": "Rueben",
+                            "image": null,
+                            "id": 60
+                        },
+                        "shipping_kind": "delivery",
+                        "shipping_cost": 2673.06,
+                        "subtotal": 6741.67,
+                        "is_shippable": true,
+                        "qty": 1,
+                        "cost_breakup": {
+                            "subtotal": {
+                                "amt": 6741.67
+                            },
+                            "shipping": {
+                                "method": "standard_shipping",
+                                "id": 9,
+                                "amt": 2673.06
+                            },
+                            "sales_tax": {
+                                "taxable_amt": 9414.73,
+                                "id": 1,
+                                "pct": 1.11,
+                                "amt": 104.5
+                            }
+                        },
+                        "cart": 1
+                    }],
+                    "date_created_at": "2015-07-23T07:33:02.870136Z",
+                    "date_updated_at": "2015-07-23T07:33:02.926366Z",
+                    "is_active": true,
+                    "total": {
+                        "sales_tax_pct": 1.11,
+                        "total": 16241.29,
+                        "subtotal": 7529.65,
+                        "shipping": 8533.34,
+                        "sales_tax": 178.3
+                    },
+                    "location": 8,
+                    "user": 5
+                }
+            }
+
+
+
+## Rental/Purchase Items [/v1/carts/{cart_id}/{add_as}]
+
+This resource allow you to manage (add/update/remove) rental items in the cart. After successful operation, response will be same as cart response
+
++ Parameters
+    + cart_id (required, number, `1`) ... Current cart id you get from `/carts/current` endpoint
+    + add_as (required, string, `rentals`) ... If you're adding the item for rent, value should be `rentals`, `purchases` otherwise
+    
+
+### Add [POST]
+
++ Attributes
+    + shippin_kind (string, required) - Either `pickup` or `delivery`
+    + date_start (string, required) - ISO formated date string
+    + date_end (string, required) - ISO formated date string
+    + produt (number, required) - Product id to be added as rental
+    
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body
+    
+            {
+                "shipping_kind": "delivery",
+                "date_start": "2015-07-26T08:01:30.073832+00:00",
+                "product": 81, 
+                "date_end": "2015-08-22T08:01:30.073862+00:00"
+            }
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 1,
+                    "rental_products": [{
+                        "id": 1,
+                        "product": {
+                            "name": "Tonja",
+                            "image": null,
+                            "id": 81
+                        },
+                        "shipping_kind": "delivery",
+                        "shipping_cost": 0.0,
+                        "subtotal": 3394.03,
+                        "is_shippable": false,
+                        "qty": 1,
+                        "cost_breakup": {
+                            "subtotal": {
+                                "rent_unit_days": 30,
+                                "rent_per": 3771.14,
+                                "amt": 3394.03,
+                                "num_days": 27,
+                                "daily_rent": 125.70466666666667
+                            },
+                            "shipping": {
+                                "amt": 0.0
+                            },
+                            "sales_tax": {
+                                "amt": 0.0,
+                                "pct": 0
+                            }
+                        },
+                        "date_start": "2015-07-26T08:01:30.073832Z",
+                        "date_end": "2015-08-22T08:01:30.073862Z",
+                        "is_postpaid": false,
+                        "cart": 1
+                    }],
+                    "purchase_products": [],
+                    "date_created_at": "2015-07-23T08:01:43.415167Z",
+                    "date_updated_at": "2015-07-23T08:01:43.729127Z",
+                    "is_active": true,
+                    "total": {
+                        "sales_tax_pct": 0,
+                        "total": 3394.03,
+                        "subtotal": 3394.03,
+                        "shipping": 0.0,
+                        "sales_tax": 0.0
+                    },
+                    "location": null,
+                    "user": 3
+                }
+            }
+
+
+### Update [PATCH]
+You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body
+    
+            {
+                "shipping_kind": "delivery",
+                "date_end": "2015-08-25T08:01:30.073862+00:00"
+            }
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 1,
+                    "rental_products": [{
+                        "id": 1,
+                        "product": {
+                            "name": "Tonja",
+                            "image": null,
+                            "id": 81
+                        },
+                        "shipping_kind": "delivery",
+                        "shipping_cost": 0.0,
+                        "subtotal": 3394.03,
+                        "is_shippable": false,
+                        "qty": 1,
+                        "cost_breakup": {
+                            "subtotal": {
+                                "rent_unit_days": 30,
+                                "rent_per": 3771.14,
+                                "amt": 3394.03,
+                                "num_days": 27,
+                                "daily_rent": 125.70466666666667
+                            },
+                            "shipping": {
+                                "amt": 0.0
+                            },
+                            "sales_tax": {
+                                "amt": 0.0,
+                                "pct": 0
+                            }
+                        },
+                        "date_start": "2015-07-26T08:01:30.073832Z",
+                        "date_end": "2015-08-22T08:01:30.073862Z",
+                        "is_postpaid": false,
+                        "cart": 1
+                    }],
+                    "purchase_products": [],
+                    "date_created_at": "2015-07-23T08:01:43.415167Z",
+                    "date_updated_at": "2015-07-23T08:01:43.729127Z",
+                    "is_active": true,
+                    "total": {
+                        "sales_tax_pct": 0,
+                        "total": 3394.03,
+                        "subtotal": 3394.03,
+                        "shipping": 0.0,
+                        "sales_tax": 0.0
+                    },
+                    "location": null,
+                    "user": 3
+                }
+            }
+
+
+### Remove an Item [DELETE]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE 
+
++ Response 200 (application/json)
+
+
+            {
+                "data": {
+                    "id": 1,
+                    "rental_products": [],
+                    "purchase_products": [],
+                    "date_created_at": "2015-07-23T13:02:09.457025Z",
+                    "date_updated_at": "2015-07-23T13:02:09.606077Z",
+                    "is_active": true,
+                    "total": {
+                        "sales_tax_pct": 0,
+                        "total": 0.0,
+                        "subtotal": 0.0,
+                        "shipping": 0.0,
+                        "sales_tax": 0.0
+                    },
+                    "location": 8,
+                    "user": 5
+                }
+            }
+
+
+
+# Group System
+This api provides some system related informative endpoints like countries, states, enums etc
+
+## Countries [/v1/system/countries]
+Informative API for country list supported by the system
+
+### List of Countries [GET]
+
+List of countries. Returns the key-value pair of id and name
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
++ Response 200 (application/json)
+
+
+            {
+                "data": {
+                    "49518": "Rwanda",
+                    "51537": "Somalia",
+                    "69543": "Yemen",
+                    "99237": "Iraq",
+                    "102358": "Saudi Arabia",
+                    "130758": "Iran",
+                    "146669": "Cyprus",
+                    "933860": "Botswana",
+                    "934292": "Mauritius",
+                    "934841": "Swaziland",
+                    "935317": "Reunion",
+                    "953987": "South Africa",
+                    "1024031": "Mayotte",
+                    "1036973": "Mozambique",
+                    "1062947": "Madagascar",
+                    "1149361": "Afghanistan",
+                    "1168579": "Pakistan",
+                    "1210997": "Bangladesh",
+                    "1218197": "Turkmenistan",
+                    "1220409": "Tajikistan",
+                    "1227603": "Sri Lanka",
+                    "1252634": "Bhutan",
+                    "1269750": "India",
+                    "1282028": "Maldives",
+                    "1282588": "British Indian Ocean Territory",
+                    "1282988": "Nepal",
+                    "1327865": "Myanmar",
+                    "1512440": "Uzbekistan",
+                    "1522867": "Kazakhstan",
+                    "1527747": "Kyrgyzstan"
+                }
+            }
+            
+## Region/States [/v1/system/countries/{country_id}/regions]
+
++ Parameters
+    + country_id (required, number, `1269750`) ... Country id of which regions are expected
+    
+
+### List of Regions [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
++ Response 200 (application/json)
+
+            
+            {
+              "data": {
+                "1270770": "Gujarat",
+                "1270771": "Karnataka",
+                "1270772": "Delhi",
+                "1270773": "Maharashtra",
+              }
+            }
+            
+## City [/v1/system/countries/{country_id}/regions/{region_id}/cities]
+
++ Parameters
+    + country_id (required, number, `1269750`) ... Country id of which cities are expected
+    + region_id (required, number, `1270770`) ... Region id of which cities are expected
+
+### List of Cities [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "1252958": "Wānkāner",
+                    "1253024": "Waghāi",
+                    "1253074": "Vyāra",
+                    "1253095": "Visnagar",
+                    "1253105": "Vīsāvadar",
+                    "1253115": "Virpur",
+                    "1253162": "Vinchia",
+                    "1278742": "Amod",
+                    "1279213": "Ahwa",
+                    "1279233": "Ahmedabad",
+                    "1279373": "Adalaj",
+                    "7279741": "Vapi",
+                    "7303983": "Jhulasan"
+                }
+            }
+            
