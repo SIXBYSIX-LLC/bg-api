@@ -1,6 +1,7 @@
 from common.tests import TestCase
 from . import factories
 from category import factories as cat_factories
+from .models import Product
 
 
 class ProductTest(TestCase):
@@ -65,6 +66,17 @@ class ProductTest(TestCase):
         factories.ProductFactory.create_batch(2, user=self.user, qty=30)
         resp = self.user_client.get('/products', data={'user': self.user.id})
         self.assertEqual(resp.data[0].get('qty'), 30)
+
+    def test_available_shipping_methods(self):
+        product = Product.objects.filter(location__city__name_std='Rajkot').first()
+        data = {'country': product.location.country_id, 'zip_code': 360001}
+        resp = self.user_client.get('/products/%s/available_shippings' % product.id, data=data)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
+        self.assertEqual(resp.data['standard_shipping']['country'], 1269750)
+
+        data = {'country': product.location.country_id, 'zip_code': 388710}
+        resp = self.user_client.get('/products/%s/available_shippings' % product.id, data=data)
+        self.assertIsNone(resp.data['standard_shipping'], resp)
 
 
 class InventoryTest(TestCase):

@@ -1,7 +1,12 @@
 from django.db.models import Count, Case, When, Value
+from rest_framework.decorators import detail_route
+from rest_framework.response import Response
+from cities.models import Country
 
 from common import viewsets
 from . import serializers, models
+from usr.models import Address
+from shipping.serializers import StandardShippingSerializer
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -35,6 +40,26 @@ class ProductViewSet(viewsets.ModelViewSet):
         response = super(ProductViewSet, self).list(request, *args, **kwargs)
         response.data.update({'facets': location_facets})
         return response
+
+    @detail_route(methods=['GET'])
+    def available_shippings(self, request, *args, **kwargs):
+        product = self.get_object()
+        country_id = request.GET.get('country')
+        zip_code = request.GET.get('zip_code')
+        data = {'standard_shipping': None}
+
+        # Building Address object to query standard shipping method
+        try:
+            location = Address(country=Country.objects.get(id=country_id), zip_code=zip_code)
+            standard_ship = product.get_standard_shipping_method(location)
+            if standard_ship:
+                standard_ship = StandardShippingSerializer(standard_ship)
+                data['standard_shipping'] = standard_ship.data
+        except Address.DoesNotExist:
+            pass
+
+        return Response(data)
+
 
 
 class InventoryViewSet(viewsets.NestedViewSetMixin, viewsets.ModelViewSet):
