@@ -4,6 +4,7 @@ from models import Product, Inventory
 from static.serializers import FileRefSerializer
 from usr.serializers import AddressListSerializer
 from usr.models import Address
+from category.serializers import CategorySerializer
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -19,6 +20,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductListSerializer(ProductSerializer):
+    category = CategorySerializer(read_only=True)
     location = AddressListSerializer(read_only=True, fields=['city', 'country', 'state',
                                                              'zip_code', 'id'])
 
