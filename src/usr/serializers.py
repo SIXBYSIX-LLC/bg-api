@@ -65,7 +65,7 @@ class ResetPasswordSerializer(serializers.Serializer):
 class AddressSerializer(serializers.GeoModelSerializer):
     class Meta:
         model = Address
-        read_only_fields = ('user',)
+        exclude = ('user',)
 
     def validate(self, attrs):
         zip_count = PostalCode.objects.filter(code=attrs.get('zip_code'),
