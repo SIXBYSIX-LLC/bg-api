@@ -20,7 +20,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProductListSerializer(ProductSerializer):
     location = AddressListSerializer(read_only=True, fields=['city', 'country', 'state',
-                                                             'zip_code'])
+                                                             'zip_code', 'id'])
 
 
 class ProductRefSerializer(ProductSerializer):
