@@ -24,6 +24,8 @@ class Cart(BaseModel, DateTimeFieldMixin):
                                                related_name='+')
     #: Shipping Location
     location = models.ForeignKey('usr.Address', null=True, default=None)
+    #: Billing address
+    billing_address = models.ForeignKey('usr.Address', null=True, default=None, related_name='+')
     #: Cart owner
     user = models.ForeignKey('miniauth.User', blank=True, editable=False)
     #: This value can be false in case it's converted to order or by other conditions in future

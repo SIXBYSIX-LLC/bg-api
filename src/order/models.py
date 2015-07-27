@@ -9,6 +9,7 @@ from shipping import constants as ship_const
 from . import messages, signals
 from common import errors
 from constants import Status as sts_const
+from usr.serializers import AddressListSerializer
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -35,6 +36,7 @@ class OrderManager(BaseManager):
             order.city = cart.location.city
             order.zip_code = cart.location.zip_code
             order.total = cart.total
+            order.billing_address = AddressListSerializer(cart.billing_address).data
             order.save()
 
             # Creating RentalItem
@@ -105,6 +107,8 @@ class Order(BaseModel, DateTimeFieldMixin):
     state = models.ForeignKey('cities.Region')
     city = models.ForeignKey('cities.City')
     zip_code = models.CharField(max_length=15)
+    #: Billing Address
+    billing_address = pg_fields.JSONField()
     #: total order value
     total = pg_fields.JSONField()
 
