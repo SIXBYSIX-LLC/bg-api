@@ -1,8 +1,10 @@
 import factory
+from factory import fuzzy
 from cities.models import Region
 
 from common.faker import fake
 from ..models import SalesTax
+from .. import constants
 
 
 class SalesTaxBaseFactory(factory.DictFactory):
@@ -23,3 +25,12 @@ class SalesTaxFactory(factory.DjangoModelFactory, factory.DictFactory):
     unit = 'pct'
     value = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=1, right_digits=2,
                                                           positive=True))
+
+
+class AdditionalChargeBaseFactory(factory.DictFactory):
+    unit = 'pct'
+    value = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=1, right_digits=2,
+                                                          positive=True))
+    item_kind = fuzzy.FuzzyChoice([constants.ItemKind.PURCHASE, constants.ItemKind.RENTAL,
+                                   constants.ItemKind.ALL])
+

@@ -1,7 +1,7 @@
 from catalog.models import Product
 from common.tests import TestCase
 from cart import factories as cart_factories
-from tax.factories import SalesTaxFactory
+from charge.factories import SalesTaxFactory
 from .constants import Status as sts_const
 from .models import Item
 

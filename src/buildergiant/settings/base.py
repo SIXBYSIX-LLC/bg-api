@@ -70,7 +70,7 @@ LOCAL_APPS = (
     'catalog',
     'inquiry',
     'shipping',
-    'tax',
+    'charge',
     'cart',
     'order',
 )

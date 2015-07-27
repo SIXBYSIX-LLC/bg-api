@@ -6,7 +6,7 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from cart.validators import validate_date_start
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
 from common import fields as ex_fields
-from tax.models import SalesTax
+from charge.models import SalesTax
 from . import constants
 from shipping import constants as ship_const
 
