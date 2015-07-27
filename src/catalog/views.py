@@ -61,9 +61,9 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(data)
 
 
-
 class InventoryViewSet(viewsets.NestedViewSetMixin, viewsets.ModelViewSet):
     serializer_class = serializers.InventorySerializer
+    list_serializer_class = retrieve_serializer_class = serializers.InventoryListSerializer
     queryset = models.Inventory.objects.all()
 
     ownership_fields = ('user',)

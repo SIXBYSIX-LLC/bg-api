@@ -43,6 +43,13 @@ class InventorySerializer(serializers.ModelSerializer):
         read_only_fields = ('date_created_at', 'user')
 
 
+class InventoryListSerializer(InventorySerializer):
+    product = ProductRefSerializer()
+
+    class Meta(InventorySerializer.Meta):
+        write_only_fields = ()
+
+
 class FacetSerializer(object):
     class LocationSerializer(serializers.Serializer):
         count = serializers.rf_serializers.IntegerField()
