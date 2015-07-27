@@ -3,7 +3,7 @@ from factory import fuzzy
 from cities.models import Region
 
 from common.faker import fake
-from ..models import SalesTax
+from ..models import SalesTax, AdditionalCharge
 from .. import constants
 
 
@@ -34,3 +34,18 @@ class AdditionalChargeBaseFactory(factory.DictFactory):
     item_kind = fuzzy.FuzzyChoice([constants.ItemKind.PURCHASE, constants.ItemKind.RENTAL,
                                    constants.ItemKind.ALL])
 
+
+class AdditionalChargeFactory(factory.DjangoModelFactory, AdditionalChargeBaseFactory):
+    class Meta:
+        model = AdditionalCharge
+
+    @factory.post_generation
+    def categories(self, create, extracted, **kwargs):
+        if not create:
+            # Simple build, do nothing.
+            return
+
+        if extracted:
+            # A list of groups were passed in, use them
+            for categories in extracted:
+                self.categories.add(categories)

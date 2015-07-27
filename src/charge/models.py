@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 from common.models import BaseModel, BaseManager
 from common import fields as ex_fields
@@ -27,8 +28,22 @@ class SalesTax(Charge):
 
 
 class AdditionalChargeManager(BaseManager):
-    def get_all_by_natural_key(self, item_kind, categories):
-        pass
+    def all_by_natural_key(self, user, item_kind, category):
+        hierarchy = category.hierarchy + [category.id]
+
+        # Get charges that applies on all item and categories
+        q_all = Q(item_kind='all', categories__isnull=True)
+
+        # Get charges that applies only on item_kind
+        q_kind = Q(item_kind=item_kind, categories__isnull=True)
+
+        # Get charges that applies on all item and only specific category
+        q_cat = Q(item_kind='all', categories__id__in=hierarchy)
+
+        # Get charges for the specific item kind and category
+        q_specific = Q(item_kind=item_kind, categories__id__in=hierarchy)
+
+        return self.filter(q_all | q_kind | q_cat | q_specific, user=user)
 
 
 class AdditionalCharge(Charge):
