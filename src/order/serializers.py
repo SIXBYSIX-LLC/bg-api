@@ -6,7 +6,6 @@ from .models import Order, OrderLine, Item, RentalItem
 from order import messages
 from common.errors import OrderError
 from usr.serializers import UserRefSerializer
-from usr.serializers import AddressListSerializer
 from catalog.serializers import ProductRefSerializer
 from constants import Status as sts_const
 
@@ -41,15 +40,11 @@ class ItemListSerializer(ItemSerializer):
 
 class OrderSerializer(ModelSerializer):
     items = ItemSerializer(many=True, source='item_set')
-    country = AddressListSerializer.CountryRefSerializer(read_only=True)
-    state = AddressListSerializer.RegionRefSerializer(read_only=True)
-    city = AddressListSerializer.CityRefSerializer(read_only=True)
 
     class Meta:
         model = Order
         write_only_fields = ('cart',)
-        read_only_fields = ('id', 'user', 'address', 'country', 'state', 'city',
-                            'zip_code', 'total')
+        read_only_fields = ('id', 'billing_address', 'shipping_address', 'total', 'user')
 
     def create(self, validated_data):
         return Order.objects.create_order(validated_data.get('cart'))

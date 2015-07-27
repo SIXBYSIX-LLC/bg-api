@@ -30,12 +30,8 @@ class OrderManager(BaseManager):
         with transaction.atomic():
             # Creating order
             order = self.model(cart=cart, user=cart.user)
-            order.address = "%s\n\n%s" % (cart.location.address1, cart.location.address2)
-            order.country = cart.location.country
-            order.state = cart.location.state
-            order.city = cart.location.city
-            order.zip_code = cart.location.zip_code
             order.total = cart.total
+            order.shipping_address = AddressListSerializer(cart.location).data
             order.billing_address = AddressListSerializer(cart.billing_address).data
             order.save()
 
@@ -102,11 +98,7 @@ class Order(BaseModel, DateTimeFieldMixin):
     # The user, who is creating the order
     user = models.ForeignKey('miniauth.User')
     # Address, copied from cart
-    address = models.TextField()
-    country = models.ForeignKey('cities.Country')
-    state = models.ForeignKey('cities.Region')
-    city = models.ForeignKey('cities.City')
-    zip_code = models.CharField(max_length=15)
+    shipping_address = pg_fields.JSONField()
     #: Billing Address
     billing_address = pg_fields.JSONField()
     #: total order value
