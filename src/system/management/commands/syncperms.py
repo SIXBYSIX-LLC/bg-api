@@ -70,6 +70,11 @@ class Command(BaseCommand):
             Permission.objects.get(codename='view_orderline'),
             Permission.objects.get(codename='change_orderline'),
             Permission.objects.get(codename='change_item', content_type__app_label='order'),
+            # Charges
+            Permission.objects.get(codename='add_additionalcharge'),
+            Permission.objects.get(codename='view_additionalcharge'),
+            Permission.objects.get(codename='change_additionalcharge'),
+            Permission.objects.get(codename='delete_additionalcharge'),
         )
 
         # Assign device group permission
