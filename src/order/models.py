@@ -267,6 +267,6 @@ class Status(BaseModel, DateTimeFieldMixin):
 
     #: The rental item status order
     status = models.CharField(max_length=30, choices=STATUS)
-    comment = models.TextField(null=True, default=None)
+    info = pg_fields.JSONField(null=True, default=None)
 
     Const = sts_const
