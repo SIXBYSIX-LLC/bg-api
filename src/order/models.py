@@ -261,6 +261,7 @@ class Status(BaseModel, DateTimeFieldMixin):
         sts_const.CANCEL: [],
         sts_const.PICKED_UP: [],
         sts_const.DELIVERED: [],
+        sts_const.END_CONTRACT: [],
     }
     STATUS = [(getattr(sts_const, prop), getattr(sts_const, prop))
               for prop in dir(sts_const) if prop.startswith('_') is False]

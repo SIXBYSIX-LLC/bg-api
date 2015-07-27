@@ -82,7 +82,7 @@ class OrderLineListSerializer(OrderLineSerializer):
 
 class ChangeStatusSerializer(Serializer):
     status = rf_serializers.CharField()
-    comment = rf_serializers.CharField(required=False)
+    info = rf_serializers.DictField(required=False)
 
     def validate(self, validated_data):
         item = self.context['item']
