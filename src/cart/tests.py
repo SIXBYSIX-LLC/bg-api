@@ -1,7 +1,7 @@
 from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
-from tax.factories import SalesTaxFactory
+from charge.factories import SalesTaxFactory
 
 
 class CartTestCase(TestCase):
