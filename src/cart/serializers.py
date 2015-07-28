@@ -45,7 +45,7 @@ class RentalProductSerializer(ItemSerializer):
         product = data.get('product') or self.instance
 
         if date_start and date_end:
-            min_contract_period = product.user.profile.settings['minimum_contract_period']
+            min_contract_period = product.user.profile.settings.get('minimum_contract_period', 1)
             if (date_end - date_start).days < min_contract_period:
                 raise ValidationError(*messages.ERR_INVALID_END_DATE)
 
