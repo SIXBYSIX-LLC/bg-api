@@ -34,10 +34,11 @@ class ProductManager(BaseManager):
     def search(self, query, raw=False):
         function = "to_tsquery" if raw else "plainto_tsquery"
         search_vector = "name || ' ' || array_to_string(tags, ' ')"
-        ts_query = "%s('%s')" % (function, query)
+        ts_query = "%s(%s)" % (function, '%s')
         where = "to_tsvector(%s) @@ %s" % (search_vector, ts_query)
+        where += " OR name LIKE %s OR array_to_string(tags, ' ') LIKE %s"
 
-        return self.extra(where=[where])
+        return self.extra(where=[where], params=[query, '%' + query + '%', '%' + query + '%'])
 
 
 
