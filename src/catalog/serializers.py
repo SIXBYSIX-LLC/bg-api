@@ -63,4 +63,4 @@ class FacetSerializer(object):
             loc_id = obj.get('location')
 
             return AddressListSerializer(Address.objects.get(id=loc_id),
-                                         fields=['city', 'country', 'state']).data
+                                         fields=['city', 'country', 'state', 'id']).data
