@@ -287,7 +287,7 @@ class RentalItem(Item):
 
         data = {
             'rent_per': rent_per, 'daily_rent': daily_rent, 'amt': rent, 'num_days': num_days,
-            'rent_unit_days': rent_days
+            'rent_unit_days': rent_days, 'unit_price': daily_rent * num_days
         }
 
         ex = dict(data.items() + {'cart': self.cart_id, 'qty': self.qty}.items())
@@ -301,4 +301,4 @@ class PurchaseItem(Item):
         """
         Calculates the cost of item, shipping (according to qty) and sales tax
         """
-        return {'amt': self.product.sell_price * self.qty}
+        return {'amt': self.product.sell_price * self.qty, 'unit_price': self.product.sell_price}
