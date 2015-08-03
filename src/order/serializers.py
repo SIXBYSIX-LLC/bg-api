@@ -40,11 +40,13 @@ class ItemListSerializer(ItemSerializer):
 
 class OrderSerializer(ModelSerializer):
     items = ItemSerializer(many=True, source='item_set')
+    total = rf_serializers.FloatField(read_only=True)
 
     class Meta:
         model = Order
         write_only_fields = ('cart',)
-        read_only_fields = ('id', 'billing_address', 'shipping_address', 'total', 'user')
+        read_only_fields = ('id', 'billing_address', 'shipping_address', 'total', 'user',
+                            'subtotal', 'shipping_charge', 'additional_charge', 'cost_breakup')
 
     def create(self, validated_data):
         return Order.objects.create_order(validated_data.get('cart'))
@@ -71,6 +73,7 @@ class OrderLineSerializer(ModelSerializer):
 
     items = ItemSerializer(many=True, source='item_set')
     order = OrderRefSerializer()
+    total = rf_serializers.FloatField(read_only=True)
 
     class Meta:
         model = OrderLine
