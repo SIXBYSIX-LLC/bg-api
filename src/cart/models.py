@@ -65,28 +65,30 @@ class Cart(BaseModel, DateTimeFieldMixin):
             if item.is_postpaid is True:
                 continue
 
+            self.shipping_charge += item.shipping_charge
+            self.subtotal += item.subtotal
+            self.additional_charge += item.additional_charge
+
             for k, v in item.cost_breakup['additional_charge'].items():
                 # Initialize value
                 if self.cost_breakup.get(k, None) is None:
                     self.cost_breakup[k] = 0.0
                 self.cost_breakup[k] += v
-                self.shipping_charge += item.shipping_charge
-                self.subtotal += item.subtotal
-                self.additional_charge += item.additional_charge
 
         # Count purchase products
         for item in self.purchaseitem_set.all():
             if force_item_calculation is True:
                 item.calculate_cost()
 
-            for k, v in item.cost_breakup.items():
+            self.shipping_charge += item.shipping_charge
+            self.subtotal += item.subtotal
+            self.additional_charge += item.additional_charge
+
+            for k, v in item.cost_breakup['additional_charge'].items():
                 # Initialize value
                 if self.cost_breakup.get(k, None) is None:
                     self.cost_breakup[k] = 0.0
                 self.cost_breakup[k] += v
-                self.shipping_charge += item.shipping_charge
-                self.subtotal += item.subtotal
-                self.additional_charge += item.additional_charge
 
         self.cost_breakup['sales_tax_pct'] = getattr(self.get_sales_tax(), 'value', 0)
 
@@ -152,6 +154,7 @@ class Item(BaseModel):
         """
         # Subtotal of either rent or purchase
         subtotal = self._calculate_subtotal()
+        print subtotal
         self.subtotal = subtotal['amt']
 
         # Shipping charge
@@ -299,20 +302,4 @@ class PurchaseItem(Item):
         """
         Calculates the cost of item, shipping (according to qty) and sales tax
         """
-        purchase = {'amt': self.product.sell_price * self.qty}
-        self.subtotal = purchase['amt']
-
-        shipping = self._calculate_shipping_cost()
-        self.shipping_cost = shipping['amt']
-
-        additional_charge = self._calculate_additional_charge(
-            AdditionalCharge.Const.ItemKind.PURCHASE
-        )
-        self.additional_charge = additional_charge['amt']
-
-        self.cost_breakup['subtotal'] = purchase
-        self.cost_breakup['shipping'] = shipping
-        self.cost_breakup['additional_charge'] = additional_charge
-
-        self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
-                                 'additional_charge'])
+        return {'amt': self.product.sell_price * self.qty}
