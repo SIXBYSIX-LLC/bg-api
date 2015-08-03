@@ -67,5 +67,7 @@ class AdditionalCharge(Charge):
 
     objects = AdditionalChargeManager()
 
+    Const = constants
+
     class Meta(Charge.Meta):
         unique_together = ('name', 'user')
