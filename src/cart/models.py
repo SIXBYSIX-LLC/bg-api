@@ -154,7 +154,6 @@ class Item(BaseModel):
         """
         # Subtotal of either rent or purchase
         subtotal = self._calculate_subtotal()
-        print subtotal
         self.subtotal = subtotal['amt']
 
         # Shipping charge
