@@ -80,6 +80,9 @@ class Cart(BaseModel, DateTimeFieldMixin):
                 item.calculate_cost()
 
             for k, v in item.cost_breakup.items():
+                # Initialize value
+                if self.cost_breakup.get(k, None) is None:
+                    self.cost_breakup[k] = 0.0
                 self.cost_breakup[k] += v
                 self.shipping_charge += item.shipping_charge
                 self.subtotal += item.subtotal
