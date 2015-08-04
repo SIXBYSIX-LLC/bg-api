@@ -47,4 +47,4 @@ class InventoryError(APIException):
 
 
 class InvoiceError(APIException):
-    status_code = 22
+    status_code = 422
