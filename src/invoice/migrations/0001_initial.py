@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('order_note', models.TextField(default=None, null=True)),
                 ('po', models.CharField(default=b'', max_length=50)),
                 ('is_paid', models.BooleanField(default=False)),
-                ('is_for_order', models.BooleanField()),
+                ('is_for_order', models.NullBooleanField(default=None)),
                 ('is_approve', models.BooleanField(default=False)),
                 ('order', models.ForeignKey(to='order.Order')),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
@@ -62,7 +62,6 @@ class Migration(migrations.Migration):
                 ('unit_price', common.fields.FloatField()),
                 ('subtotal', common.fields.FloatField()),
                 ('shipping_charge', common.fields.FloatField()),
-                ('additional_charge', common.fields.FloatField()),
                 ('overuse_charge', common.fields.FloatField(default=0)),
                 ('cost_breakup', djangofuture.contrib.postgres.fields.jsonb.JSONField(default={})),
                 ('date_from', models.DateTimeField(default=None, null=True)),
@@ -79,6 +78,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='invoice',
-            unique_together=set([('user', 'is_for_order')]),
+            unique_together=set([('user', 'order', 'is_for_order')]),
         ),
     ]
