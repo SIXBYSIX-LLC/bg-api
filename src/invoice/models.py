@@ -1,5 +1,6 @@
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
+from model_utils.managers import QueryManager
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
@@ -56,6 +57,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
     is_approve = models.BooleanField(default=False)
 
     objects = InvoiceManager()
+    approved = QueryManager(is_approve=True)
 
     class Meta(BaseModel.Meta):
         unique_together = ('user', 'order', 'is_for_order')

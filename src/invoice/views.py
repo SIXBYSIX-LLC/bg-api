@@ -7,7 +7,7 @@ from .serializers import (InvoiceSerializer, InvoiceRetrieveSerializer, InvoiceL
 
 
 class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
-    queryset = Invoice.objects.all()
+    queryset = Invoice.approved.all()
     serializer_class = InvoiceSerializer
     retrieve_serializer_class = InvoiceRetrieveSerializer
     ownership_fields = ('user',)
