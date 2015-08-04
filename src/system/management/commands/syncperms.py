@@ -75,6 +75,12 @@ class Command(BaseCommand):
             Permission.objects.get(codename='view_additionalcharge'),
             Permission.objects.get(codename='change_additionalcharge'),
             Permission.objects.get(codename='delete_additionalcharge'),
+            # Invoice
+            Permission.objects.get(codename='view_invoice'),
+            Permission.objects.get(codename='view_invoiceline'),
+            Permission.objects.get(codename='change_invoiceline'),
+            Permission.objects.get(codename='view_item', content_type__app_label='invoice'),
+            Permission.objects.get(codename='change_item', content_type__app_label='invoice'),
         )
 
         # Assign device group permission
