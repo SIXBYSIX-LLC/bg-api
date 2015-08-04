@@ -15,7 +15,7 @@ class InvoiceManager(BaseManager):
                                  is_for_order=True)
             invoice.save()
 
-            # Add Item
+            # Add purchase Item
             for item in order.purchaseitem_set.all():
                 invoiceline = InvoiceLine.objects.get_or_create(
                     user_id=item.detail.get('user'), invoice=invoice, is_approve=True
@@ -23,7 +23,7 @@ class InvoiceManager(BaseManager):
 
                 # Adding items to invoice
                 description = "%s\nSKU: %s" % (item.detail.get('name'), item.detail.get('sku'))
-                item = Item.objects.create(
+                Item.objects.create(
                     invoice=invoice,
                     invoiceline=invoiceline,
                     qty=item.qty,
@@ -34,6 +34,29 @@ class InvoiceManager(BaseManager):
                     cost_breakup=item.cost_breakup,
                     unit_price=item.cost_breakup['subtotal'].get('unit_price'),
                     order_item=item
+                )
+
+            # Add rental items
+            for item in order.rentalitem_set.all():
+                invoiceline = InvoiceLine.objects.get_or_create(
+                    user_id=item.detail.get('user'), invoice=invoice, is_approve=True
+                )[0]
+
+                description = "%s\nSKU: %s\nRent from %s to %s\nPost paid payment" % (
+                    item.detail.get('name'), item.detail.get('sku'), item.date_start.isoformat(),
+                    item.date_end.isoformat()
+                )
+                Item.objects.create(
+                    invoice=invoice,
+                    invoiceline=invoiceline,
+                    qty=item.qty,
+                    description=description,
+                    user=item.orderline.user,
+                    subtotal=0,
+                    shipping_charge=0,
+                    cost_breakup={},
+                    unit_price=0,
+                    order_item=item,
                 )
 
         return invoice
