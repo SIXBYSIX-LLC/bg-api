@@ -4,6 +4,9 @@ from factory import fuzzy
 from usr import factories as usr_factories
 from catalog import factories as cat_factories
 from shipping import factories as shp_factories
+from cart import factories as cart_factories
+from charge import factories as chrg_factories
+from order.models import Order
 
 
 class TestDataSet(object):
@@ -14,6 +17,8 @@ class TestDataSet(object):
 
     products = []
     users = []
+    carts = []
+    orders = []
 
     def generate(self):
         self.users = usr_factories.UserFactory.create_batch(4)
@@ -65,6 +70,9 @@ class TestDataSet(object):
             self.add_inventory(product, is_active=True, batch_size=4)
             self.add_inventory(product, is_active=False, batch_size=1)
 
+        self.carts.append(self.add_cart(self.users[1]))
+        self.orders.append(self.add_order(self.carts[0]))
+
     def add_address(self, to_user, city_name, batch_size=1):
         zip_code = getattr(self, 'ZIP_RANGE_%s' % city_name.upper())
 
@@ -84,3 +92,29 @@ class TestDataSet(object):
     def add_inventory(self, to_proudct, batch_size=1, **kwargs):
         return cat_factories.InventoryFactory.create_batch(batch_size, product=to_proudct,
                                                            user=to_proudct.user, **kwargs)
+
+    def add_cart(self, user):
+        chrg_factories.SalesTaxFactory()
+        cart = cart_factories.CartFactory(
+            user=user,
+            is_active=True,
+            location=user.address_set.filter(city__name_std='Rajkot')[0],
+            billing_address=user.address_set.filter(city__name_std='Rajkot')[0]
+        )
+        prod1 = self.users[2].product_set.filter(
+            location__city__name_std='Rajkot').order_by('?').first()
+        prod2 = self.users[3].product_set.filter(
+            location__city__name_std='Vadodara').order_by('?').first()
+        prod3 = self.users[2].product_set.filter(
+            location__city__name_std='Rajkot').order_by('?').first()
+
+        cart_factories.RentalItemFactory(cart=cart, product=prod1, is_postpaid=True)
+        cart_factories.RentalItemFactory(cart=cart, product=prod2, is_postpaid=False)
+        cart_factories.PurchaseItemFactory(cart=cart, product=prod3)
+
+        cart.calculate_cost(force_item_calculation=True)
+
+        return cart
+
+    def add_order(self, cart):
+        return Order.objects.create_order(cart)
