@@ -5,8 +5,8 @@ from usr.serializers import UserRefSerializer
 
 
 class ItemSerializer(ModelSerializer):
-    user = UserRefSerializer(read_only=True)
     total = rf_serializers.FloatField(read_only=True)
+    additional_charge = rf_serializers.FloatField(read_only=True)
 
     class Meta:
         model = Item
@@ -19,7 +19,7 @@ class ItemSerializer(ModelSerializer):
         if cost_breakup:
             additional_charge = cost_breakup.get('additional_charge')
             instance.cost_breakup['additional_charge'] = additional_charge
-
+        instance.full_clean()
         super(ItemSerializer, self).update(instance, validated_data)
 
 
@@ -30,7 +30,7 @@ class InvoiceSerializer(ModelSerializer):
     shipping_charge = rf_serializers.FloatField(read_only=True)
     additional_charge = rf_serializers.FloatField(read_only=True)
     cost_breakup = rf_serializers.DictField(read_only=True)
-    user = UserRefSerializer(read_only=True)
+    user = UserRefSerializer(read_only=True, source='user.profile')
 
     class Meta:
         model = Invoice
@@ -45,4 +45,4 @@ class InvoiceLineSerializer(InvoiceSerializer):
 
     class Meta:
         model = InvoiceLine
-        exclude = ('user',)
+        exclude = ('user', 'order')
