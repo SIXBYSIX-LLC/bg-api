@@ -70,8 +70,7 @@ class TestDataSet(object):
             self.add_inventory(product, is_active=True, batch_size=4)
             self.add_inventory(product, is_active=False, batch_size=1)
 
-        self.carts.append(self.add_cart(self.users[1]))
-        self.orders.append(self.add_order(self.carts[0]))
+        chrg_factories.SalesTaxFactory()
 
     def add_address(self, to_user, city_name, batch_size=1):
         zip_code = getattr(self, 'ZIP_RANGE_%s' % city_name.upper())
@@ -94,27 +93,22 @@ class TestDataSet(object):
                                                            user=to_proudct.user, **kwargs)
 
     def add_cart(self, user):
-        chrg_factories.SalesTaxFactory()
         cart = cart_factories.CartFactory(
             user=user,
             is_active=True,
             location=user.address_set.filter(city__name_std='Rajkot')[0],
             billing_address=user.address_set.filter(city__name_std='Rajkot')[0]
         )
-        prod1 = self.users[2].product_set.filter(
-            location__city__name_std='Rajkot').order_by('?').first()
-        prod2 = self.users[3].product_set.filter(
-            location__city__name_std='Vadodara').order_by('?').first()
-        prod3 = self.users[2].product_set.filter(
-            location__city__name_std='Rajkot').order_by('?').first()
-
-        cart_factories.RentalItemFactory(cart=cart, product=prod1, is_postpaid=True)
-        cart_factories.RentalItemFactory(cart=cart, product=prod2, is_postpaid=False)
-        cart_factories.PurchaseItemFactory(cart=cart, product=prod3)
-
-        cart.calculate_cost(force_item_calculation=True)
 
         return cart
+
+    def add_item_to_cart(self, cart, product, add_as):
+        if add_as == 'purchase':
+            cart_factories.PurchaseItemFactory(cart=cart, product=product)
+        else:
+            cart_factories.RentalItemFactory(cart=cart, product=product, is_postpaid=True)
+
+        cart.calculate_cost(force_item_calculation=True)
 
     def add_order(self, cart):
         return Order.objects.create_order(cart)
