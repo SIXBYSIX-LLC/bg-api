@@ -28,7 +28,7 @@ class PaymentGateway(object):
     Base class for payment gateways. All payment gateway should inherit this class
     """
 
-    def charge(self, invoice, **kwargs):
+    def charge(self, invoice, transaction_ref, **kwargs):
         raise NotImplementedError
 
 
@@ -39,7 +39,7 @@ class Postpaid(PaymentGateway):
     """
     name = 'postpaid'
 
-    def charge(self, invoice, **kwargs):
+    def charge(self, invoice, transaction_ref, **kwargs):
         if invoice.total > 0:
             raise errors.PaymentError(*messages.ERR_INVALID_AMT)
 
