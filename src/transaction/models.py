@@ -17,7 +17,7 @@ L = logging.getLogger('bgapi.' + __name__)
 
 class TransactionManager(BaseManager):
     def pay_invoice(self, gateway, invoice, return_url, **kwargs):
-        with transaction.automic():
+        with transaction.atomic():
             # Getting payment gateway
             pg = paymentgateway.get_by_name(gateway)
             L.info('Invoice initiated transaction', extra={
@@ -65,7 +65,7 @@ class TransactionManager(BaseManager):
                 q_params = urllib.urlencode({
                     'status': response.status,
                     'message': response.message,
-                    'transaction_id': id
+                    'transaction_id': t.id
                 })
                 if '?' not in return_url:
                     q_params = '?' + q_params

@@ -1,7 +1,9 @@
-from common.serializers import ModelSerializer, rf_serializers
+from common.serializers import ModelSerializer, rf_serializers, Serializer
 from .models import Invoice, InvoiceLine, Item
 from order.serializers import OrderSerializer
 from usr.serializers import UserRefSerializer
+from common import helper
+from transaction import constants as trans_const
 
 
 class ItemSerializer(ModelSerializer):
@@ -46,3 +48,9 @@ class InvoiceLineSerializer(InvoiceSerializer):
     class Meta:
         model = InvoiceLine
         exclude = ('user', 'order')
+
+
+class InvoicePaymentSerializer(Serializer):
+    return_url = rf_serializers.URLField()
+    gateway = rf_serializers.ChoiceField(helper.prop2pair(trans_const.PaymentGateway))
+    nonce = rf_serializers.DictField(required=False)

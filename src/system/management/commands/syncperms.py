@@ -77,6 +77,7 @@ class Command(BaseCommand):
             Permission.objects.get(codename='delete_additionalcharge'),
             # Invoice
             Permission.objects.get(codename='view_invoice'),
+            Permission.objects.get(codename='add_invoice'),
             Permission.objects.get(codename='view_invoiceline'),
             Permission.objects.get(codename='change_invoiceline'),
             Permission.objects.get(codename='view_item', content_type__app_label='invoice'),
