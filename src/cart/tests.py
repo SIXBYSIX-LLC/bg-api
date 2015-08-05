@@ -1,7 +1,7 @@
 from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
-from charge.factories import SalesTaxFactory
+from charge.models import SalesTax
 
 
 class CartTestCase(TestCase):
@@ -129,7 +129,7 @@ class CartTestCase(TestCase):
         self.assertEqual(rmresp.data['total'], 0, rmresp)
 
     def test_cart_sales_tax(self):
-        tax = SalesTaxFactory()
+        tax = SalesTax.objects.all().first()
         # Cart with shipping address to rajkot
         rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
         cart = CartFactory(user=self.dataset.users[1], location=rjt)

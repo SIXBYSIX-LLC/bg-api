@@ -7,9 +7,9 @@ class FloatField(models.FloatField):
         self.min_value, self.max_value, self.precision = min_value, max_value, precision
 
         self.validators = kwargs.pop('validators', [])
-        if self.min_value:
+        if self.min_value is not None:
             self.validators.append(MinValueValidator(self.min_value))
-        if self.max_value:
+        if self.max_value is not None:
             self.validators.append(MaxValueValidator(self.max_value))
 
         super(FloatField, self).__init__(**kwargs)

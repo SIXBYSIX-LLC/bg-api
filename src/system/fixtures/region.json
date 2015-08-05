@@ -10,5 +10,17 @@
         },
         "model": "cities.region",
         "pk": 1270770
+    },
+    {
+        "fields": {
+            "code": "09",
+            "name": "Delhi",
+            "country": 1269750,
+            "alt_names": [],
+            "name_std": "Delhi",
+            "slug": "delhi"
+        },
+        "model": "cities.region",
+        "pk": 1270771
     }
 ]

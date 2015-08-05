@@ -14,7 +14,7 @@ class CitiesProvider(BaseProvider):
         return Country.objects.order_by('?').first()
 
     def cities_region(self, country):
-        return Region.objects.filter(country=country).order_by('?').first()
+        return Region.objects.filter(country=country, id='1270770').order_by('?').first()
 
     def cities_city(self, region):
         return City.objects.filter(region=region).order_by('?').first()

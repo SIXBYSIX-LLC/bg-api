@@ -8,9 +8,9 @@ from .models import AdditionalCharge
 
 class SalesTaxTest(TestCase):
     def test_create(self):
-        st = factories.SalesTaxBaseFactory()
+        st = factories.SalesTaxBaseFactory(state=1270771)
         resp = self.admin_client.post('/charges/sales_taxes', data=st)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED, resp)
 
 
 class AdditionalChargeTest(TestCase):

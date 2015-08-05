@@ -1,14 +1,12 @@
 from catalog.models import Product
 from common.tests import TestCase
 from cart import factories as cart_factories
-from charge.factories import SalesTaxFactory
 from .constants import Status as sts_const
 from .models import Item
 
 
 class OrderTest(TestCase):
     def prepare_data(self):
-        SalesTaxFactory()
         self.cart = cart_factories.CartFactory(
             user=self.dataset.users[1],
             is_active=True,
