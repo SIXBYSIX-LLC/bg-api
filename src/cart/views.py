@@ -23,7 +23,7 @@ class CartViewSet(GenericViewSet, UpdateModelMixin):
         return Response(serializer.data)
 
     @list_route(methods=['PUT'])
-    def checkout(self):
+    def action_checkout(self):
         cart = self.get_object()
         order = Order.objects.create_order(cart)
         invoice = Invoice.objects.create_from_order(order)
