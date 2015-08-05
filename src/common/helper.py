@@ -83,10 +83,11 @@ def prop2pair(cls, out='tuple', startswith_only=None):
     :return tuple,dict:
     """
     if startswith_only is not None:
-        d = {getattr(cls, prop): prop.capitalize() for prop in dir(cls) if prop.startswith(
-            startswith_only) is False}
+        d = {getattr(cls, prop): prop.capitalize() for prop in dir(cls)
+             if prop.startswith(startswith_only) is True}
     else:
-        d = {getattr(cls, prop): prop.capitalize() for prop in dir(cls)}
+        d = {getattr(cls, prop): prop.capitalize() for prop in dir(cls)
+             if prop.startswith('_') is False}
 
     if out == 'tuple':
         d = d.items()
