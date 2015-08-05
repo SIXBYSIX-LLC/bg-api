@@ -71,3 +71,24 @@ def str2bool(v):
         return v.lower() in ("yes", "true", "t", "1")
     except:
         return False
+
+
+def prop2pair(cls, out='tuple', startswith_only=None):
+    """
+    Iterates over each property of the cls and prepare the key-value pair
+
+    :param cls: Class to be interated over
+    :param str out: Output format either `tuple` or `dict`
+    :param str startswith_only: Consider only properties that starts with this value
+    :return tuple,dict:
+    """
+    if startswith_only is not None:
+        d = {getattr(cls, prop): prop.capitalize() for prop in dir(cls) if prop.startswith(
+            startswith_only) is False}
+    else:
+        d = {getattr(cls, prop): prop.capitalize() for prop in dir(cls)}
+
+    if out == 'tuple':
+        d = d.items()
+
+    return d
