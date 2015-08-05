@@ -54,7 +54,7 @@ class InvoiceManager(BaseManager):
                     user=item.orderline.user,
                     subtotal=0,
                     shipping_charge=0,
-                    cost_breakup={},
+                    cost_breakup={'additional_charge': {}},
                     unit_price=0,
                     order_item=item,
                 )
