@@ -48,7 +48,7 @@ class Postpaid(PaymentGateway):
             received_amt=0,
             raw={},
             status=status_const.SUCCESS,
-            messages='Payment is successful'
+            message='Payment is successful'
         )
 
 
@@ -75,7 +75,7 @@ def get_by_name(name):
     """
     pgs = [Postpaid, Braintree]
     for pg in pgs:
-        if pg.name == name.lower().stripe():
+        if pg.name == name.lower().strip():
             return pg()
 
     raise errors.PaymentError(*messages.ERR_INVALID_PG_NAME)
