@@ -70,9 +70,11 @@ LOCAL_APPS = (
     'catalog',
     'inquiry',
     'shipping',
-    'tax',
+    'charge',
     'cart',
     'order',
+    'invoice',
+    'transaction',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS

@@ -5,8 +5,13 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class FloatField(models.FloatField):
     def __init__(self, min_value=None, max_value=None, precision=None, **kwargs):
         self.min_value, self.max_value, self.precision = min_value, max_value, precision
-        self.validators = [MinValueValidator(self.min_value),
-                           MaxValueValidator(self.max_value)] + kwargs.pop('validators', [])
+
+        self.validators = kwargs.pop('validators', [])
+        if self.min_value is not None:
+            self.validators.append(MinValueValidator(self.min_value))
+        if self.max_value is not None:
+            self.validators.append(MaxValueValidator(self.max_value))
+
         super(FloatField, self).__init__(**kwargs)
 
     def to_python(self, value):

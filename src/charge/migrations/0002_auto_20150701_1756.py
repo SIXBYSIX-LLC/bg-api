@@ -6,7 +6,7 @@ from django.db import models, migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('tax', '0001_initial'),
+        ('charge', '0001_initial'),
     ]
 
     operations = [

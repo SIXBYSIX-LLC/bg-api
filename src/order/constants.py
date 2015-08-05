@@ -8,3 +8,4 @@ class Status(object):
     PICKED_UP = 'picked_up'  # Item has been picked up
     DELIVERED = 'delivered'  # Item is delivered
     CANCEL = 'cancelled'  # Item is cancelled by buyer or seller
+    END_CONTRACT = 'end_contract'  # Item is cancelled by buyer or seller

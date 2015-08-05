@@ -7,8 +7,9 @@ from model_utils.managers import InheritanceManager
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from shipping import constants as ship_const
 from . import messages, signals
-from common import errors
+from common import errors, fields as ex_fields
 from constants import Status as sts_const
+from usr.serializers import AddressListSerializer
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -29,12 +30,12 @@ class OrderManager(BaseManager):
         with transaction.atomic():
             # Creating order
             order = self.model(cart=cart, user=cart.user)
-            order.address = "%s\n\n%s" % (cart.location.address1, cart.location.address2)
-            order.country = cart.location.country
-            order.state = cart.location.state
-            order.city = cart.location.city
-            order.zip_code = cart.location.zip_code
-            order.total = cart.total
+            order.subtotal = cart.subtotal
+            order.shipping_charge = cart.shipping_charge
+            order.additional_charge = cart.additional_charge
+            order.cost_breakup = cart.cost_breakup
+            order.shipping_address = AddressListSerializer(cart.location).data
+            order.billing_address = AddressListSerializer(cart.billing_address).data
             order.save()
 
             # Creating RentalItem
@@ -59,6 +60,8 @@ class OrderManager(BaseManager):
                     date_start=item.date_start,
                     date_end=item.date_end,
                     subtotal=item.subtotal,
+                    shipping_charge=item.shipping_charge,
+                    additional_charge=item.additional_charge,
                     cost_breakup=item.cost_breakup,
                     is_postpaid=item.is_postpaid
                 )
@@ -81,6 +84,8 @@ class OrderManager(BaseManager):
                     detail=product_serializer.data,
                     shipping_method=item.shipping_method.name if item.shipping_method else None,
                     subtotal=item.subtotal,
+                    shipping_charge=item.shipping_charge,
+                    additional_charge=item.additional_charge,
                     cost_breakup=item.cost_breakup
                 )
                 purchase_item.change_status(sts_const.NOT_CONFIRMED)
@@ -100,13 +105,17 @@ class Order(BaseModel, DateTimeFieldMixin):
     # The user, who is creating the order
     user = models.ForeignKey('miniauth.User')
     # Address, copied from cart
-    address = models.TextField()
-    country = models.ForeignKey('cities.Country')
-    state = models.ForeignKey('cities.Region')
-    city = models.ForeignKey('cities.City')
-    zip_code = models.CharField(max_length=15)
-    #: total order value
-    total = pg_fields.JSONField()
+    shipping_address = pg_fields.JSONField()
+    #: Billing Address
+    billing_address = pg_fields.JSONField()
+    #: Subtotal of order value
+    subtotal = ex_fields.FloatField(min_value=0.0, precision=2)
+    #: Shipping charge of whole order
+    shipping_charge = ex_fields.FloatField(min_value=0.0, precision=2)
+    #: Total additional charge
+    additional_charge = ex_fields.FloatField(min_value=0.0, precision=2)
+    #: Cost breakup
+    cost_breakup = pg_fields.JSONField()
 
     objects = OrderManager()
 
@@ -122,6 +131,10 @@ class Order(BaseModel, DateTimeFieldMixin):
     def purchaseitem_set(self):
         return PurchaseItem.objects.filter(order=self)
 
+    @property
+    def total(self):
+        return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
+
 
 class OrderLine(BaseModel, DateTimeFieldMixin):
     """
@@ -132,25 +145,37 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
     user = models.ForeignKey('miniauth.User')
     #: Order id
     order = models.ForeignKey('Order')
-    #: Total amount of this line
-    total = pg_fields.JSONField(null=True, default=None)
+    #: Subtotal of order value
+    subtotal = ex_fields.FloatField(min_value=0.0, precision=2, default=0.0)
+    #: Shipping charge of whole order
+    shipping_charge = ex_fields.FloatField(min_value=0.0, precision=2, default=0.0)
+    #: Total additional charge
+    additional_charge = ex_fields.FloatField(min_value=0.0, precision=2, default=0.0)
+    #: Cost breakup
+    cost_breakup = pg_fields.JSONField(default={})
+
+    @property
+    def total(self):
+        return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
 
     def calculate_cost(self):
-        total = {'subtotal': 0.0, 'sales_tax': 0.0, 'shipping': 0.0}
-
         for item in self.item_set.select_related('rentalitem').all():
             if getattr(item, 'rentalitem', None):
                 if item.rentalitem.is_postpaid:
                     continue
 
-            total['subtotal'] += item.subtotal
-            total['sales_tax'] += item.cost_breakup['sales_tax']['amt']
-            total['shipping'] += item.cost_breakup['shipping']['amt']
+                self.shipping_charge += item.shipping_charge
+                self.subtotal += item.subtotal
+                self.additional_charge += item.additional_charge
 
-        total['total'] = round(total['subtotal'] + total['sales_tax'] + total['shipping'], 2)
+                for k, v in item.cost_breakup['additional_charge'].items():
+                    # Initialize value
+                    if self.cost_breakup.get(k, None) is None:
+                        self.cost_breakup[k] = 0.0
+                    self.cost_breakup[k] += v
 
-        self.total = total
-        self.save(update_fields=['total'])
+        self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
+                                 'additional_charge'])
 
     @property
     def rentalitem_set(self):
@@ -174,8 +199,12 @@ class Item(BaseModel):
     #: Item status
     statuses = models.ManyToManyField('Status')
     #: Subtotal, only includes rent for quantity
-    subtotal = models.FloatField()
-    #: Subtotal breakup
+    subtotal = ex_fields.FloatField(min_value=0.0, precision=2)
+    #: Shipping charge of whole order
+    shipping_charge = ex_fields.FloatField(min_value=0.0, precision=2)
+    #: Total additional charge
+    additional_charge = ex_fields.FloatField(min_value=0.0, precision=2)
+    #: Cost breakup
     cost_breakup = pg_fields.JSONField()
     #: Quantity
     qty = models.PositiveSmallIntegerField()
@@ -190,7 +219,11 @@ class Item(BaseModel):
     def current_status(self):
         return self.statuses.last()
 
-    def change_status(self, status, comment=None, **kwargs):
+    @property
+    def total(self):
+        return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
+
+    def change_status(self, status, info=None, **kwargs):
         """
         Change item status
 
@@ -216,7 +249,7 @@ class Item(BaseModel):
         if status == sts_const.APPROVED:
             self.__change_status_approve()
 
-        self.statuses.add(Status.objects.create(status=status, comment=comment))
+        self.statuses.add(Status.objects.create(status=status, info=info))
 
         signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
 
@@ -265,12 +298,13 @@ class Status(BaseModel, DateTimeFieldMixin):
         sts_const.CANCEL: [],
         sts_const.PICKED_UP: [],
         sts_const.DELIVERED: [],
+        sts_const.END_CONTRACT: [],
     }
     STATUS = [(getattr(sts_const, prop), getattr(sts_const, prop))
               for prop in dir(sts_const) if prop.startswith('_') is False]
 
     #: The rental item status order
     status = models.CharField(max_length=30, choices=STATUS)
-    comment = models.TextField(null=True, default=None)
+    info = pg_fields.JSONField(null=True, default=None)
 
     Const = sts_const

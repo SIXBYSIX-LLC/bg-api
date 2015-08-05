@@ -1,9 +1,12 @@
 from rest_framework import decorators
+from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from cities.models import Country, Region, City
 
 from common import viewsets
+from .models import Config
+from system.serializers import ConfigSerializer
 
 
 class CitiesViewSet(viewsets.GenericViewSet):
@@ -29,3 +32,18 @@ class CitiesViewSet(viewsets.GenericViewSet):
         data = {city.id: city.name for city in City.objects.filter(region_id=r_id)}
 
         return Response(data)
+
+
+class ConfigViewSet(viewsets.GenericViewSet, RetrieveModelMixin, UpdateModelMixin):
+    queryset = Config.objects.all()
+    serializer_class = ConfigSerializer
+
+    def update(self, request, *args, **kwargs):
+        # Perform the lookup filtering.
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+
+        filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
+
+        Config.objects.get_or_create(**filter_kwargs)
+
+        return super(ConfigViewSet, self).update(request, *args, **kwargs)

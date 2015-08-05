@@ -1,18 +1,17 @@
 from catalog.models import Product
 from common.tests import TestCase
 from cart import factories as cart_factories
-from tax.factories import SalesTaxFactory
 from .constants import Status as sts_const
 from .models import Item
 
 
 class OrderTest(TestCase):
     def prepare_data(self):
-        SalesTaxFactory()
         self.cart = cart_factories.CartFactory(
             user=self.dataset.users[1],
             is_active=True,
-            location=self.dataset.users[1].address_set.filter(city__name_std='Rajkot')[0]
+            location=self.dataset.users[1].address_set.filter(city__name_std='Rajkot')[0],
+            billing_address=self.dataset.users[1].address_set.filter(city__name_std='Rajkot')[0]
         )
         prod1 = self.dataset.users[2].product_set.filter(
             location__city__name_std='Rajkot').order_by('?').first()

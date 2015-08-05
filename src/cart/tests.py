@@ -1,7 +1,7 @@
 from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
-from tax.factories import SalesTaxFactory
+from charge.models import SalesTax
 
 
 class CartTestCase(TestCase):
@@ -102,7 +102,7 @@ class CartTestCase(TestCase):
         rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='pickup')
         c = self.get_client(self.dataset.users[1])
         resp = c.post('/carts/%s/rentals' % cart.id, data=rental_item)
-        self.assertEqual(resp.data['rental_products'][0].get('shipping_cost'), 0.0, resp)
+        self.assertEqual(resp.data['rental_products'][0].get('shipping_charge'), 0.0, resp)
 
     def test_cost_update_on_location_change(self):
         srt = self.dataset.users[1].address_set.filter(city__name_std='Surat').first()
@@ -120,16 +120,16 @@ class CartTestCase(TestCase):
         # Now change it to Rajkot
         upresp = c.patch('/carts/%s' % cart.id, data={'location': rjt.id})
         self.assertEqual(upresp.status_code, self.status_code.HTTP_200_OK)
-        self.assertNotEqual(upresp.data['rental_products'][0]['shipping_cost'],
-                            resp.data['rental_products'][0]['shipping_cost'])
+        self.assertNotEqual(upresp.data['rental_products'][0]['shipping_charge'],
+                            resp.data['rental_products'][0]['shipping_charge'])
 
         # Delete item entirely
         c.delete('/carts/%s/rentals/%s' % (cart.id, resp.data['rental_products'][0]['id']))
         rmresp = c.get('/carts/current')
-        self.assertEqual(rmresp.data['total']['total'], 0, rmresp)
+        self.assertEqual(rmresp.data['total'], 0, rmresp)
 
     def test_cart_sales_tax(self):
-        tax = SalesTaxFactory()
+        tax = SalesTax.objects.all().first()
         # Cart with shipping address to rajkot
         rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
         cart = CartFactory(user=self.dataset.users[1], location=rjt)
@@ -141,8 +141,8 @@ class CartTestCase(TestCase):
         c = self.get_client(self.dataset.users[1])
         c.post('/carts/%s/rentals' % cart.id, data=rental_item)
         resp = c.get('/carts/current')
-        self.assertEqual(resp.data['total']['sales_tax_pct'], tax.value)
-        self.assertGreater(resp.data['total']['sales_tax'], 10)
+        self.assertEqual(resp.data['cost_breakup']['sales_tax_pct'], tax.value)
+        self.assertGreater(resp.data['cost_breakup']['sales_tax'], 10)
 
     def test_add_purchases_product(self):
         cart_id = self.get_cart()

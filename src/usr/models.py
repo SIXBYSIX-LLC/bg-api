@@ -9,12 +9,11 @@ from django.utils.translation import ugettext as _
 from django.core import validators
 from django.core.mail import EmailMessage
 from django.conf import settings
-from django.contrib.gis.db import models as gis_models
 from djangofuture.contrib.postgres import fields as pg_fields
 
 from common import errors
-from common.models import BaseModel
-from . import messages, signals, constants
+from common.models import BaseModel, AddressBase
+from . import messages, signals
 
 
 LOG = logging.getLogger('bgapi.' + __name__)
@@ -224,33 +223,5 @@ class Profile(User):
         return True
 
 
-class Address(BaseModel):
-    """
-    Address collection of the user
-    """
-    TYPES = (
-        (constants.TYPE_JOB_SITE, 'Job site'),
-        (constants.TYPE_BILLING, 'Billing'),
-    )
-    #: Owner of the object
-    user = models.ForeignKey('miniauth.User')
-    #: Location name
-    name = models.CharField(max_length=30)
-    #: Address 1
-    address1 = models.CharField(max_length=254)
-    #: Address 2
-    address2 = models.CharField(max_length=254, blank=True, null=True, default=None)
-    city = models.ForeignKey('cities.City')
-    state = models.ForeignKey('cities.Region')
-    zip_code = models.CharField(max_length=20)
-    country = models.ForeignKey('cities.Country')
-    #: Coordinates of the location
-    coord = gis_models.PointField(null=True, blank=True)
-    #: Type of address
-    kind = models.CharField(choices=TYPES, max_length=20)
-
-    Const = constants
-
-    class Meta(BaseModel.Meta):
-        unique_together = ('name', 'user')
-
+class Address(AddressBase):
+    pass

@@ -44,3 +44,11 @@ class ChangeStatusError(APIException):
 
 class InventoryError(APIException):
     status_code = 422
+
+
+class InvoiceError(APIException):
+    status_code = 422
+
+
+class PaymentError(APIException):
+    status_code = 422

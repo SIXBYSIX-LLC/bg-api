@@ -6,7 +6,6 @@ from .models import Order, OrderLine, Item, RentalItem
 from order import messages
 from common.errors import OrderError
 from usr.serializers import UserRefSerializer
-from usr.serializers import AddressListSerializer
 from catalog.serializers import ProductRefSerializer
 from constants import Status as sts_const
 
@@ -41,15 +40,13 @@ class ItemListSerializer(ItemSerializer):
 
 class OrderSerializer(ModelSerializer):
     items = ItemSerializer(many=True, source='item_set')
-    country = AddressListSerializer.CountryRefSerializer(read_only=True)
-    state = AddressListSerializer.RegionRefSerializer(read_only=True)
-    city = AddressListSerializer.CityRefSerializer(read_only=True)
+    total = rf_serializers.FloatField(read_only=True)
 
     class Meta:
         model = Order
         write_only_fields = ('cart',)
-        read_only_fields = ('id', 'user', 'address', 'country', 'state', 'city',
-                            'zip_code', 'total')
+        read_only_fields = ('id', 'billing_address', 'shipping_address', 'total', 'user',
+                            'subtotal', 'shipping_charge', 'additional_charge', 'cost_breakup')
 
     def create(self, validated_data):
         return Order.objects.create_order(validated_data.get('cart'))
@@ -76,6 +73,7 @@ class OrderLineSerializer(ModelSerializer):
 
     items = ItemSerializer(many=True, source='item_set')
     order = OrderRefSerializer()
+    total = rf_serializers.FloatField(read_only=True)
 
     class Meta:
         model = OrderLine
@@ -87,7 +85,7 @@ class OrderLineListSerializer(OrderLineSerializer):
 
 class ChangeStatusSerializer(Serializer):
     status = rf_serializers.CharField()
-    comment = rf_serializers.CharField(required=False)
+    info = rf_serializers.DictField(required=False)
 
     def validate(self, validated_data):
         item = self.context['item']

@@ -8,7 +8,7 @@ import common.fields
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('tax', '0002_auto_20150701_1756'),
+        ('charge', '0002_auto_20150701_1756'),
     ]
 
     operations = [

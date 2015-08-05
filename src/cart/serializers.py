@@ -1,7 +1,7 @@
 from cart.models import Cart, RentalItem, Item, PurchaseItem
 from catalog.serializers import ProductRefSerializer
 from common.errors import ValidationError
-from common.serializers import ModelSerializer
+from common.serializers import ModelSerializer, rf_serializers
 from . import messages
 
 
@@ -11,7 +11,7 @@ class ItemSerializer(ModelSerializer):
     """
     class Meta:
         model = Item
-        read_only_fields = ('shipping_cost', 'subtotal', 'is_shippable', 'cost_breakup')
+        read_only_fields = ('shipping_charge', 'subtotal', 'is_shippable', 'cost_breakup')
 
     def create(self, validated_data):
         instance = super(ItemSerializer, self).create(validated_data)
@@ -74,10 +74,12 @@ class PurchaseProductListSerializer(PurchaseProductSerializer):
 class CartSerializer(ModelSerializer):
     rental_products = RentalProductListSerializer(source='rentalitem_set', many=True)
     purchase_products = PurchaseProductListSerializer(source='purchaseitem_set', many=True)
+    total = rf_serializers.FloatField(read_only=True)
 
     class Meta:
         model = Cart
-        read_only_fields = ('rental_products', 'user', 'is_active', 'total', 'purchase_products')
+        read_only_fields = ('rental_products', 'user', 'is_active', 'total', 'purchase_products',
+                            'cost_breakup')
 
     def update(self, instance, validated_data):
         instance = super(CartSerializer, self).update(instance, validated_data)
