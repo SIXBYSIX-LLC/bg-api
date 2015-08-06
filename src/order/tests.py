@@ -1,8 +1,10 @@
+from django.db.models import Q
+
 from catalog.models import Product
 from common.tests import TestCase
 from cart import factories as cart_factories
 from .constants import Status as sts_const
-from .models import Item
+from .models import Item, Order
 
 
 class OrderTest(TestCase):
@@ -125,3 +127,14 @@ class OrderTest(TestCase):
         resp = c.put('/orders/%s/items/%s/actions/change_status' % (order_id, item_id),
                      data={'status': sts_const.CANCEL})
         self.assertEqual(resp.status_code, self.status_code.HTTP_204_NO_CONTENT)
+
+    def test_confirm_order(self):
+        self.test_create_order()
+        order = Order.objects.all()[0]
+        unconfirmed_count = order.item_set.filter(~Q(statuses__status=sts_const.CONFIRMED)).count()
+        self.assertGreater(unconfirmed_count, 1)
+
+        order.confirm()
+
+        unconfirmed_count = order.item_set.filter(~Q(statuses__status=sts_const.CONFIRMED)).count()
+        self.assertEqual(unconfirmed_count, 0)

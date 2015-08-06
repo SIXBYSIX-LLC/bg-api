@@ -1,6 +1,7 @@
 import logging
 
 from django.db import models, transaction
+from django.db.models import Q
 from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import InheritanceManager
 
@@ -135,6 +136,10 @@ class Order(BaseModel, DateTimeFieldMixin):
     def total(self):
         return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
 
+    def confirm(self):
+        for item in self.item_set.filter(~Q(statuses__status=sts_const.CONFIRMED)):
+            item.change_status(sts_const.CONFIRMED)
+
 
 class OrderLine(BaseModel, DateTimeFieldMixin):
     """
@@ -157,6 +162,14 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
     @property
     def total(self):
         return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
+
+    @property
+    def rentalitem_set(self):
+        return RentalItem.objects.filter(orderline=self)
+
+    @property
+    def purchaseitem_set(self):
+        return PurchaseItem.objects.filter(orderline=self)
 
     def calculate_cost(self):
         self.shipping_charge = 0
@@ -184,14 +197,6 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
 
         self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
                                  'additional_charge'])
-
-    @property
-    def rentalitem_set(self):
-        return RentalItem.objects.filter(orderline=self)
-
-    @property
-    def purchaseitem_set(self):
-        return PurchaseItem.objects.filter(orderline=self)
 
 
 class Item(BaseModel):
