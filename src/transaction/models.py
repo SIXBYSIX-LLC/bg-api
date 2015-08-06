@@ -70,7 +70,7 @@ class TransactionManager(BaseManager):
             url = response.redirect_url
 
         L.info('Transaction is completed', extra={'redirect_url': url})
-        return url, t.id
+        return url, t
 
 
 class Transaction(BaseModel, DateTimeFieldMixin):

@@ -7,6 +7,7 @@ from .models import Invoice, InvoiceLine, Item
 from .serializers import (InvoiceSerializer, InvoiceRetrieveSerializer, InvoiceLineSerializer,
                           ItemSerializer, InvoicePaymentSerializer)
 from transaction.models import Transaction
+from transaction.serializer import TransactionRefSerializer
 
 
 class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
@@ -22,9 +23,12 @@ class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
         serializer = InvoicePaymentSerializer(data=request.data)
         serializer.is_valid(True)
 
-        redirect_url, t_id = Transaction.objects.pay_invoice(invoice=invoice, **serializer.data)
+        redirect_url, transaction = Transaction.objects.pay_invoice(
+            invoice=invoice, **serializer.data
+        )
+        t_serializer = TransactionRefSerializer(transaction)
 
-        return Response({'redirect_url': redirect_url, 'transaction': t_id})
+        return Response({'redirect_url': redirect_url, 'transaction': t_serializer.data})
 
 
 class InvoiceLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, UpdateModelMixin):
