@@ -137,12 +137,12 @@ class CartTestCase(TestCase):
         # Product from Rajkot
         prod = self.dataset.users[3].product_set.filter(
             location__city__name_std='Rajkot').first()
-        rental_item = RentalItemBaseFactory(product=prod.id, shipping_kind='delivery')
+        purchase_item = {'product': prod.id, 'shipping_kind': 'delivery'}
         c = self.get_client(self.dataset.users[1])
-        c.post('/carts/%s/rentals' % cart.id, data=rental_item)
+        c.post('/carts/%s/purchases' % cart.id, data=purchase_item)
         resp = c.get('/carts/current')
         self.assertEqual(resp.data['cost_breakup']['sales_tax_pct'], tax.value)
-        self.assertGreater(resp.data['cost_breakup']['sales_tax'], 10)
+        self.assertGreater(resp.data['cost_breakup']['additional_charge']['sales_tax'], 10)
 
     def test_add_purchases_product(self):
         cart_id = self.get_cart()

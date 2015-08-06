@@ -11,7 +11,7 @@ class ItemSerializer(ModelSerializer):
     """
     class Meta:
         model = Item
-        read_only_fields = ('shipping_charge', 'subtotal', 'is_shippable', 'cost_breakup')
+        read_only_fields = ['shipping_charge', 'subtotal', 'is_shippable', 'cost_breakup']
 
     def create(self, validated_data):
         instance = super(ItemSerializer, self).create(validated_data)
@@ -32,6 +32,7 @@ class ItemSerializer(ModelSerializer):
 class RentalProductSerializer(ItemSerializer):
     class Meta(ItemSerializer.Meta):
         model = RentalItem
+        read_only_fields = ItemSerializer.Meta.read_only_fields + ['is_postpaid']
 
     def validate_product(self, value):
         product = value

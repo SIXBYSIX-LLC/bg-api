@@ -57,6 +57,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
         self.shipping_charge = 0.0
         self.additional_charge = 0.0
         self.cost_breakup = {}
+        additional_charge = {}
 
         # Count rental products
         for item in self.rentalitem_set.all():
@@ -71,9 +72,9 @@ class Cart(BaseModel, DateTimeFieldMixin):
 
             for k, v in item.cost_breakup['additional_charge'].items():
                 # Initialize value
-                if self.cost_breakup.get(k, None) is None:
-                    self.cost_breakup[k] = 0.0
-                self.cost_breakup[k] += v
+                if additional_charge.get(k, None) is None:
+                    additional_charge[k] = 0.0
+                additional_charge[k] += v
 
         # Count purchase products
         for item in self.purchaseitem_set.all():
@@ -86,11 +87,12 @@ class Cart(BaseModel, DateTimeFieldMixin):
 
             for k, v in item.cost_breakup['additional_charge'].items():
                 # Initialize value
-                if self.cost_breakup.get(k, None) is None:
-                    self.cost_breakup[k] = 0.0
-                self.cost_breakup[k] += v
+                if additional_charge.get(k, None) is None:
+                    additional_charge[k] = 0.0
+                additional_charge[k] += v
 
         self.cost_breakup['sales_tax_pct'] = getattr(self.get_sales_tax(), 'value', 0)
+        self.cost_breakup['additional_charge'] = additional_charge
 
         self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
                                  'additional_charge'])
@@ -135,7 +137,7 @@ class Item(BaseModel):
     #: Item quantity
     qty = models.PositiveSmallIntegerField(default=1)
     #: Cost breakup
-    cost_breakup = pg_fields.JSONField(default={}, editable=False)
+    cost_breakup = pg_fields.JSONField(default={'additional_charge': {}}, editable=False)
 
     class Meta(BaseModel.Meta):
         abstract = True
@@ -248,7 +250,7 @@ class RentalItem(Item):
     # Item to be returned
     date_end = models.DateTimeField()
     #: Should pay later?
-    is_postpaid = models.BooleanField(default=False)
+    is_postpaid = models.BooleanField(default=True)
 
     class Meta(Item.Meta):
         unique_together = ('cart', 'product', 'date_start', 'date_end')
