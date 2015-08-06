@@ -30,12 +30,17 @@ class ItemListSerializer(ItemSerializer):
     class DetailSerializer(ProductRefSerializer):
         class Meta(ProductRefSerializer.Meta):
             fields = ('id', 'name', 'daily_price', 'sell_price', 'weekly_price', 'monthly_price',
-                      'images')
+                      'image')
+
+        def get_image(self, obj):
+            if obj['images']:
+                return obj['images'][0]
 
     detail = DetailSerializer()
 
     class Meta(ItemSerializer.Meta):
         depth = 0
+        exclude = ItemSerializer.Meta.exclude + ('cost_breakup',)
 
 
 class OrderSerializer(ModelSerializer):
@@ -61,6 +66,9 @@ class OrderSerializer(ModelSerializer):
 
 class OrderListSerializer(OrderSerializer):
     items = ItemListSerializer(many=True, source='rentalitem_set')
+
+    class Meta(OrderSerializer.Meta):
+        exclude = ('shipping_address', 'billing_address', 'cost_breakup')
 
 
 class OrderLineSerializer(ModelSerializer):
