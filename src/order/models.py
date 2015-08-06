@@ -159,6 +159,12 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
         return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
 
     def calculate_cost(self):
+        self.shipping_charge = 0
+        self.subtotal = 0
+        self.additional_charge = 0
+        self.cost_breakup = {}
+        additional_charge = {}
+
         for item in self.item_set.select_related('rentalitem').all():
             if getattr(item, 'rentalitem', None):
                 if item.rentalitem.is_postpaid:
@@ -170,9 +176,11 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
 
                 for k, v in item.cost_breakup['additional_charge'].items():
                     # Initialize value
-                    if self.cost_breakup.get(k, None) is None:
-                        self.cost_breakup[k] = 0.0
-                    self.cost_breakup[k] += v
+                    if additional_charge.get(k, None) is None:
+                        additional_charge[k] = 0.0
+                    additional_charge[k] += v
+
+        self.cost_breakup['additional_charge'] = additional_charge
 
         self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
                                  'additional_charge'])
