@@ -299,6 +299,9 @@ class RentalItem(Item):
 
 
 class PurchaseItem(Item):
+    class Meta(Item.Meta):
+        unique_together = ('cart', 'product')
+
     def _calculate_subtotal(self):
         """
         Calculates the cost of item, shipping (according to qty) and sales tax

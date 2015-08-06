@@ -1,3 +1,5 @@
+from rest_framework.validators import UniqueTogetherValidator
+
 from cart.models import Cart, RentalItem, Item, PurchaseItem
 from catalog.serializers import ProductRefSerializer
 from common.errors import ValidationError
@@ -33,6 +35,13 @@ class RentalProductSerializer(ItemSerializer):
     class Meta(ItemSerializer.Meta):
         model = RentalItem
         read_only_fields = ItemSerializer.Meta.read_only_fields + ['is_postpaid']
+        validators = [
+            UniqueTogetherValidator(
+                queryset=PurchaseItem.objects.all(),
+                fields=('cart', 'product', 'date_start', 'date_end'),
+                message='Product is already in your cart'
+            )
+        ]
 
     def validate_product(self, value):
         product = value
@@ -60,6 +69,13 @@ class RentalProductListSerializer(RentalProductSerializer):
 class PurchaseProductSerializer(ItemSerializer):
     class Meta(ItemSerializer.Meta):
         model = PurchaseItem
+        validators = [
+            UniqueTogetherValidator(
+                queryset=PurchaseItem.objects.all(),
+                fields=('cart', 'product'),
+                message='Product is already in your cart'
+            )
+        ]
 
     def validate_product(self, value):
         product = value
