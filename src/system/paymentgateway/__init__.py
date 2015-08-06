@@ -31,6 +31,9 @@ class PaymentGateway(object):
     def charge(self, invoice, transaction_ref, **kwargs):
         raise NotImplementedError
 
+    def capture(self, transaction, **kwargs):
+        raise NotImplementedError
+
 
 class Postpaid(PaymentGateway):
     """

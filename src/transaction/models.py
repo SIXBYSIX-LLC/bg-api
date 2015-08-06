@@ -16,65 +16,61 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class TransactionManager(BaseManager):
+    @transaction.atomic
     def pay_invoice(self, gateway, invoice, return_url, **kwargs):
-        with transaction.atomic():
-            # Getting payment gateway
-            pg = paymentgateway.get_by_name(gateway)
-            L.info('Invoice initiated transaction', extra={
-                'invoice': invoice.id, 'gateway': gateway, 'return_url': return_url,
-                'pg_gateway': pg.name
+        # Getting payment gateway
+        pg = paymentgateway.get_by_name(gateway)
+        L.info('Invoice initiated transaction', extra={
+            'invoice': invoice.id, 'gateway': gateway, 'return_url': return_url,
+            'pg_gateway': pg.name
+        })
+
+        # Generate transaction id, mix of user id and transaction id
+        _id = '%s%s%s' % (
+            invoice.id, invoice.user_id,
+            get_random_string(15, allowed_chars=string.ascii_uppercase + string.digits)
+        )
+
+        # Initiate the transaction
+        t = self.create(
+            id=_id,
+            payer=invoice.user,
+            invoice=invoice,
+            expected_amt=invoice.total,
+            using=gateway,
+            return_url=return_url
+        )
+        L.debug('Transaction is created', extra={'transaction': t.id})
+
+        # Call for the charge by payment gateway
+        response = pg.charge(invoice, _id)
+        L.debug('Charged by payment gateway', extra={
+            'status': response.status, 'message': response.message,
+            'redirect_url': response.redirect_url
+        })
+
+        # Redirect URL is none, which means payment is processed server side and we need to
+        # redirect user to return url with status
+        if response.redirect_url is None:
+            # As payment is processed already, we can make transaction a success
+            t.mark_success(response)
+            L.debug('Payment is processed server side and transaction is marked as %s',
+                    t.status)
+
+            # Preparing query params for return url
+            q_params = urllib.urlencode({
+                'status': response.status,
+                'message': response.message,
+                'transaction_id': t.id
             })
+            if '?' not in return_url:
+                q_params = '?' + q_params
+            url = return_url + q_params
+        else:
+            url = response.redirect_url
 
-            # Generate transaction id, mix of user id and transaction id
-            _id = '%s%s%s' % (
-                invoice.id, invoice.user_id,
-                get_random_string(15, allowed_chars=string.ascii_uppercase + string.digits)
-            )
-
-            # Initiate the transaction
-            t = self.create(
-                id=_id,
-                payer=invoice.user,
-                invoice=invoice,
-                expected_amt=invoice.total,
-                using=gateway,
-                return_url=return_url
-            )
-            L.debug('Transaction is created', extra={'transaction': t.id})
-
-            # Call for the charge by payment gateway
-            response = pg.charge(invoice, _id)
-            L.debug('Charged by payment gateway', extra={
-                'status': response.status, 'message': response.message,
-                'redirect_url': response.redirect_url
-            })
-
-            # Redirect URL is none, which means payment is processed server side and we need to
-            # redirect user to return url with status
-            if response.redirect_url is None:
-                # As payment is processed already, we can make transaction a success and fill the
-                # necessary detail
-                t.received_amt = response.received_amt
-                t.status = response.status
-                t.response = response.raw
-                t.save(update_fields=['received_amt', 'status', 'response'])
-                L.debug('Payment is processed server side and transaction is marked as %s',
-                        t.status)
-
-                # Preparing query params for return url
-                q_params = urllib.urlencode({
-                    'status': response.status,
-                    'message': response.message,
-                    'transaction_id': t.id
-                })
-                if '?' not in return_url:
-                    q_params = '?' + q_params
-                url = return_url + q_params
-            else:
-                url = response.redirect_url
-
-            L.info('Transaction is completed', extra={'redirect_url': url})
-            return url, t.id
+        L.info('Transaction is completed', extra={'redirect_url': url})
+        return url, t.id
 
 
 class Transaction(BaseModel, DateTimeFieldMixin):
@@ -99,6 +95,8 @@ class Transaction(BaseModel, DateTimeFieldMixin):
 
     objects = TransactionManager()
 
+    Const = constants
+
     @property
     def _gateway(self):
         """
@@ -113,3 +111,23 @@ class Transaction(BaseModel, DateTimeFieldMixin):
         :param Float amt: Amount to be refunded
         :return Refund: Refund object
         """
+
+    @transaction.atomic
+    def mark_success(self, pg_response, mark_invoice_paid=True):
+        """
+        Marks this transaction as success and also marking associative invoice as paid
+
+        :param ChargeResponse pg_response: Charge response object received from payment gateway
+        :param bool mark_invoice_paid: If True, will mark associate invoice as paid
+        :return:
+        """
+        if self.status == constants.Status.SUCCESS:
+            return
+
+        self.received_amt = pg_response.received_amt
+        self.status = pg_response.status
+        self.response = pg_response.raw
+        self.save(update_fields=['received_amt', 'status', 'response'])
+
+        if mark_invoice_paid is True:
+            self.invoice.mark_paid()
