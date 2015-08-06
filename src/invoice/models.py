@@ -5,6 +5,7 @@ from model_utils.managers import QueryManager
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
 from . import messages
+from transaction import constants as trans_const
 
 
 class InvoiceManager(BaseManager):
@@ -127,6 +128,34 @@ class Invoice(BaseModel, DateTimeFieldMixin):
                 breakup[k] += v
 
         return {'additional_charge': breakup}
+
+    @transaction.atomic
+    def mark_paid(self, force=False, confirm_order=True):
+        """
+        Mark this invoice as paid. By default it look for at least one transaction to succeeded
+        for the invoice
+
+        :param bool force: if False, it'll mark as paid without transaction check
+        :param confirm_order: If True, it'll mark associate order as confirmed
+        :return:
+        :raise PaymentError: If no success transaction found for the invoice
+        """
+        if self.is_paid is True:
+            return
+
+        if force is False:
+            # To mark as paid invoice.transaction_set should have at least 1 transaction success
+            trans_ok_cnt = self.transaction_set.filter(status=trans_const.Status.SUCCESS).count()
+            if trans_ok_cnt == 0:
+                raise errors.PaymentError(*messages.ERR_TRANSACTION_CONFIRM)
+
+        # Marking as paid
+        self.is_paid = True
+        self.save(update_fields=['is_paid'])
+
+        # Marking order as confirm
+        if confirm_order is True:
+            self.order.confirm()
 
 
 class InvoiceLine(BaseModel):
