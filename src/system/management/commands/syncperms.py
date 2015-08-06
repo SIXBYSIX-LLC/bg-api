@@ -67,6 +67,7 @@ class Command(BaseCommand):
             Permission.objects.get(codename='change_purchaseitem', content_type__app_label='cart'),
             Permission.objects.get(codename='delete_purchaseitem', content_type__app_label='cart'),
             # Order
+            Permission.objects.get(codename='add_order'),
             Permission.objects.get(codename='view_order'),
             Permission.objects.get(codename='change_order'),
             Permission.objects.get(codename='view_orderline'),
