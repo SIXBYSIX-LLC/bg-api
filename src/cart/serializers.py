@@ -37,7 +37,7 @@ class RentalProductSerializer(ItemSerializer):
         read_only_fields = ItemSerializer.Meta.read_only_fields + ['is_postpaid']
         validators = [
             UniqueTogetherValidator(
-                queryset=PurchaseItem.objects.all(),
+                queryset=RentalItem.objects.all(),
                 fields=('cart', 'product', 'date_start', 'date_end'),
                 message='Product is already in your cart'
             )
