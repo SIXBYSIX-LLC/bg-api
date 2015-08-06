@@ -52,3 +52,7 @@ class InvoiceError(APIException):
 
 class PaymentError(APIException):
     status_code = 422
+
+
+class CartError(APIException):
+    status_code = 422

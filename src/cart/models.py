@@ -1,15 +1,17 @@
 import logging
 
-from django.db import models
+from django.db import models, transaction
 from django.utils.text import slugify
 from djangofuture.contrib.postgres import fields as pg_fields
 
 from cart.validators import validate_date_start
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
-from common import fields as ex_fields
+from common import fields as ex_fields, errors
 from charge.models import SalesTax, AdditionalCharge
-from . import constants
+from . import constants, messages
 from shipping import constants as ship_const
+from order.models import Order
+from invoice.models import Invoice
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -114,6 +116,30 @@ class Cart(BaseModel, DateTimeFieldMixin):
     def deactivate(self):
         self.is_active = False
         self.save(update_fields=['is_active'])
+
+    @transaction.atomic
+    def checkout(self):
+        L.info('Checking out the cart')
+        if self.is_active is False:
+            L.warning(messages.ERR_CHKT_CART_INACTIVE[0])
+            raise errors.CartError(*messages.ERR_CHKT_CART_INACTIVE)
+
+        if self.location is None:
+            L.warning(messages.ERR_CHKT_NO_SHIPPING_ADDR[0])
+            raise errors.CartError(*messages.ERR_CHKT_NO_SHIPPING_ADDR)
+
+        if self.billing_address is None:
+            L.warning(messages.ERR_CHKT_NO_BILLING_ADDR[0])
+            raise errors.CartError(*messages.ERR_CHKT_NO_BILLING_ADDR)
+
+        if self.rental_products.count() == 0 and self.purchase_products.count() == 0:
+            L.warning(messages.ERR_CHKT_NO_ITEM[0])
+            raise errors.CartError(*messages.ERR_CHKT_NO_ITEM)
+
+        order = Order.objects.create_order(self)
+        invoice = Invoice.objects.create_from_order(order)
+
+        return order, invoice
 
 
 class Item(BaseModel):

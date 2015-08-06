@@ -1,5 +1,5 @@
 from rest_framework import status
-from rest_framework.decorators import list_route
+from rest_framework.decorators import list_route, detail_route
 from rest_framework.mixins import UpdateModelMixin, CreateModelMixin, DestroyModelMixin
 from rest_framework.response import Response
 
@@ -7,8 +7,6 @@ from cart.models import RentalItem, PurchaseItem
 from cart.serializers import CartSerializer, RentalProductSerializer, PurchaseProductSerializer
 from common.viewsets import GenericViewSet, NestedViewSetMixin
 from .models import Cart
-from order.models import Order
-from invoice.models import Invoice
 
 
 class CartViewSet(GenericViewSet, UpdateModelMixin):
@@ -22,11 +20,10 @@ class CartViewSet(GenericViewSet, UpdateModelMixin):
 
         return Response(serializer.data)
 
-    @list_route(methods=['PUT'])
-    def action_checkout(self):
+    @detail_route(methods=['PUT'])
+    def action_checkout(self, request, *args, **kwargs):
         cart = self.get_object()
-        order = Order.objects.create_order(cart)
-        invoice = Invoice.objects.create_from_order(order)
+        order, invoice = cart.checkout()
 
         data = {'invoice': invoice.id, 'payable_amount': invoice.total, 'order': order.id}
         return Response(data)

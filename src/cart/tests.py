@@ -2,6 +2,7 @@ from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
 from charge.models import SalesTax
+from usr.factories import AddressFactory
 
 
 class CartTestCase(TestCase):
@@ -155,3 +156,29 @@ class CartTestCase(TestCase):
 
         resp = self.user_client.post('/carts/%s/purchases' % cart_id, data=new_rental)
         self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST, resp)
+
+    def test_checkout(self):
+        cart_id = self.get_cart()
+        cart_uri = '/carts/%s/actions/checkout' % cart_id
+        product = ProductFactory()
+
+        # We don't have any item in cart and expecting the error
+        resp = self.user_client.put('/carts/%s/actions/checkout' % cart_id)
+        self.assertEqual(resp.status_code, 422)
+
+        # Adding item to cart
+        new_rental = RentalItemBaseFactory(product=product.id)
+        self.user_client.post('/carts/%s/purchases' % cart_id, data=new_rental)
+
+        # We don't have billing and shipping address set so expecting the error
+        resp = self.user_client.put('/carts/%s/actions/checkout' % cart_id)
+        self.assertEqual(resp.status_code, 422)
+
+        # Setting the addresses
+        address = AddressFactory(user=self.user)
+        self.user_client.patch('/carts/%s' % cart_id, data={'location': address.id,
+                                                            'billing_address': address.id})
+
+        # Now we all good
+        resp = self.user_client.put(cart_uri)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
