@@ -2,7 +2,6 @@ from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
 from charge.models import SalesTax
-from usr.factories import AddressFactory
 
 
 class CartTestCase(TestCase):
@@ -158,27 +157,32 @@ class CartTestCase(TestCase):
         self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST, resp)
 
     def test_checkout(self):
-        cart_id = self.get_cart()
+        cart = self.dataset.add_cart(self.dataset.users[1])
+        cart.billing_address = None
+        cart.save(update_fields=['billing_address'])
+        cart_id = cart.id
         cart_uri = '/carts/%s/actions/checkout' % cart_id
-        product = ProductFactory()
+        prod1 = self.dataset.users[2].product_set.filter(
+            location__city__name_std='Rajkot').order_by('?').first()
+        c = self.get_client(self.dataset.users[1])
 
         # We don't have any item in cart and expecting the error
-        resp = self.user_client.put('/carts/%s/actions/checkout' % cart_id)
+        resp = c.put('/carts/%s/actions/checkout' % cart_id)
         self.assertEqual(resp.status_code, 422)
 
         # Adding item to cart
-        new_rental = RentalItemBaseFactory(product=product.id)
-        self.user_client.post('/carts/%s/purchases' % cart_id, data=new_rental)
+        new_rental = RentalItemBaseFactory(product=prod1.id)
+        c.post('/carts/%s/purchases' % cart_id, data=new_rental)
 
         # We don't have billing and shipping address set so expecting the error
-        resp = self.user_client.put('/carts/%s/actions/checkout' % cart_id)
+        resp = c.put('/carts/%s/actions/checkout' % cart_id)
         self.assertEqual(resp.status_code, 422)
 
         # Setting the addresses
-        address = AddressFactory(user=self.user)
+        address = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
         self.user_client.patch('/carts/%s' % cart_id, data={'location': address.id,
                                                             'billing_address': address.id})
 
         # Now we all good
         resp = self.user_client.put(cart_uri)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK, resp)
