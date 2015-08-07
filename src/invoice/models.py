@@ -188,7 +188,7 @@ class InvoiceLine(BaseModel):
 
     class Meta(BaseModel.Meta):
         permissions = (
-            ('can_approve_invoiceline', 'Can approve invoiceline')
+            ('can_approve_invoiceline', 'Can approve invoiceline'),
         )
 
     @property
