@@ -7,6 +7,7 @@ from django.db import models
 from django.contrib.gis.db import models as gis_models
 
 import constants
+import validators
 
 
 class BaseManager(models.Manager):
@@ -48,6 +49,10 @@ class AddressBase(BaseModel):
     user = models.ForeignKey('miniauth.User')
     #: Location name
     name = models.CharField(max_length=30)
+    first_name = models.CharField(max_length=35)
+    last_name = models.CharField(max_length=35)
+    company_name = models.CharField(max_length=100, default='')
+    phone = models.CharField(max_length=20, validators=[validators.phone_number])
     #: Address 1
     address1 = models.CharField(max_length=254)
     #: Address 2

@@ -1,3 +1,5 @@
+import string
+
 import factory
 from factory import fuzzy
 
@@ -76,6 +78,10 @@ class DeviceUserFactory(UserFactory):
 
 class AddressBaseFactory(factory.DictFactory):
     name = factory.LazyAttribute(lambda x: fake.name())
+    first_name = factory.LazyAttribute(lambda x: fake.first_name())
+    last_name = factory.LazyAttribute(lambda x: fake.last_name())
+    phone = fuzzy.FuzzyText(length=14, prefix='+1', chars=string.digits)
+    company_name = factory.LazyAttribute(lambda x: fake.company())
     address1 = factory.LazyAttribute(lambda x: fake.address())
     country = factory.LazyAttribute(lambda x: fake.cities_country().id)
     state = factory.LazyAttribute(lambda o: fake.cities_region(o.country).id)

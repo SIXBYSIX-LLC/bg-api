@@ -155,6 +155,15 @@ class TestUser(TestCase):
         factories.AddressFactory(user=self.user)
         self.assertEqual(self.user.address_set.count(), 1)
 
+    def test_add_address(self):
+        data = factories.AddressBaseFactory()
+        resp = self.user_client.post('/users/%s/addresses' % self.user.id, data=data)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED, resp)
+
+        data = factories.AddressBaseFactory(phone='84984')
+        resp = self.user_client.post('/users/%s/addresses' % self.user.id, data=data)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST, resp)
+
     def test_create_favorite_product(self):
         from catalog.factories import ProductFactory
 
