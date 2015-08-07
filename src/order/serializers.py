@@ -65,7 +65,7 @@ class OrderSerializer(ModelSerializer):
 
 
 class OrderListSerializer(OrderSerializer):
-    items = ItemListSerializer(many=True, source='rentalitem_set')
+    items = ItemListSerializer(many=True, source='item_set')
 
     class Meta(OrderSerializer.Meta):
         exclude = ('shipping_address', 'billing_address', 'cost_breakup')
@@ -88,6 +88,16 @@ class OrderLineSerializer(ModelSerializer):
 
 
 class OrderLineListSerializer(OrderLineSerializer):
+    class OrderRefSerializer(OrderLineSerializer.OrderRefSerializer):
+        user = UserRefSerializer(source='user.profile')
+
+        class Meta(OrderLineSerializer.OrderRefSerializer.Meta):
+            model = Order
+            exclude = OrderLineSerializer.OrderRefSerializer.Meta.exclude + (
+                'shipping_address', 'billing_address', 'cost_breakup'
+            )
+
+    order = OrderRefSerializer()
     items = ItemListSerializer(many=True, source='item_set')
 
 
