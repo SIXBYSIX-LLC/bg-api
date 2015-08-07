@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import QueryManager
@@ -6,6 +8,8 @@ from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
 from . import messages
 from transaction import constants as trans_const
+
+L = logging.getLogger('bgapi.' + __name__)
 
 
 class InvoiceManager(BaseManager):
@@ -157,6 +161,20 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         if confirm_order is True:
             self.order.confirm()
 
+    @transaction.atomic
+    def approve(self, force=False):
+        L.debug('Approving invoice', extra={'force': force})
+
+        unapproved_cnt = InvoiceLine.objects.filter(invoice=self, is_approve=False).count()
+        if force is False:
+            if unapproved_cnt > 0:
+                raise errors.InvoiceError(*messages.ERR_APPROVE_INVOICE)
+        elif force is True and unapproved_cnt > 0:
+            InvoiceLine.objects.filter(invoice=self, is_approve=False).update(is_approve=True)
+
+        self.is_approve = True
+        self.save(update_fields=['is_approve'])
+
 
 class InvoiceLine(BaseModel):
     #: User as seller
@@ -167,6 +185,11 @@ class InvoiceLine(BaseModel):
     is_approve = models.BooleanField(default=False)
     #: Just for seller's note, not visible to buyer
     remark = models.TextField(default='')
+
+    class Meta(BaseModel.Meta):
+        permissions = (
+            ('can_approve_invoiceline', 'Can approve invoiceline')
+        )
 
     @property
     def total(self):
@@ -210,6 +233,15 @@ class InvoiceLine(BaseModel):
                 breakup[k] += v
 
         return {'additional_charge': breakup}
+
+    def approve(self):
+        self.is_approve = True
+        self.save(update_fields=['is_approve'])
+
+        try:
+            self.invoice.approve()
+        except errors.InvoiceError:
+            pass
 
 
 class Item(BaseModel, DateTimeFieldMixin):

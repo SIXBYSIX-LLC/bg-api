@@ -48,6 +48,7 @@ class InvoiceLineSerializer(InvoiceSerializer):
     class Meta:
         model = InvoiceLine
         exclude = ('user', 'order')
+        ready_only_fields = ('is_approve',)
 
 
 class InvoicePaymentSerializer(Serializer):

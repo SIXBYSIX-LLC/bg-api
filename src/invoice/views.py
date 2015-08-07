@@ -1,8 +1,9 @@
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
-from rest_framework import decorators
+from rest_framework import decorators, status
 
 from common.viewsets import GenericViewSet, NestedViewSetMixin
+from common.permissions import CustomActionPermissions
 from .models import Invoice, InvoiceLine, Item
 from .serializers import (InvoiceSerializer, InvoiceRetrieveSerializer, InvoiceLineSerializer,
                           ItemSerializer, InvoicePaymentSerializer)
@@ -35,6 +36,13 @@ class InvoiceLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, Upd
     queryset = InvoiceLine.objects.all()
     serializer_class = InvoiceLineSerializer
     ownership_fields = ('user',)
+
+    @decorators.detail_route(methods=['PUT'], permission_classes=(CustomActionPermissions,))
+    def action_approve(self, request, *args, **kwargs):
+        invoiceline = self.get_object()
+        invoiceline.approve()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ItemViewSet(NestedViewSetMixin, GenericViewSet, ListModelMixin, UpdateModelMixin):
