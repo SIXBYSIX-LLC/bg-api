@@ -41,7 +41,6 @@ class ProductManager(BaseManager):
         return self.extra(where=[where], params=[query, '%' + query + '%', '%' + query + '%'])
 
 
-
 class Product(BaseModel):
     """
     Product information that are to be shown to buyer
@@ -60,6 +59,8 @@ class Product(BaseModel):
     description = models.TextField(blank=True, null=True)
     #: Brand
     brand = models.CharField(max_length=100)
+    #: Hourly price
+    hourly_price = ex_fields.FloatField(min_value=0.0, max_value=99999, precision=2)
     #: Daily rental price
     daily_price = ex_fields.FloatField(min_value=0.0, max_value=99999, precision=2)
     #: Weekly rental price
