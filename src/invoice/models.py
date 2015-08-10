@@ -89,6 +89,9 @@ class Invoice(BaseModel, DateTimeFieldMixin):
 
     class Meta(BaseModel.Meta):
         unique_together = ('user', 'order', 'is_for_order')
+        permissions = (
+            ('can_pay_invoice', 'Can pay invoice'),
+        )
 
     @property
     def total(self):

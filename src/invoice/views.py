@@ -18,7 +18,7 @@ class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     ownership_fields = ('user',)
     filter_fields = ('order',)
 
-    @decorators.detail_route(methods=['POST'])
+    @decorators.detail_route(methods=['POST'], permission_classes=(CustomActionPermissions,))
     def action_pay(self, request, *args, **kwargs):
         invoice = self.get_object()
         serializer = InvoicePaymentSerializer(data=request.data)
