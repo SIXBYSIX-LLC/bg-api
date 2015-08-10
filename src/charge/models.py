@@ -71,3 +71,81 @@ class AdditionalCharge(Charge):
 
     class Meta(Charge.Meta):
         unique_together = ('name', 'user')
+
+
+class Rental(object):
+    def __init__(self, start_date, end_date, item):
+        self.user = item.user
+        self.start_date, self.end_date, self.item = start_date, end_date, item
+
+    def calculate(self):
+        settings = self.item.user.profile.settings
+        unit = self.applicable_units(
+            settings.get('hourly_price_till_hours', 4), settings.get('daily_price_till_days', 3),
+            settings.get('weekly_price_till_days', 15), self.end_date, self.start_date
+        )
+
+        price = {'daily': self.item.daily_price, 'weekly': self.item.weekly_price,
+                 'monthly': self.item.monthly_price, 'hourly': self.item.hourly_price}
+
+        subtotal = {'hourly': price['hourly'] * unit['final']['hours'],
+                    'daily': price['daily'] * unit['final']['days'],
+                    'weekly': price['weekly'] * unit['final']['weeks'],
+                    'monthly': price['monthly'] * unit['final']['months']}
+
+        amt = 0.0
+        for v in subtotal.items():
+            amt += v
+
+        amt = round(amt, 2)
+        data = {'unit': unit, 'prices': price, 'subtotal': subtotal, 'amt': amt}
+        return data
+
+    @classmethod
+    def applicable_units(cls, start_date, end_date, hourly_slab, daily_slab, weekly_slab):
+        data = {}
+        calc = {}
+        daily_slab *= 8
+        weekly_slab *= 8
+
+        daily_hours = 1 * 8
+        weekly_hours = 7 * daily_hours
+        monthly_hours = 28 * daily_hours
+
+        td = end_date - start_date
+        days = td.days
+        hours = td.seconds / 3600
+        minutes = (td.seconds / 60) % 60
+        # If minutes is more than 5, count it as an hour
+        if minutes > 5:
+            hours += 1
+
+        total_hours = (days * 8) + hours
+        data = {'actual': str(td), 'adjusted': '%s days, %s:00:00' % (days, hours)}
+
+        rent_hours = rent_days = rent_weeks = rent_months = 0
+
+        rent_months = total_hours / monthly_hours
+        rent_month_diff_hrs = total_hours % monthly_hours
+
+        if rent_month_diff_hrs > weekly_slab:
+            rent_months += 1
+        else:
+            rent_weeks = rent_month_diff_hrs / weekly_hours
+            rent_week_diff_hrs = rent_month_diff_hrs % weekly_hours
+
+            if rent_week_diff_hrs > daily_slab:
+                rent_weeks += 1
+            else:
+                rent_days = rent_week_diff_hrs / daily_hours
+                rent_days_diff_hrs = rent_week_diff_hrs % daily_hours
+
+                if rent_days_diff_hrs > hourly_slab:
+                    rent_days += 1
+                else:
+                    rent_hours = rent_days_diff_hrs
+
+        data['final'] = {
+            'months': rent_months, 'weeks': rent_weeks, 'days': rent_days, 'hours': rent_hours
+        }
+        return data
