@@ -21,10 +21,6 @@ class CartManager(BaseManager):
 
 
 class Cart(BaseModel, DateTimeFieldMixin):
-    rental_products = models.ManyToManyField('catalog.Product', through='RentalItem',
-                                             related_name='+')
-    purchase_products = models.ManyToManyField('catalog.Product', through='PurchaseItem',
-                                               related_name='+')
     #: Shipping Location
     location = models.ForeignKey('usr.Address', null=True, default=None)
     #: Billing address
@@ -132,7 +128,7 @@ class Cart(BaseModel, DateTimeFieldMixin):
             L.warning(messages.ERR_CHKT_NO_BILLING_ADDR[0])
             raise errors.CartError(*messages.ERR_CHKT_NO_BILLING_ADDR)
 
-        if self.rental_products.count() == 0 and self.purchase_products.count() == 0:
+        if self.rentalitem_set.count() == 0 and self.purchaseitem_set.count() == 0:
             L.warning(messages.ERR_CHKT_NO_ITEM[0])
             raise errors.CartError(*messages.ERR_CHKT_NO_ITEM)
 

@@ -180,9 +180,9 @@ class CartTestCase(TestCase):
 
         # Setting the addresses
         address = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
-        self.user_client.patch('/carts/%s' % cart_id, data={'location': address.id,
+        c.patch('/carts/%s' % cart_id, data={'location': address.id,
                                                             'billing_address': address.id})
 
         # Now we all good
-        resp = self.user_client.put(cart_uri)
+        resp = c.put(cart_uri)
         self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK, resp)
