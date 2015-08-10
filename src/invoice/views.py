@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import decorators, status
 
 from common.viewsets import GenericViewSet, NestedViewSetMixin
-from common.permissions import CustomActionPermissions
+from common.permissions import CustomActionPermissions, IsOwnerPermissions
 from .models import Invoice, InvoiceLine, Item
 from .serializers import (InvoiceSerializer, InvoiceRetrieveSerializer, InvoiceLineSerializer,
                           ItemSerializer, InvoicePaymentSerializer)
@@ -18,7 +18,8 @@ class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     ownership_fields = ('user',)
     filter_fields = ('order',)
 
-    @decorators.detail_route(methods=['POST'], permission_classes=(CustomActionPermissions,))
+    @decorators.detail_route(methods=['POST'], permission_classes=(IsOwnerPermissions,
+                                                                   CustomActionPermissions,))
     def action_pay(self, request, *args, **kwargs):
         invoice = self.get_object()
         serializer = InvoicePaymentSerializer(data=request.data)
@@ -37,7 +38,8 @@ class InvoiceLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, Upd
     serializer_class = InvoiceLineSerializer
     ownership_fields = ('user',)
 
-    @decorators.detail_route(methods=['PUT'], permission_classes=(CustomActionPermissions,))
+    @decorators.detail_route(methods=['PUT'], permission_classes=(IsOwnerPermissions,
+                                                                  CustomActionPermissions,))
     def action_approve(self, request, *args, **kwargs):
         invoiceline = self.get_object()
         invoiceline.approve()

@@ -90,7 +90,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
     class Meta(BaseModel.Meta):
         unique_together = ('user', 'order', 'is_for_order')
         permissions = (
-            ('can_pay_invoice', 'Can pay invoice'),
+            ('action_pay', 'Can pay invoice'),
         )
 
     @property
@@ -191,7 +191,7 @@ class InvoiceLine(BaseModel):
 
     class Meta(BaseModel.Meta):
         permissions = (
-            ('can_approve_invoiceline', 'Can approve invoiceline'),
+            ('action_approve', 'Can approve invoiceline'),
         )
 
     @property

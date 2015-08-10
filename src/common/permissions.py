@@ -82,7 +82,7 @@ class CustomActionPermissions(rf_permissions.BasePermission):
         if model_cls is None and queryset is not None:
             model_cls = queryset.model
 
-        expected_perm = "%(app_label)s.%(action_name)s" % {'app_label': model_cls.get_app_label(),
+        expected_perm = "%(app_label)s.%(action_name)s" % {'app_label': model_cls._meta.app_label,
                                                            'action_name': view.action}
 
         return request.user.has_perm(expected_perm)
