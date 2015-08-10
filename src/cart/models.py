@@ -1,13 +1,12 @@
 import logging
 
 from django.db import models, transaction
-from django.utils.text import slugify
 from djangofuture.contrib.postgres import fields as pg_fields
 
 from cart.validators import validate_date_start
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
 from common import fields as ex_fields, errors
-from charge.models import SalesTax, AdditionalCharge
+from charge.models import SalesTax, AdditionalCharge, Calculator
 from . import constants, messages
 from shipping import constants as ship_const
 from order.models import Order
@@ -164,6 +163,11 @@ class Item(BaseModel):
     class Meta(BaseModel.Meta):
         abstract = True
 
+    def __init__(self, *args, **kwargs):
+        super(Item, self).__init__(*args, **kwargs)
+
+        self.calc = Calculator(self.product, self.qty)
+
     @property
     def shipping_method(self):
         return self.product.get_standard_shipping_method(self.cart.location)
@@ -202,35 +206,16 @@ class Item(BaseModel):
         raise NotImplementedError
 
     def _calculate_shipping_cost(self):
-        data = {'amt': 0.0}
-
-        if self.shipping_kind == ship_const.SHIPPING_PICKUP:
-            L.info('Shipping cost', extra=data)
-            return data
-        if self.is_shippable is False:
-            L.info('Item is not shippable', extra={
-                'cart': self.cart_id, 'product': self.product_id
-            })
-            return data
-
-        # Shipping standard method
-        data['amt'] = round(self.shipping_method.cost * self.qty, 2)
-        data['method'] = 'standard_shipping'
-        data['id'] = self.shipping_method.id
+        data = self.calc.calc_shipping_charge(self.cart.location, self.shipping_kind)
 
         L.info('Shipping cost', extra=data)
 
         return data
 
     def _calculate_sales_tax(self, amt):
-        tax = {'pct': 0, 'amt': 0.0}
         sales_tax = self.cart.get_sales_tax()
 
-        if sales_tax:
-            tax['taxable_amt'] = amt
-            tax['id'] = sales_tax.id
-            tax['pct'] = sales_tax.value
-            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
+        tax = self.calc.calc_sales_tax(amt, sales_tax)
 
         return tax
 
@@ -240,28 +225,12 @@ class Item(BaseModel):
 
         :return dict:
         """
-        data = {'amt': 0.0}
-        charge_const = AdditionalCharge.Const
-        charges = AdditionalCharge.objects.all_by_natural_key(
-            self.product.user, item_kind, self.product.category
-        )
-
-        for charge in charges:
-            k = slugify(charge.name).replace('-', '_')
-            if charge.unit == charge_const.Unit.FLAT:
-                data[k] = charge.value
-                data['amt'] += charge.value * self.qty
-            elif charge.unit == charge_const.Unit.PERCENTAGE:
-                value = round((self.subtotal * charge.value) / 100, 2)
-                data[k] = value
-                data['amt'] += value * self.qty
 
         # Sales tax
         sales_tax = self._calculate_sales_tax(self.subtotal + self.shipping_charge)
-        data['sales_tax'] = sales_tax['amt']
-
-        # Add sales tax amount to total amount
-        data['amt'] += sales_tax['amt']
+        data = self.calc.calc_additional_charge(self.subtotal, item_kind, {
+            'sales_tax': sales_tax['amt']
+        })
 
         return data
 
@@ -287,32 +256,7 @@ class RentalItem(Item):
                 'daily_rent': daily_rent, 'rent': rent, 'num_days': num_days, 'rent_days': rent_days
             }
         """
-        num_days = (self.date_end - self.date_start).days
-        user_settings = self.product.user.profile.settings
-
-        daily_rental_till = user_settings.get('daily_price_till_days') or 3
-        weekly_rental_till = user_settings.get('weekly_price_till_days') or 25
-
-        # Decide which rental cost should be applied
-        if daily_rental_till < num_days <= weekly_rental_till:
-            rent_per = self.product.weekly_price
-            rent_days = 7
-        elif num_days > weekly_rental_till:
-            rent_per = self.product.monthly_price
-            rent_days = 30
-        else:
-            rent_per = self.product.daily_price
-            rent_days = 1
-
-        # Getting daily rent from unit rent
-        daily_rent = rent_per / rent_days
-        # Final rent
-        rent = round(daily_rent * num_days * self.qty, 2)
-
-        data = {
-            'rent_per': rent_per, 'daily_rent': daily_rent, 'amt': rent, 'num_days': num_days,
-            'rent_unit_days': rent_days, 'unit_price': daily_rent * num_days
-        }
+        data = self.calc.calc_rent(self.date_start, self.date_end)
 
         ex = dict(data.items() + {'cart': self.cart_id, 'qty': self.qty}.items())
         L.info('Rent calculation', extra=ex)
