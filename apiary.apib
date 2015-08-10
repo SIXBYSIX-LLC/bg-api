@@ -569,13 +569,19 @@ User can add as many as addresses they want.
 ### Create an Address [POST]
 
 + Attributes
+    + first_name: Abc (string, required) - First name of person
+    + last_name: Xyz (string, required) - Last name of the person
+    + company_name: Co (string, optional) - Company name
+    + phone: +12345678925 (number, required) - Phone no in E.164 format
     + country: 1269750 (number, required) - Country id received from system/countries api
     + state: 1270770 (number, required) - State id received from system/countries api
     + city: 1277202 (number, required) - City id received from system/countries api
-    + name: 1269750 (string, required)
+    + name: 1269750 (string, required) - Label for the address
     + kind: billing (string, required) - Either `billing` or `job_site`
     + coord - Address coordinates in one of WKT / EWKT / HEXEWKB format
     + zip_code: 07418 (number, required)
+    + address1 (string, required) - Address line 1
+    + address2 (string, optional) - Address line 2
 
 
 + Request (application/json)
@@ -590,6 +596,10 @@ User can add as many as addresses they want.
                 "city": 1277202,
                 "kind": "job_site",
                 "name": "Dallas",
+                "first_name": "Cecil",
+                "last_name": "Kunde",
+                "company_name": "Bernhard Group",
+                "phone": "+141903325396927",
                 "country": 1269750,
                 "address1": "1698 Kunde Rue\nSouth Gagebury, VI 41909",
                 "address2": "",
@@ -611,6 +621,10 @@ User can add as many as addresses they want.
                 "data": {
                     "id": 4,
                     "name": "Office",
+                    "first_name": "Cecil",
+                    "last_name": "Kunde",
+                    "company_name": "Bernhard Group",
+                    "phone": "+141903325396927",
                     "address1": "b3, 1234, o streed",
                     "address2": null,
                     "zip_code": "345345",
@@ -649,6 +663,10 @@ User can add as many as addresses they want.
                     "name": "Dallas",
                     "address1": "1698 Kunde Rue\nSouth Gagebury, VI 41909",
                     "address2": "",
+                    "first_name": "Cecil",
+                    "last_name": "Kunde",
+                    "company_name": "Bernhard Group",
+                    "phone": "+141903325396927",
                     "zip_code": "07418",
                     "coord": {
                         "type": "Point",
@@ -675,6 +693,10 @@ User can add as many as addresses they want.
                 {
                     "id": 1,
                     "name": "Office",
+                    "first_name": "Cecil",
+                    "last_name": "Kunde",
+                    "company_name": "Bernhard Group",
+                    "phone": "+141903325396927",
                     "address1": "b3, 1234, o streed",
                     "address2": null,
                     "zip_code": "345345",
@@ -715,6 +737,10 @@ User can add as many as addresses they want.
         {
             "id": 7,
             "name": "Dallas",
+            "first_name": "Cecil",
+            "last_name": "Kunde",
+            "company_name": "Bernhard Group",
+            "phone": "+141903325396927",
             "address1": "1698 Kunde Rue\nSouth Gagebury, VI 41909",
             "address2": "",
             "zip_code": "07418",
@@ -759,6 +785,10 @@ User can add as many as addresses they want.
             "data": {
                 "id": 5,
                 "name": "Office2",
+                "first_name": "Cecil",
+                "last_name": "Kunde",
+                "company_name": "Bernhard Group",
+                "phone": "+141903325396927",
                 "address1": "b3, 1234, o streed",
                 "address2": null,
                 "zip_code": "345345",
@@ -873,12 +903,13 @@ To navigate to subcategories for product assignment, categories can be filter by
 
 Categories can only be created/updated by Admins only.
 
-## Categories Collection [/v1/categories{?parent}]
+## Categories Collection [/v1/categories{?parent,parent__isnull}]
 
 ### List categories [GET]
 
 + Parameters
     + parent (optional, number, `1`) ... Filter by parent category id
+    + parent__isnull (optional, boolean, `True`) ... Filter by parent is null. `True` or `False`
 
 + Request (application/json)
     + Header
@@ -976,6 +1007,7 @@ To add images to product, see staticfile API. Upto 10 images per products are al
     + brand (required, string) - Brand of the product
     + category (required, number) - Category id that product should belongs to. It should be leaf category
     + condition (required, string) - Product condition any of condition enum
+    + hourly_price: 15.50 (required, number) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
     + daily_price: 75.45 (required, number) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
     + weekly_price: 125.14 (required, string) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
     + monthly_price: 475.25 (required, string) - Decimal number with two precision represents the price in USD. Set 0 if not applicable
@@ -995,6 +1027,7 @@ To add images to product, see staticfile API. Upto 10 images per products are al
             {
                 "monthly_price": 9767.81,
                 "category": 3,
+                "hourly_price": 75.81,
                 "daily_price": 1670.81,
                 "name": "Track Mini Excavator",
                 "tags": [
@@ -1023,6 +1056,7 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                 "name": "Track Mini Excavator",
                 "description": null,
                 "brand": "JCB",
+                "hourly_price": 75.81,
                 "daily_price": "189.00",
                 "weekly_price": "649.00",
                 "monthly_price": "1739.00",
@@ -1107,6 +1141,7 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "name": "Track Mini Excavator, 7,000-9,900 lbs.",
                         "description": null,
                         "brand": "JCB",
+                        "hourly_price": 75.81,
                         "daily_price": "189.00",
                         "weekly_price": "649.00",
                         "monthly_price": "1739.00",
@@ -1118,7 +1153,16 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "condition": "used",
                         "date_created_at": "2015-06-22T09:25:16.467775Z",
                         "date_updated_at": "2015-06-22T09:25:16.467821Z",
-                        "category": 2,
+                        "category": {
+                            "id": 246,
+                            "image": null,
+                            "name": "Guillermo",
+                            "hierarchy": [
+                                244,
+                                245
+                            ],
+                            "parent": 245
+                        },
                         "location": {
                             "country": {
                                 "name": "India",
@@ -1143,6 +1187,7 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "name": "Track Mini Excavator, 7,000-9,1900 lbs.",
                         "description": null,
                         "brand": "JCB",
+                        "hourly_price": 75.81,
                         "daily_price": "189.00",
                         "weekly_price": "649.00",
                         "monthly_price": "1739.00",
@@ -1154,7 +1199,16 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "condition": "used",
                         "date_created_at": "2015-06-22T14:23:33.691045Z",
                         "date_updated_at": "2015-06-22T14:23:33.691071Z",
-                        "category": 2,
+                        "category": {
+                            "id": 246,
+                            "image": null,
+                            "name": "Guillermo",
+                            "hierarchy": [
+                                244,
+                                245
+                            ],
+                            "parent": 245
+                        },
                         "location": {
                             "country": {
                                 "name": "India",
@@ -1179,6 +1233,7 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "name": "Track Mini Excavator, 7,000-9,900 lbs.",
                         "description": null,
                         "brand": "JCB",
+                        "hourly_price": 75.81,
                         "daily_price": "189.00",
                         "weekly_price": "649.00",
                         "monthly_price": "1739.00",
@@ -1190,7 +1245,16 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                         "condition": "used",
                         "date_created_at": "2015-06-22T14:24:51.586335Z",
                         "date_updated_at": "2015-06-22T14:24:51.586356Z",
-                        "category": 2,
+                        "category": {
+                            "id": 246,
+                            "image": null,
+                            "name": "Guillermo",
+                            "hierarchy": [
+                                244,
+                                245
+                            ],
+                            "parent": 245
+                        },
                         "location": {
                             "country": {
                                 "name": "India",
@@ -1247,6 +1311,7 @@ To add images to product, see staticfile API. Upto 10 images per products are al
                 "name": "Track Mini Excavator, 7,000-9,900 lbs.",
                 "description": null,
                 "brand": "JCB",
+                "hourly_price": 75.81,
                 "daily_price": "189.00",
                 "weekly_price": "649.00",
                 "monthly_price": "1739.00",
@@ -1315,6 +1380,7 @@ You can update all attributes except `qty`. To update the quantity checkout the 
                 "name": "Excavator",
                 "description": null,
                 "brand": "JCB",
+                "hourly_price": 75.81,
                 "daily_price": "189.00",
                 "weekly_price": "649.00",
                 "monthly_price": "1739.00",
@@ -1342,6 +1408,45 @@ You can update all attributes except `qty`. To update the quantity checkout the 
 
 + Response 204 (application/json)
 
+## Available Shipping Methods [/v1/productions/{product_id}/available_shippings{?zip_code,country}]
+
+This endpoint is useful to quickly check if the product is deliverable to given country and zip code.
+It returns the shipping methods available to zip code
+
+### Get Shipping Methods [GET]
+
++ Parameters
+    + zip_code (required, string, `365012`) ... Zip code
+    + country (required, number, `123456`) ... Country id where the given zip code to be found
+
++ Request (application/json)
+    + Header
+    
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "standard_shipping": {
+                        "id": 1,
+                        "zipcode_start": 360001,
+                        "zipcode_end": 365480,
+                        "cost": 2243.65,
+                        "user": 4,
+                        "origin": 4,
+                        "country": 1269750
+                    }
+                }
+            }
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "standard_shipping": null
+                }
+            }
 
 # Group Inventories
 
@@ -1470,7 +1575,8 @@ You need to using inventory API to update/delete the objects.
     + Header
 
             Authorization: Token TOKEN_VALUE
-
+            
+            
 + Response 200 (application/json)
 
             {
@@ -1480,6 +1586,36 @@ You need to using inventory API to update/delete the objects.
                     "source": "purchased",
                     "is_active": true,
                     "date_created_at": "2015-06-22T12:14:46.193540Z",
+                    "user": 3
+                }
+            }
+            
+            
+### Update [PATCH]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body
+    
+            {
+                "serial_no": "123123"
+                "source": "purchased"
+                "is_active": "true"
+            }
+            
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 26,
+                    "serial_no": "456123",
+                    "source": "purchased",
+                    "is_active": true,
+                    "date_created_at": "2015-07-03T17:09:27.090818Z",
                     "user": 3
                 }
             }
@@ -1550,6 +1686,9 @@ Upon checkout, system calculates a total for the order, including shipping and h
 
 Typical process of purchasing or renting the item is to add them into the cart. User will be having only single cart a time and it'll be preserved untill checkout or manual clear process.
 
+Cart can be value of 0 if contains all rental items, so the payable amount would be 0 at the time of checkout.
+
+
 ## The Current Cart [/v1/carts/current]
 
 This endpoing will return the current cart of the user. Response will contain the cart id; That cart id should be used when updating the cart items
@@ -1572,118 +1711,83 @@ This endpoing will return the current cart of the user. Response will contain th
                     "rental_products": [{
                         "id": 1,
                         "product": {
-                            "name": "Marissa",
+                            "name": "Linnie",
                             "image": null,
-                            "id": 56
+                            "id": 81
                         },
                         "shipping_kind": "delivery",
-                        "shipping_cost": 2673.06,
-                        "subtotal": 3338.95,
-                        "is_shippable": true,
+                        "subtotal": 7502.65,
+                        "shipping_charge": 0,
+                        "additional_charge": 0,
+                        "is_shippable": false,
                         "qty": 1,
                         "cost_breakup": {
+                            "additional_charge": {
+                                "amt": 0,
+                                "sales_tax": 0
+                            },
                             "subtotal": {
                                 "rent_unit_days": 30,
-                                "rent_per": 3709.95,
-                                "amt": 3338.95,
-                                "num_days": 27,
-                                "daily_rent": 123.66499999999999
+                                "unit_price": 7502.652000000001,
+                                "rent_per": 8336.28,
+                                "daily_rent": 277.87600000000003,
+                                "amt": 7502.65,
+                                "num_days": 27
                             },
                             "shipping": {
-                                "method": "standard_shipping",
-                                "id": 9,
-                                "amt": 2673.06
-                            },
-                            "sales_tax": {
-                                "taxable_amt": 6012.01,
-                                "id": 1,
-                                "pct": 1.11,
-                                "amt": 66.73
+                                "amt": 0
                             }
                         },
-                        "date_start": "2015-07-26T07:32:49.981145Z",
-                        "date_end": "2015-08-22T07:32:49.981152Z",
+                        "date_start": "2015-08-09T13:28:57.794725Z",
+                        "date_end": "2015-09-05T13:28:57.794762Z",
                         "is_postpaid": true,
-                        "cart": 1
-                    }, {
-                        "id": 2,
-                        "product": {
-                            "name": "Lina",
-                            "image": null,
-                            "id": 68
-                        },
-                        "shipping_kind": "delivery",
-                        "shipping_cost": 5860.28,
-                        "subtotal": 787.98,
-                        "is_shippable": true,
-                        "qty": 1,
-                        "cost_breakup": {
-                            "subtotal": {
-                                "rent_unit_days": 30,
-                                "rent_per": 875.53,
-                                "amt": 787.98,
-                                "num_days": 27,
-                                "daily_rent": 29.18433333333333
-                            },
-                            "shipping": {
-                                "method": "standard_shipping",
-                                "id": 15,
-                                "amt": 5860.28
-                            },
-                            "sales_tax": {
-                                "taxable_amt": 6648.26,
-                                "id": 1,
-                                "pct": 1.11,
-                                "amt": 73.8
-                            }
-                        },
-                        "date_start": "2015-07-26T07:32:49.981145Z",
-                        "date_end": "2015-08-22T07:32:49.981152Z",
-                        "is_postpaid": false,
                         "cart": 1
                     }],
                     "purchase_products": [{
                         "id": 1,
                         "product": {
-                            "name": "Rueben",
+                            "name": "Leander",
                             "image": null,
-                            "id": 60
+                            "id": 81
                         },
                         "shipping_kind": "delivery",
-                        "shipping_cost": 2673.06,
-                        "subtotal": 6741.67,
-                        "is_shippable": true,
+                        "subtotal": 8023.61,
+                        "shipping_charge": 0,
+                        "additional_charge": 0,
+                        "is_shippable": false,
                         "qty": 1,
                         "cost_breakup": {
+                            "additional_charge": {
+                                "amt": 0,
+                                "sales_tax": 0
+                            },
                             "subtotal": {
-                                "amt": 6741.67
+                                "amt": 8023.61,
+                                "unit_price": 8023.61
                             },
                             "shipping": {
-                                "method": "standard_shipping",
-                                "id": 9,
-                                "amt": 2673.06
-                            },
-                            "sales_tax": {
-                                "taxable_amt": 9414.73,
-                                "id": 1,
-                                "pct": 1.11,
-                                "amt": 104.5
+                                "amt": 0
                             }
                         },
                         "cart": 1
                     }],
-                    "date_created_at": "2015-07-23T07:33:02.870136Z",
-                    "date_updated_at": "2015-07-23T07:33:02.926366Z",
+                    "total": 8023.61,
+                    "date_created_at": "2015-08-06T13:32:11.248463Z",
+                    "date_updated_at": "2015-08-06T13:32:11.248492Z",
                     "is_active": true,
-                    "total": {
-                        "sales_tax_pct": 1.11,
-                        "total": 16241.29,
-                        "subtotal": 7529.65,
-                        "shipping": 8533.34,
-                        "sales_tax": 178.3
+                    "subtotal": 8023.61,
+                    "shipping_charge": 110.12,
+                    "additional_charge": 56.23,
+                    "cost_breakup": {
+                        "additional_charge": {
+                            "amt": 56.23,
+                            "sales_tax": 56.23
+                        },
+                        "sales_tax_pct": 2.7
                     },
-                    "location": 8,
-                    "user": 5
+                    "location": null,
+                    "billing_address": null,
+                    "user": 3
                 }
             }
 
@@ -1727,55 +1831,66 @@ This resource allow you to manage (add/update/remove) rental items in the cart. 
             {
                 "data": {
                     "id": 1,
-                    "rental_products": [{
-                        "id": 1,
-                        "product": {
-                            "name": "Tonja",
-                            "image": null,
-                            "id": 81
-                        },
-                        "shipping_kind": "delivery",
-                        "shipping_cost": 0.0,
-                        "subtotal": 3394.03,
-                        "is_shippable": false,
-                        "qty": 1,
-                        "cost_breakup": {
-                            "subtotal": {
-                                "rent_unit_days": 30,
-                                "rent_per": 3771.14,
-                                "amt": 3394.03,
-                                "num_days": 27,
-                                "daily_rent": 125.70466666666667
+                    "rental_products": [],
+                    "purchase_products": [
+                        {
+                            "id": 1,
+                            "product": {
+                                "name": "Leander",
+                                "image": null,
+                                "id": 81
                             },
-                            "shipping": {
-                                "amt": 0.0
+                            "shipping_kind": "delivery",
+                            "subtotal": 8023.61,
+                            "shipping_charge": 0,
+                            "additional_charge": 0,
+                            "is_shippable": false,
+                            "qty": 1,
+                            "cost_breakup": {
+                                "additional_charge": {
+                                    "amt": 0,
+                                    "sales_tax": 0
+                                },
+                                "subtotal": {
+                                    "amt": 8023.61,
+                                    "unit_price": 8023.61
+                                },
+                                "shipping": {
+                                    "amt": 0
+                                }
                             },
-                            "sales_tax": {
-                                "amt": 0.0,
-                                "pct": 0
-                            }
-                        },
-                        "date_start": "2015-07-26T08:01:30.073832Z",
-                        "date_end": "2015-08-22T08:01:30.073862Z",
-                        "is_postpaid": false,
-                        "cart": 1
-                    }],
-                    "purchase_products": [],
-                    "date_created_at": "2015-07-23T08:01:43.415167Z",
-                    "date_updated_at": "2015-07-23T08:01:43.729127Z",
+                            "cart": 1
+                        }
+                    ],
+                    "total": 8023.61,
+                    "date_created_at": "2015-08-06T13:32:11.248463Z",
+                    "date_updated_at": "2015-08-06T13:32:11.248492Z",
                     "is_active": true,
-                    "total": {
-                        "sales_tax_pct": 0,
-                        "total": 3394.03,
-                        "subtotal": 3394.03,
-                        "shipping": 0.0,
-                        "sales_tax": 0.0
+                    "subtotal": 8023.61,
+                    "shipping_charge": 0,
+                    "additional_charge": 0,
+                    "cost_breakup": {
+                        "additional_charge": {
+                            "amt": 0,
+                            "sales_tax": 0
+                        },
+                        "sales_tax_pct": 0
                     },
                     "location": null,
+                    "billing_address": null,
                     "user": 3
                 }
             }
 
+
+
+## Rental/Purchase Item [/v1/carts/{cart_id}/{item_as}/{id}]
+
++ Parameters
+    + cart_id (required, number, `1`) ... Current cart id you get from `/carts/current` endpoint
+    + item_as (required, string, `rentals`) ... If you're adding the item for rent, value should be `rentals`, `purchases` otherwise
+    + id (required, number, `2`) ... Item id
+    
 
 ### Update [PATCH]
 You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
@@ -1799,51 +1914,53 @@ You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
             {
                 "data": {
                     "id": 1,
-                    "rental_products": [{
-                        "id": 1,
-                        "product": {
-                            "name": "Tonja",
-                            "image": null,
-                            "id": 81
-                        },
-                        "shipping_kind": "delivery",
-                        "shipping_cost": 0.0,
-                        "subtotal": 3394.03,
-                        "is_shippable": false,
-                        "qty": 1,
-                        "cost_breakup": {
-                            "subtotal": {
-                                "rent_unit_days": 30,
-                                "rent_per": 3771.14,
-                                "amt": 3394.03,
-                                "num_days": 27,
-                                "daily_rent": 125.70466666666667
+                    "rental_products": [],
+                    "purchase_products": [
+                        {
+                            "id": 1,
+                            "product": {
+                                "name": "Leander",
+                                "image": null,
+                                "id": 81
                             },
-                            "shipping": {
-                                "amt": 0.0
+                            "shipping_kind": "delivery",
+                            "subtotal": 8023.61,
+                            "shipping_charge": 0,
+                            "additional_charge": 0,
+                            "is_shippable": false,
+                            "qty": 1,
+                            "cost_breakup": {
+                                "additional_charge": {
+                                    "amt": 0,
+                                    "sales_tax": 0
+                                },
+                                "subtotal": {
+                                    "amt": 8023.61,
+                                    "unit_price": 8023.61
+                                },
+                                "shipping": {
+                                    "amt": 0
+                                }
                             },
-                            "sales_tax": {
-                                "amt": 0.0,
-                                "pct": 0
-                            }
-                        },
-                        "date_start": "2015-07-26T08:01:30.073832Z",
-                        "date_end": "2015-08-22T08:01:30.073862Z",
-                        "is_postpaid": false,
-                        "cart": 1
-                    }],
-                    "purchase_products": [],
-                    "date_created_at": "2015-07-23T08:01:43.415167Z",
-                    "date_updated_at": "2015-07-23T08:01:43.729127Z",
+                            "cart": 1
+                        }
+                    ],
+                    "total": 8023.61,
+                    "date_created_at": "2015-08-06T13:32:11.248463Z",
+                    "date_updated_at": "2015-08-06T13:32:11.248492Z",
                     "is_active": true,
-                    "total": {
-                        "sales_tax_pct": 0,
-                        "total": 3394.03,
-                        "subtotal": 3394.03,
-                        "shipping": 0.0,
-                        "sales_tax": 0.0
+                    "subtotal": 8023.61,
+                    "shipping_charge": 0,
+                    "additional_charge": 0,
+                    "cost_breakup": {
+                        "additional_charge": {
+                            "amt": 0,
+                            "sales_tax": 0
+                        },
+                        "sales_tax_pct": 0
                     },
                     "location": null,
+                    "billing_address": null,
                     "user": 3
                 }
             }
@@ -1865,22 +1982,1092 @@ You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
                     "id": 1,
                     "rental_products": [],
                     "purchase_products": [],
-                    "date_created_at": "2015-07-23T13:02:09.457025Z",
-                    "date_updated_at": "2015-07-23T13:02:09.606077Z",
+                    "total": 8023.61,
+                    "date_created_at": "2015-08-06T13:32:11.248463Z",
+                    "date_updated_at": "2015-08-06T13:32:11.248492Z",
                     "is_active": true,
-                    "total": {
-                        "sales_tax_pct": 0,
-                        "total": 0.0,
-                        "subtotal": 0.0,
-                        "shipping": 0.0,
-                        "sales_tax": 0.0
+                    "subtotal": 0.0,
+                    "shipping_charge": 0,
+                    "additional_charge": 0,
+                    "cost_breakup": {
+                        "additional_charge": {
+                            "amt": 0,
+                            "sales_tax": 0
+                        },
+                        "sales_tax_pct": 0
                     },
-                    "location": 8,
+                    "location": null,
+                    "billing_address": null,
+                    "user": 3
+                }
+            }
+
+
+
+## Checkout [/v1/carts/{cart_id}/actions/checkout]
+
+This endpoint provides will validate the cart data, place an order and 
+generating the invoice of payable amount.
+
+As soon as user checks out, front-end should initiate for the invoice payment flow.
+
++ Parameters
+    + cart_id (required, number, `1`) ... Current cart id you get from `/carts/current` endpoint
+
+### Checkout [PUT]
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE 
+
++ Response 200 (application/json)
+    
+            {
+                "data": {
+                    "order": 1,
+                    "invoice": 1,
+                    "payable_amount": 4928.34
+                }
+            }
+
+
+# Group Order
+Order is a collection of rental/purchase items user has availed through the checkout process.
+
+As soon as order is created (using checkout process), the invoice will be generated of payable amount.
+User should pay the invoice in order to confirm the order.
+
+### Enum
+
++ Item Status
+    + `not_confirmed`: User placed the order but payment and other verification is pending
+    + `confirmed`: Item is confirmed by the system which means payment is collected
+    + `approved`: Item is approved/accepted by seller, which means seller will process shortly
+    + `ready_to_ship`: Item is ready to ship to buyer location if shipping_kind if `delivery`
+    + `dispatched`: Item is shipped
+    + `ready_to_pickup`: Item ready to pick up means buyer can pickup the item any time from the seller's location
+    + `picked_up`: Item is picked up
+    + `delivered`: Item is delivered
+    + `cancelled`: Item is canceled by either seller or buyer. Can be cancelled only when status is or before ready_to_pickup / ready_to_ship
+
+
+## Order Collection [/v1/orders]
+
+This endpoint provides the orders placed by the user.
+
+### List [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+    
+    
++ Response 200 (application/json)
+
+        
+            {
+                "meta": {
+                    "count": 1,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 1,
+                        "items": [
+                            {
+                                "id": 1,
+                                "current_status": "not_confirmed",
+                                "user": {
+                                    "fullname": "Latricia Schuppe MD",
+                                    "id": 5
+                                },
+                                "rent_details": {
+                                    "date_start": "2015-08-09T14:16:13.091467Z",
+                                    "date_end": "2015-09-05T14:16:13.091474Z",
+                                    "is_postpaid": true
+                                },
+                                "detail": {
+                                    "id": 57,
+                                    "name": "Letitia",
+                                    "daily_price": 9672.98,
+                                    "sell_price": 1461.57,
+                                    "weekly_price": 6010.58,
+                                    "monthly_price": 4149.44,
+                                    "image": null
+                                },
+                                "subtotal": 3734.5,
+                                "shipping_charge": 3292.85,
+                                "additional_charge": 191.14,
+                                "qty": 1,
+                                "shipping_kind": "delivery",
+                                "shipping_method": "Standard shipping"
+                            },
+                            {
+                                "id": 2,
+                                "current_status": "not_confirmed",
+                                "user": {
+                                    "fullname": "Latricia Schuppe MD",
+                                    "id": 5
+                                },
+                                "rent_details": {
+                                    "date_start": "2015-08-09T14:16:13.091467Z",
+                                    "date_end": "2015-09-05T14:16:13.091474Z",
+                                    "is_postpaid": false
+                                },
+                                "detail": {
+                                    "id": 68,
+                                    "name": "Fae",
+                                    "daily_price": 655.65,
+                                    "sell_price": 5163.78,
+                                    "weekly_price": 9387.43,
+                                    "monthly_price": 1764.76,
+                                    "image": null
+                                },
+                                "subtotal": 1588.28,
+                                "shipping_charge": 5977.87,
+                                "additional_charge": 205.8,
+                                "qty": 1,
+                                "shipping_kind": "delivery",
+                                "shipping_method": "Standard shipping"
+                            }
+                        ],
+                        "total": 12598.29,
+                        "date_created_at": "2015-08-06T14:16:33.751569Z",
+                        "date_updated_at": "2015-08-06T14:16:33.751596Z",
+                        "subtotal": 2993.97,
+                        "shipping_charge": 9270.72,
+                        "additional_charge": 333.6,
+                        "user": 5
+                    }
+                ]
+            }
+
+
+## Order [/v1/orders/{order_id}]
+Once the order is placed cannot be cancelled but individule item can be cancelled.
+If all item is cancelled the entire order is said to be cancelled.
+
+
+### Detail [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+
+            {
+                "data": {
+                    "id": 1,
+                    "items": [
+                        {
+                            "id": 1,
+                            "current_status": "not_confirmed",
+                            "user": {
+                                "fullname": "Dr. Martine Gleichner PhD",
+                                "id": 5
+                            },
+                            "rent_details": {
+                                "date_start": "2015-08-10T03:51:09.797029Z",
+                                "date_end": "2015-09-06T03:51:09.797039Z",
+                                "is_postpaid": true
+                            },
+                            "detail": {
+                                "sku": "171ARE61438919496",
+                                "category": 171,
+                                "daily_price": 7573.35,
+                                "name": "Areli",
+                                "tags": [
+                                    "excavator",
+                                    "pornition",
+                                    "bob builder"
+                                ],
+                                "monthly_price": 1532.72,
+                                "brand": "Harris, Streich and Upton",
+                                "description": "Qui voluptatibus ipsam quia quis. At tenetur placeat sed fugiat non. Hic autem distinctio magni maxime quia sed. Consequatur odit quia perspiciatis vitae sunt quia. Omnis fuga ab alias aspernatur dolorum ducimus vel ullam. Qui culpa quasi corporis necessitatibus perspiciatis provident qui. Expedita temporibus quasi quis necessitatibus ex commodi vel. Excepturi atque nemo minima ut est incidunt recusandae voluptas.",
+                                "is_active": false,
+                                "weekly_price": 166.58,
+                                "sell_price": 7603.3,
+                                "date_created_at": "2015-08-07T03:51:36.228873Z",
+                                "date_updated_at": "2015-08-07T03:51:36.228890Z",
+                                "user": 6,
+                                "images": [],
+                                "attributes": null,
+                                "id": 57,
+                                "condition": "used",
+                                "location": 12
+                            },
+                            "subtotal": 1379.45,
+                            "shipping_charge": 2368.94,
+                            "additional_charge": 3.75,
+                            "cost_breakup": {
+                                "additional_charge": {
+                                    "amt": 3.75,
+                                    "sales_tax": 3.75
+                                },
+                                "subtotal": {
+                                    "rent_unit_days": 30,
+                                    "unit_price": 1379.448,
+                                    "rent_per": 1532.72,
+                                    "daily_rent": 51.09066666666667,
+                                    "amt": 1379.45,
+                                    "num_days": 27
+                                },
+                                "shipping": {
+                                    "method": "standard_shipping",
+                                    "id": 9,
+                                    "amt": 2368.94
+                                }
+                            },
+                            "qty": 1,
+                            "shipping_kind": "delivery",
+                            "shipping_method": "Standard shipping"
+                        },
+                        {
+                            "id": 3,
+                            "current_status": "not_confirmed",
+                            "user": {
+                                "fullname": "Dr. Martine Gleichner PhD",
+                                "id": 5
+                            },
+                            "rent_details": null,
+                            "detail": {
+                                "sku": "180DEA61438919496",
+                                "category": 180,
+                                "daily_price": 5993.81,
+                                "name": "Deanna",
+                                "tags": [
+                                    "excavator",
+                                    "pornition",
+                                    "bob builder"
+                                ],
+                                "monthly_price": 7025.97,
+                                "brand": "Conn, Wolff and Nader",
+                                "description": "Laudantium vitae consequatur officia dolorum voluptatem culpa illum quos. Laborum ipsum dolore maxime commodi. Laudantium nihil porro perspiciatis commodi tempore. Distinctio animi est quibusdam ab aut. Repellat consectetur nam fugiat modi molestiae corrupti commodi blanditiis. Dolorem occaecati iusto eveniet aut enim est. Et in illo quasi repudiandae accusamus unde nam.",
+                                "is_active": false,
+                                "weekly_price": 2711.52,
+                                "sell_price": 6344.57,
+                                "date_created_at": "2015-08-07T03:51:36.239544Z",
+                                "date_updated_at": "2015-08-07T03:51:36.239562Z",
+                                "user": 6,
+                                "images": [],
+                                "attributes": null,
+                                "id": 60,
+                                "condition": "used",
+                                "location": 12
+                            },
+                            "subtotal": 6344.57,
+                            "shipping_charge": 0,
+                            "additional_charge": 6.34,
+                            "cost_breakup": {
+                                "additional_charge": {
+                                    "amt": 6.34,
+                                    "sales_tax": 6.34
+                                },
+                                "subtotal": {
+                                    "amt": 6344.57,
+                                    "unit_price": 6344.57
+                                },
+                                "shipping": {
+                                    "amt": 0
+                                }
+                            },
+                            "qty": 1,
+                            "shipping_kind": "pickup",
+                            "shipping_method": "Standard shipping"
+                        }
+                    ],
+                    "total": 18673.64,
+                    "date_created_at": "2015-08-07T03:51:37.041034Z",
+                    "date_updated_at": "2015-08-07T03:51:37.041062Z",
+                    "shipping_address": {
+                        "city": {
+                            "id": 1258847,
+                            "name": "Rājkot"
+                        },
+                        "kind": "job_site",
+                        "name": "Mr. Silvester Bernhard Jr.",
+                        "country": {
+                            "id": 1269750,
+                            "name": "India"
+                        },
+                        "address2": null,
+                        "coord": null,
+                        "state": {
+                            "id": 1270770,
+                            "name": "Gujarat"
+                        },
+                        "address1": "60563 Tommie Mission\nHaywardmouth, IL 04030",
+                        "id": 8,
+                        "zip_code": "362287"
+                    },
+                    "billing_address": {
+                        "city": {
+                            "id": 1258847,
+                            "name": "Rājkot"
+                        },
+                        "kind": "job_site",
+                        "name": "Mr. Silvester Bernhard Jr.",
+                        "country": {
+                            "id": 1269750,
+                            "name": "India"
+                        },
+                        "address2": null,
+                        "coord": null,
+                        "state": {
+                            "id": 1270770,
+                            "name": "Gujarat"
+                        },
+                        "address1": "60563 Tommie Mission\nHaywardmouth, IL 04030",
+                        "id": 8,
+                        "zip_code": "362287"
+                    },
+                    "subtotal": 13554.85,
+                    "shipping_charge": 5100.14,
+                    "additional_charge": 18.65,
+                    "cost_breakup": {
+                        "additional_charge": {
+                            "amt": 18.65,
+                            "sales_tax": 18.65
+                        },
+                        "sales_tax_pct": 0.1
+                    },
                     "user": 5
                 }
             }
 
 
+## Change Item Status [/v1/orders/{id}/items/{item_id}/actions/change_status]
+
+Item status can be changed to only either `cancelled` or `delivered` by the user.
+If the item is already dispatched or picked up, it cannot be canelled.
+If the item is dispatched only then status can be changed to delivered.
+
++ Parameters
+    + id (required, number, `1`) ... Order id
+    + item_id (required, number, `1`) ... Item id found in order detail response
+    
+
+### Change status [PUT]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body
+    
+            {
+                "status": "delivered", 
+                "info": {
+                    "comment": "Any useful comment"
+                }
+            }
+
+
++ Response 204 (application/json)
+
+
+
+# Group OrderLine
+
+This resource provides order information received to seller that they need to fulfill.
+
+
+## List [GET /v1/orderlines]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+
+            {
+                "meta": {
+                    "count": 1,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 1,
+                        "items": [
+                            {
+                                "id": 1,
+                                "current_status": "not_confirmed",
+                                "user": {
+                                    "fullname": "Matthias Boehm",
+                                    "id": 5
+                                },
+                                "rent_details": {
+                                    "date_start": "2015-08-10T04:19:59.230234Z",
+                                    "date_end": "2015-09-06T04:19:59.230241Z",
+                                    "is_postpaid": true
+                                },
+                                "detail": {
+                                    "id": 60,
+                                    "name": "Terrance",
+                                    "daily_price": 461.86,
+                                    "sell_price": 912.4,
+                                    "weekly_price": 8347.14,
+                                    "monthly_price": 2614.55,
+                                    "image": null
+                                },
+                                "subtotal": 2353.1,
+                                "shipping_charge": 4783.11,
+                                "additional_charge": 164.13,
+                                "qty": 1,
+                                "shipping_kind": "delivery",
+                                "shipping_method": "Standard shipping"
+                            },
+                            {
+                                "id": 3,
+                                "current_status": "not_confirmed",
+                                "user": {
+                                    "fullname": "Matthias Boehm",
+                                    "id": 5
+                                },
+                                "rent_details": null,
+                                "detail": {
+                                    "id": 59,
+                                    "name": "Magen",
+                                    "daily_price": 3227.58,
+                                    "sell_price": 5265.43,
+                                    "weekly_price": 3198.73,
+                                    "monthly_price": 9138.54,
+                                    "image": null
+                                },
+                                "subtotal": 5265.43,
+                                "shipping_charge": 4783.11,
+                                "additional_charge": 231.12,
+                                "qty": 1,
+                                "shipping_kind": "delivery",
+                                "shipping_method": "Standard shipping"
+                            }
+                        ],
+                        "order": {
+                            "id": 1,
+                            "user": {
+                                "fullname": "Matthias Boehm",
+                                "id": 5
+                            },
+                            "date_created_at": "2015-08-07T04:20:25.688998Z",
+                            "date_updated_at": "2015-08-07T04:20:25.689027Z",
+                            "subtotal": 8381.54,
+                            "shipping_charge": 11069.91,
+                            "additional_charge": 447.39
+                        },
+                        "total": 0,
+                        "date_created_at": "2015-08-07T04:20:25.695471Z",
+                        "date_updated_at": "2015-08-07T04:20:25.695495Z",
+                        "subtotal": 0,
+                        "shipping_charge": 0,
+                        "additional_charge": 0,
+                        "cost_breakup": {
+                            "additional_charge": {}
+                        },
+                        "user": 6
+                    }
+                ]
+            }
+
+
+
+## Detail [GET /v1/orderlines/{id}]
+
++ Request
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 1,
+                    "items": [
+                        {
+                            "id": 1,
+                            "current_status": "not_confirmed",
+                            "user": {
+                                "fullname": "Dr. Bryan Paucek",
+                                "id": 5
+                            },
+                            "rent_details": {
+                                "date_start": "2015-08-10T05:51:00.851218Z",
+                                "date_end": "2015-09-06T05:51:00.851232Z",
+                                "is_postpaid": true
+                            },
+                            "detail": {
+                                "sku": "168DON61438926685",
+                                "category": 168,
+                                "daily_price": 1418.92,
+                                "name": "Donia",
+                                "tags": [
+                                    "excavator",
+                                    "pornition",
+                                    "bob builder"
+                                ],
+                                "monthly_price": 6550.4,
+                                "brand": "Zieme Ltd",
+                                "description": "Iusto sint repellat est ut debitis. Iste sunt veritatis quibusdam est sed et dignissimos. Autem nisi odit repellat pariatur officiis vel. Similique rerum blanditiis enim et. Asperiores recusandae placeat qui inventore voluptas hic. Non occaecati quod et officiis. Excepturi eius quaerat et cupiditate.",
+                                "is_active": false,
+                                "weekly_price": 9657.63,
+                                "sell_price": 9606.72,
+                                "date_created_at": "2015-08-07T05:51:25.502832Z",
+                                "date_updated_at": "2015-08-07T05:51:25.502876Z",
+                                "user": 6,
+                                "images": [],
+                                "attributes": null,
+                                "id": 56,
+                                "condition": "used",
+                                "location": 12
+                            },
+                            "subtotal": 5895.36,
+                            "shipping_charge": 3551.92,
+                            "additional_charge": 92.58,
+                            "cost_breakup": {
+                                "additional_charge": {
+                                    "amt": 92.58,
+                                    "sales_tax": 92.58
+                                },
+                                "subtotal": {
+                                    "rent_unit_days": 30,
+                                    "unit_price": 5895.36,
+                                    "rent_per": 6550.4,
+                                    "daily_rent": 218.34666666666666,
+                                    "amt": 5895.36,
+                                    "num_days": 27
+                                },
+                                "shipping": {
+                                    "method": "standard_shipping",
+                                    "id": 9,
+                                    "amt": 3551.92
+                                }
+                            },
+                            "qty": 1,
+                            "shipping_kind": "delivery",
+                            "shipping_method": "Standard shipping"
+                        },
+                        {
+                            "id": 3,
+                            "current_status": "not_confirmed",
+                            "user": {
+                                "fullname": "Dr. Bryan Paucek",
+                                "id": 5
+                            },
+                            "rent_details": null,
+                            "detail": {
+                                "sku": "171RIG61438926685",
+                                "category": 171,
+                                "daily_price": 1126.17,
+                                "name": "Rigoberto",
+                                "tags": [
+                                    "excavator",
+                                    "pornition",
+                                    "bob builder"
+                                ],
+                                "monthly_price": 4748.34,
+                                "brand": "Abbott, Fisher and Botsford",
+                                "description": "Ut tenetur sapiente rerum quod et. Occaecati eligendi necessitatibus enim excepturi. Non maxime odit possimus cumque est. Consequuntur quo numquam quia aliquam exercitationem modi. Ut consequatur tempore est nulla molestias deserunt tenetur. Iusto aspernatur provident distinctio velit nihil enim ipsum. Voluptas enim quos maxime ad.",
+                                "is_active": false,
+                                "weekly_price": 2412.9,
+                                "sell_price": 2342.66,
+                                "date_created_at": "2015-08-07T05:51:25.506061Z",
+                                "date_updated_at": "2015-08-07T05:51:25.506076Z",
+                                "user": 6,
+                                "images": [],
+                                "attributes": null,
+                                "id": 57,
+                                "condition": "used",
+                                "location": 12
+                            },
+                            "subtotal": 2342.66,
+                            "shipping_charge": 0,
+                            "additional_charge": 22.96,
+                            "cost_breakup": {
+                                "additional_charge": {
+                                    "amt": 22.96,
+                                    "sales_tax": 22.96
+                                },
+                                "subtotal": {
+                                    "amt": 2342.66,
+                                    "unit_price": 2342.66
+                                },
+                                "shipping": {
+                                    "amt": 0
+                                }
+                            },
+                            "qty": 1,
+                            "shipping_kind": "pickup",
+                            "shipping_method": "Standard shipping"
+                        }
+                    ],
+                    "order": {
+                        "id": 1,
+                        "user": {
+                            "fullname": "Dr. Bryan Paucek",
+                            "id": 5
+                        },
+                        "date_created_at": "2015-08-07T05:51:26.194204Z",
+                        "date_updated_at": "2015-08-07T05:51:26.194232Z",
+                        "shipping_address": {
+                            "city": {
+                                "id": 1258847,
+                                "name": "Rājkot"
+                            },
+                            "kind": "job_site",
+                            "name": "Gottlieb Okuneva IV",
+                            "country": {
+                                "id": 1269750,
+                                "name": "India"
+                            },
+                            "address2": null,
+                            "coord": null,
+                            "state": {
+                                "id": 1270770,
+                                "name": "Gujarat"
+                            },
+                            "address1": "7729 Lorin Ramp\nKulasmouth, SC 89574-3652",
+                            "id": 8,
+                            "zip_code": "360392"
+                        },
+                        "billing_address": {
+                            "city": {
+                                "id": 1258847,
+                                "name": "Rājkot"
+                            },
+                            "kind": "job_site",
+                            "name": "Gottlieb Okuneva IV",
+                            "country": {
+                                "id": 1269750,
+                                "name": "India"
+                            },
+                            "address2": null,
+                            "coord": null,
+                            "state": {
+                                "id": 1270770,
+                                "name": "Gujarat"
+                            },
+                            "address1": "7729 Lorin Ramp\nKulasmouth, SC 89574-3652",
+                            "id": 8,
+                            "zip_code": "360392"
+                        },
+                        "subtotal": 2981.21,
+                        "shipping_charge": 5000.95,
+                        "additional_charge": 78.23,
+                        "cost_breakup": {
+                            "additional_charge": {
+                                "amt": 78.23,
+                                "sales_tax": 78.23
+                            },
+                            "sales_tax_pct": 0.98
+                        }
+                    },
+                    "total": 0,
+                    "date_created_at": "2015-08-07T05:51:26.200134Z",
+                    "date_updated_at": "2015-08-07T05:51:26.200158Z",
+                    "subtotal": 0,
+                    "shipping_charge": 0,
+                    "additional_charge": 0,
+                    "cost_breakup": {
+                        "additional_charge": {}
+                    },
+                    "user": 6
+                }
+            }
+
+## Change Item Status [PUT /v1/orderlines/{id}/items/{item_id}/actions/change_status]
+
++ Parameters
+    + id (required, number, `1`) ... Order id
+    + item_id (required, number, `1`) ... Item id found in order detail response
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body
+    
+            {
+                "status": "delivered", 
+                "info": {
+                    "comment": "Any useful comment"
+                }
+            }
+
+
++ Response 204 (application/json)
+
+## Set Inventories [PUT /v1/orderlines/{id}/items/{item_id}/inventories]
+
+Before seller can approve the order item, he needs to assign inventories to that item.
+Number of inventories assigned to an order item should match the number of quantity
+otherwise error will raise.
+
+Seller can assign only available inventories to the item, if inventory is not available, 
+seller needs to either add more inventory or free up the occupied inventory.
+
+
++ Parameters
+    + id (required, number, `1`) ... Order id
+    + item_id (required, number, `1`) ... Item id found in order detail response
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body
+    
+            {
+                "inventories": [1, 3, 5]
+            }
+
+
++ Response 204 (application/json)
+
+
+# Group Invoice
+Invoices are consolidataion of the purchase and rental items that includes all the charges and prices
+of the items. User is liable to pay the invoice to confirm the order or to keep all the contracts running.
+
+While checking out the cart, if cart contains all rental items, invoice will still be generated but the
+payable amount will be 0. Although user should pay the invoice but using the dummy payment gateway.
+We'll cover that in this section later.
+
+
+## List [GET /v1/invoices]
+List all the invoices
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 1,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 1,
+                        "order": {
+                            "id": 1,
+                            "shipping_address": {
+                                "city": {
+                                    "id": 1258847,
+                                    "name": "Rājkot"
+                                },
+                                "kind": "job_site",
+                                "last_name": "McKenzie",
+                                "name": "Dr. Carmen McDermott",
+                                "country": {
+                                    "id": 1269750,
+                                    "name": "India"
+                                },
+                                "address2": null,
+                                "first_name": "Tatsuo",
+                                "coord": null,
+                                "phone": "+176318747477150",
+                                "state": {
+                                    "id": 1270770,
+                                    "name": "Gujarat"
+                                },
+                                "company_name": "Ullrich, Boehm and Cormier",
+                                "address1": "168 Noreen Cove\nToyport, WI 82734-2077",
+                                "id": 8,
+                                "zip_code": "362426"
+                            },
+                            "billing_address": {
+                                "city": {
+                                    "id": 1258847,
+                                    "name": "Rājkot"
+                                },
+                                "kind": "job_site",
+                                "last_name": "McKenzie",
+                                "name": "Dr. Carmen McDermott",
+                                "country": {
+                                    "id": 1269750,
+                                    "name": "India"
+                                },
+                                "address2": null,
+                                "first_name": "Tatsuo",
+                                "coord": null,
+                                "phone": "+176318747477150",
+                                "state": {
+                                    "id": 1270770,
+                                    "name": "Gujarat"
+                                },
+                                "company_name": "Ullrich, Boehm and Cormier",
+                                "address1": "168 Noreen Cove\nToyport, WI 82734-2077",
+                                "id": 8,
+                                "zip_code": "362426"
+                            }
+                        },
+                        "total": 11720.26,
+                        "subtotal": 7566.11,
+                        "additional_charge": 530.4,
+                        "cost_breakup": {
+                            "additional_charge": {
+                                "amt": 265.2,
+                                "sales_tax": 265.2
+                            }
+                        },
+                        "user": {
+                            "fullname": "Dr. Eustace Nienow",
+                            "id": 5
+                        },
+                        "date_created_at": "2015-08-10T15:07:24.781299Z",
+                        "date_updated_at": "2015-08-10T15:07:24.781322Z",
+                        "order_note": null,
+                        "po": "",
+                        "is_paid": false,
+                        "is_for_order": true,
+                        "is_approve": true
+                    }
+                ]
+            }
+
+
+## Invoice Detail [GET /v1/invoices/{id}]
+
+Get invoice detail
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+
+            {
+                "data": {
+                    "id": 1,
+                    "order": {
+                        "id": 1,
+                        "shipping_address": {
+                            "city": {
+                                "id": 1258847,
+                                "name": "Rājkot"
+                            },
+                            "kind": "job_site",
+                            "last_name": "Cartwright",
+                            "name": "Alphonsine Mosciski",
+                            "country": {
+                                "id": 1269750,
+                                "name": "India"
+                            },
+                            "address2": null,
+                            "first_name": "Jocelyne",
+                            "coord": null,
+                            "phone": "+166830717696566",
+                            "state": {
+                                "id": 1270770,
+                                "name": "Gujarat"
+                            },
+                            "company_name": "Conroy Group",
+                            "address1": "9693 Mavis Garden\nNorth Royal, MS 01739",
+                            "id": 8,
+                            "zip_code": "361534"
+                        },
+                        "billing_address": {
+                            "city": {
+                                "id": 1258847,
+                                "name": "Rājkot"
+                            },
+                            "kind": "job_site",
+                            "last_name": "Cartwright",
+                            "name": "Alphonsine Mosciski",
+                            "country": {
+                                "id": 1269750,
+                                "name": "India"
+                            },
+                            "address2": null,
+                            "first_name": "Jocelyne",
+                            "coord": null,
+                            "phone": "+166830717696566",
+                            "state": {
+                                "id": 1270770,
+                                "name": "Gujarat"
+                            },
+                            "company_name": "Conroy Group",
+                            "address1": "9693 Mavis Garden\nNorth Royal, MS 01739",
+                            "id": 8,
+                            "zip_code": "361534"
+                        }
+                    },
+                    "total": 7343.88,
+                    "subtotal": 6277.9,
+                    "additional_charge": 1065.98,
+                    "cost_breakup": {
+                        "additional_charge": {
+                            "amt": 532.99,
+                            "sales_tax": 532.99
+                        }
+                    },
+                    "user": {
+                        "fullname": "Dr. Candida Stroman",
+                        "id": 5
+                    },
+                    "items": [
+                        {
+                            "id": 3,
+                            "total": 0,
+                            "additional_charge": 0,
+                            "date_created_at": "2015-08-10T15:11:08.701570Z",
+                            "date_updated_at": "2015-08-10T15:11:08.701591Z",
+                            "description": "Sigrid\nSKU: 210SIG71439219468\nRent from 2015-08-13T15:10:41.405445+00:00 to 2015-09-09T15:10:41.405452+00:00\nPost paid payment",
+                            "qty": 1,
+                            "unit_price": 0,
+                            "subtotal": 0,
+                            "shipping_charge": 0,
+                            "overuse_charge": 0,
+                            "cost_breakup": {
+                                "additional_charge": {}
+                            },
+                            "date_from": null,
+                            "date_to": null,
+                            "user": 7
+                        },
+                        {
+                            "id": 2,
+                            "total": 0,
+                            "additional_charge": 0,
+                            "date_created_at": "2015-08-10T15:11:08.697001Z",
+                            "date_updated_at": "2015-08-10T15:11:08.697023Z",
+                            "description": "Kaelyn\nSKU: 180KAE61439219467\nRent from 2015-08-13T15:10:41.405445+00:00 to 2015-09-09T15:10:41.405452+00:00\nPost paid payment",
+                            "qty": 1,
+                            "unit_price": 0,
+                            "subtotal": 0,
+                            "shipping_charge": 0,
+                            "overuse_charge": 0,
+                            "cost_breakup": {
+                                "additional_charge": {}
+                            },
+                            "date_from": null,
+                            "date_to": null,
+                            "user": 6
+                        },
+                        {
+                            "id": 1,
+                            "total": 7343.88,
+                            "additional_charge": 1065.98,
+                            "date_created_at": "2015-08-10T15:11:08.690786Z",
+                            "date_updated_at": "2015-08-10T15:11:08.690820Z",
+                            "description": "Syreeta\nSKU: 177SYR61439219467",
+                            "qty": 1,
+                            "unit_price": 6277.9,
+                            "subtotal": 6277.9,
+                            "shipping_charge": 0,
+                            "overuse_charge": 0,
+                            "cost_breakup": {
+                                "additional_charge": {
+                                    "amt": 532.99,
+                                    "sales_tax": 532.99
+                                },
+                                "subtotal": {
+                                    "amt": 6277.9,
+                                    "unit_price": 6277.9
+                                },
+                                "shipping": {
+                                    "amt": 0
+                                }
+                            },
+                            "date_from": null,
+                            "date_to": null,
+                            "user": 6
+                        }
+                    ],
+                    "date_created_at": "2015-08-10T15:11:08.667244Z",
+                    "date_updated_at": "2015-08-10T15:11:08.667307Z",
+                    "order_note": null,
+                    "po": "",
+                    "is_paid": false,
+                    "is_for_order": true,
+                    "is_approve": true
+                }
+            }
+
+
+## Paying the Invoice [POST /v1/invoices/{id}/actions/pay]
+
+To pay the invoice, you must provide three things, payment gateway, its nonce fed by user and return url.
+Each parameter is described in attribute section.
+
+### 0 amount invoice
+
+If invoice amount is 0, there is a special dummy gateway is designed called `postpaid`. 
+When cart amount is 0 i.e. when cart contains only rental items, you must provide gateway name is `postpaid`
+
+
++ Parameters
+    + id (required, number, `1`) ... Invoice id
+
++ Attributes
+    + gateway: postpaid (required, string) - One of the available payment gateways to system
+    + return_url (required, string)- URL of your site. This url will be used to redirect user
+     on this location upon payment response. Three parameters will appended to return_url, status=<success/fail>,
+     message=<Human readable message from payment gateway>, trasaction_id
+    + nonce (optional, object): Credential from user related to gateway (eg, credit card detail)
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "gateway": "postpaid",
+                "return_url": "http://mysite.com"
+            }
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "transaction": {
+                        "id": "15LVJJ1VCE6IEMUM8",
+                        "date_created_at": "2015-08-10T16:16:17.140569Z",
+                        "date_updated_at": "2015-08-10T16:16:17.140595Z",
+                        "expected_amt": 0,
+                        "received_amt": 0,
+                        "using": "postpaid",
+                        "status": "success",
+                        "payer": 5,
+                        "invoice": 1
+                    },
+                    "redirect_url": "http://mysite.com?status=success&message=Payment+is+successful&transaction_id=15LVJJ1VCE6IEMUM8"
+                }
+            }
+
+
+As soon as you receive the response, you should redirect user to `redirect_url` found in the response.
 
 # Group System
 This api provides some system related informative endpoints like countries, states, enums etc
