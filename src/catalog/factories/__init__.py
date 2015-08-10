@@ -14,11 +14,13 @@ class ProductBaseFactory(factory.DictFactory):
     name = factory.LazyAttribute(lambda x: fake.first_name())
     description = factory.LazyAttribute(lambda x: ' '.join(fake.paragraphs(nb=2)))
     brand = factory.lazy_attribute(lambda x: fake.company())
-    daily_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=4, right_digits=2,
-                                                                positive=True))
-    weekly_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=4, right_digits=2,
+    hourly_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=1, right_digits=2,
                                                                  positive=True))
-    monthly_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=4, right_digits=2,
+    daily_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=2, right_digits=2,
+                                                                positive=True))
+    weekly_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=3, right_digits=2,
+                                                                 positive=True))
+    monthly_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=3, right_digits=2,
                                                                   positive=True))
     sell_price = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=4, right_digits=2,
                                                                positive=True))

@@ -50,9 +50,13 @@ class CartTestCase(TestCase):
         # self.assertNotEqual(resp.data['product'], new_product.id)
 
     def test_minimum_contract_period(self):
-        cart_id = self.get_cart()
+        def change_min_contract_period(user, days):
+            user.profile.settings.update({'minimum_contract_period': days})
+            user.profile.save()
 
+        cart_id = self.get_cart()
         product = ProductFactory()
+        change_min_contract_period(product.user, 5)
         new_rental = RentalItemBaseFactory(product=product.id,
                                            date_start='2016-06-01T12:00:00',
                                            date_end='2016-06-02T12:00:00')
@@ -65,6 +69,7 @@ class CartTestCase(TestCase):
         rental_item = RentalItemFactory(cart=cart,
                                         product=self.dataset.users[3].product_set.first())
         c = self.get_client(self.dataset.users[1])
+        change_min_contract_period(self.dataset.users[3], 5)
 
         # Check if update is working
         resp = c.patch('/carts/%s/rentals/%s' % (cart.id, rental_item.id),

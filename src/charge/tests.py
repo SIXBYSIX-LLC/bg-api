@@ -3,7 +3,7 @@ import factories
 from category.models import Category
 from category.factories import Sub3CategoryFactory
 from . import constants
-from .models import AdditionalCharge
+from .models import AdditionalCharge, Calculator
 
 
 class SalesTaxTest(TestCase):
@@ -77,3 +77,11 @@ class AdditionalChargeTest(TestCase):
         self.assertEqual(len(a_charges), 2, a_charges)
         self.assertIn(env, a_charges)
         self.assertIn(polish, a_charges)
+
+    def test_rent(self):
+        from django.utils import timezone
+
+        start = timezone.datetime(2015, 8, 30, 10)
+        end = start + timezone.timedelta(days=26, hours=0, minutes=0)
+
+        print Calculator.effective_rent_period(start, end, 4, 3, 25)

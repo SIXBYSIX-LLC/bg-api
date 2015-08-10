@@ -159,9 +159,10 @@ class Profile(User):
     user = models.ForeignKey(User, blank=True, null=True, default=None,
                              on_delete=models.SET_DEFAULT, related_name='members')
     settings = pg_fields.JSONField(default={
+        'hourly_price_till_hours': 4,
         'daily_price_till_days': 3,
-        'weekly_price_till_days': 25,
-        'minimum_contract_period': 5,
+        'weekly_price_till_days': 14,
+        'minimum_contract_period': 0,
     })
     #: User's credit form, usually a PDF that contains account other personal information about
     # user. It helps to seller to authentic the user
