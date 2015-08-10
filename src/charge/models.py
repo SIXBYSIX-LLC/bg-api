@@ -1,9 +1,16 @@
+import logging
+
 from django.db import models
 from django.db.models import Q
+from django.utils.text import slugify
 
 from common.models import BaseModel, BaseManager
 from common import fields as ex_fields
 from . import constants
+from shipping import constants as ship_const
+
+
+L = logging.getLogger('bgapi.' + __name__)
 
 
 class Charge(BaseModel):
@@ -73,38 +80,114 @@ class AdditionalCharge(Charge):
         unique_together = ('name', 'user')
 
 
-class Rental(object):
-    def __init__(self, start_date, end_date, item):
-        self.user = item.user
-        self.start_date, self.end_date, self.item = start_date, end_date, item
+class Calculator(object):
+    def __init__(self, product, qty):
+        self.product, self.qty = product, qty
 
-    def calculate(self):
-        settings = self.item.user.profile.settings
-        unit = self.applicable_units(
+    def calc_rent(self, start_date, end_date):
+        settings = self.product.user.profile.settings
+        rent_period = self.effective_rent_period(
+            start_date, end_date,
             settings.get('hourly_price_till_hours', 4), settings.get('daily_price_till_days', 3),
-            settings.get('weekly_price_till_days', 15), self.end_date, self.start_date
+            settings.get('weekly_price_till_days', 15)
         )
 
-        price = {'daily': self.item.daily_price, 'weekly': self.item.weekly_price,
-                 'monthly': self.item.monthly_price, 'hourly': self.item.hourly_price}
+        price = {'daily': self.product.daily_price, 'weekly': self.product.weekly_price,
+                 'monthly': self.product.monthly_price, 'hourly': self.product.hourly_price}
 
-        subtotal = {'hourly': price['hourly'] * unit['final']['hours'],
-                    'daily': price['daily'] * unit['final']['days'],
-                    'weekly': price['weekly'] * unit['final']['weeks'],
-                    'monthly': price['monthly'] * unit['final']['months']}
+        subtotal = {'hourly': price['hourly'] * rent_period['final']['hours'],
+                    'daily': price['daily'] * rent_period['final']['days'],
+                    'weekly': price['weekly'] * rent_period['final']['weeks'],
+                    'monthly': price['monthly'] * rent_period['final']['months']}
 
         amt = 0.0
-        for v in subtotal.items():
+        for v in subtotal.values():
             amt += v
 
-        amt = round(amt, 2)
-        data = {'unit': unit, 'prices': price, 'subtotal': subtotal, 'amt': amt}
+        unit_price = round(amt, 2)
+        amt = unit_price * self.qty
+        data = {'rent_period': rent_period, 'prices': price, 'subtotal': subtotal, 'amt': amt,
+                'unit_price': unit_price}
+        return data
+
+    def calc_additional_charge(self, base_amount, item_kind, marge_other_charge={}):
+        """
+        Calculates any additional charges levied by seller and sales tax
+
+        :return dict:
+        """
+        data = {'amt': 0.0}
+        charge_const = AdditionalCharge.Const
+        charges = AdditionalCharge.objects.all_by_natural_key(
+            self.product.user, item_kind, self.product.category
+        )
+
+        for charge in charges:
+            k = slugify(charge.name).replace('-', '_')
+            if charge.unit == charge_const.Unit.FLAT:
+                data[k] = charge.value
+                data['amt'] += charge.value * self.qty
+            elif charge.unit == charge_const.Unit.PERCENTAGE:
+                value = round((base_amount * charge.value) / 100, 2)
+                data[k] = value
+                data['amt'] += value * self.qty
+
+        data.update(**marge_other_charge)
+        # Add other charges amount to total amount
+        for k, v in marge_other_charge.items():
+            data['amt'] += v
+
+        return data
+
+    def calc_shipping_charge(self, shipping_address, shipping_kind):
+        shipping_method = self.product.get_standard_shipping_method(shipping_address)
+
+        data = {'amt': 0.0}
+
+        if shipping_kind == ship_const.SHIPPING_PICKUP:
+            L.info('Shipping cost', extra=data)
+            return data
+        if not shipping_method:
+            L.info('Item is not shippable', extra={'product': self.product.id})
+            return data
+
+        # Shipping standard method
+        data['amt'] = round(shipping_method.cost * self.qty, 2)
+        data['method'] = 'standard_shipping'
+        data['id'] = shipping_method.id
+
+        L.info('Shipping cost', extra=data)
+
         return data
 
     @classmethod
-    def applicable_units(cls, start_date, end_date, hourly_slab, daily_slab, weekly_slab):
-        data = {}
-        calc = {}
+    def calc_sales_tax(cls, amt, sales_tax):
+        tax = {'pct': 0, 'amt': 0.0}
+
+        if sales_tax:
+            tax['taxable_amt'] = amt
+            tax['id'] = sales_tax.id
+            tax['pct'] = sales_tax.value
+            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
+
+        return tax
+
+    @classmethod
+    def get_sales_tax(cls, country, state):
+        """
+        :return: Get sales tax percentage
+        """
+        try:
+            tax = SalesTax.objects.get(country=country, state=state)
+        except SalesTax.DoesNotExist:
+            return None
+        except AttributeError:
+            return None
+        else:
+            return tax
+
+    @classmethod
+    def effective_rent_period(cls, start_date, end_date, hourly_slab, daily_slab, weekly_slab):
         daily_slab *= 8
         weekly_slab *= 8
 
