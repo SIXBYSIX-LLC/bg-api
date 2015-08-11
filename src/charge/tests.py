@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from common.tests import TestCase
 import factories
 from category.models import Category
@@ -79,9 +81,47 @@ class AdditionalChargeTest(TestCase):
         self.assertIn(polish, a_charges)
 
     def test_rent(self):
-        from django.utils import timezone
+        def d(*l):
+            return {'hours': l[0], 'days': l[1], 'weeks': l[2], 'months': l[3]}
 
         start = timezone.datetime(2015, 8, 30, 10)
-        end = start + timezone.timedelta(days=26, hours=0, minutes=0)
 
-        print Calculator.effective_rent_period(start, end, 4, 3, 25)
+        ideal_price_set = dict(hourly_price=10, daily_price=50, weekly_price=200,
+                               monthly_price=500)
+
+        end = start + timezone.timedelta(days=30, hours=4, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(4, 2, 0, 1))
+
+        # For exact month
+        end = start + timezone.timedelta(days=28, hours=2, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(2, 0, 0, 1))
+
+        end = start + timezone.timedelta(days=25, hours=6, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(0, 1, 0, 1))
+
+        end = start + timezone.timedelta(days=18, hours=0, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(0, 0, 0, 1))
+
+        end = start + timezone.timedelta(days=13, hours=1, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(0, 0, 2, 0))
+
+        end = start + timezone.timedelta(days=10, hours=0, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(0, 3, 1, 0))
+
+        end = start + timezone.timedelta(days=3, hours=2, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(2, 3, 0, 0))
+
+        end = start + timezone.timedelta(days=0, hours=5, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(5, 0, 0, 0))
+
+        end = start + timezone.timedelta(days=0, hours=6, minutes=0)
+        data = Calculator.effective_rent_period(start, end, **ideal_price_set)
+        self.assertDictEqual(data['final'], d(0, 1, 0, 0))

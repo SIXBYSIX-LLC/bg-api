@@ -85,20 +85,18 @@ class Calculator(object):
         self.product, self.qty = product, qty
 
     def calc_rent(self, start_date, end_date):
-        settings = self.product.user.profile.settings
-        rent_period = self.effective_rent_period(
-            start_date, end_date,
-            settings.get('hourly_price_till_hours', 4), settings.get('daily_price_till_days', 3),
-            settings.get('weekly_price_till_days', 15)
-        )
+        price = {
+            'daily_price': self.product.daily_price, 'weekly_price': self.product.weekly_price,
+            'monthly_price': self.product.monthly_price, 'hourly_price': self.product.hourly_price
+        }
+        rent_period = self.effective_rent_period(start_date, end_date, **price)
 
-        price = {'daily': self.product.daily_price, 'weekly': self.product.weekly_price,
-                 'monthly': self.product.monthly_price, 'hourly': self.product.hourly_price}
-
-        subtotal = {'hourly': price['hourly'] * rent_period['final']['hours'],
-                    'daily': price['daily'] * rent_period['final']['days'],
-                    'weekly': price['weekly'] * rent_period['final']['weeks'],
-                    'monthly': price['monthly'] * rent_period['final']['months']}
+        subtotal = {
+            'hourly': price['hourly_price'] * rent_period['final']['hours'],
+            'daily': price['daily_price'] * rent_period['final']['days'],
+            'weekly': price['weekly_price'] * rent_period['final']['weeks'],
+            'monthly': price['monthly_price'] * rent_period['final']['months'],
+        }
 
         amt = 0.0
         for v in subtotal.values():
@@ -187,13 +185,19 @@ class Calculator(object):
             return tax
 
     @classmethod
-    def effective_rent_period(cls, start_date, end_date, hourly_slab, daily_slab, weekly_slab):
-        daily_slab *= 8
-        weekly_slab *= 8
+    def effective_rent_period(cls, start_date, end_date, **kwargs):
+        """
+        This function needs cleanup and should simplified
 
-        daily_hours = 1 * 8
-        weekly_hours = 7 * daily_hours
-        monthly_hours = 28 * daily_hours
+        :param start_date:
+        :param end_date:
+        :param kwargs:
+        :return:
+        """
+        hourly_price = kwargs.get('hourly_price')
+        daily_price = kwargs.get('daily_price')
+        weekly_price = kwargs.get('weekly_price')
+        monthly_price = kwargs.get('monthly_price')
 
         td = end_date - start_date
         days = td.days
@@ -203,32 +207,113 @@ class Calculator(object):
         if minutes > 5:
             hours += 1
 
-        total_hours = (days * 8) + hours
+        total_hours = days * 8 + hours
         data = {'actual': str(td), 'adjusted': '%s days, %s:00:00' % (days, hours)}
 
-        rent_hours = rent_days = rent_weeks = rent_months = 0
+        # Calculate rent if counted as hours for given period
+        # Dict to hold final effective period
+        hourly_effective_period = {'months': 0, 'weeks': 0, 'days': 0, 'hours': total_hours}
+        rent_as_hours = total_hours * hourly_price
 
-        rent_months = total_hours / monthly_hours
-        rent_month_diff_hrs = total_hours % monthly_hours
+        # Calculate rent if counted as days and carry hours for given period
+        daily_effective_period = {'months': 0, 'weeks': 0, 'days': days, 'hours': hours}
+        carry_hours_rent_or_daily = carry_hours_rent = hours * hourly_price
+        # Decides which rent is more cheaper if counted as hours(hours) or as a day
+        if carry_hours_rent > daily_price:
+            daily_effective_period.update({'days': days + 1, 'hours': 0})
+            carry_hours_rent_or_daily = daily_price
+        rent_as_days = days * daily_price + carry_hours_rent_or_daily
 
-        if rent_month_diff_hrs > weekly_slab:
-            rent_months += 1
-        else:
-            rent_weeks = rent_month_diff_hrs / weekly_hours
-            rent_week_diff_hrs = rent_month_diff_hrs % weekly_hours
-
-            if rent_week_diff_hrs > daily_slab:
-                rent_weeks += 1
-            else:
-                rent_days = rent_week_diff_hrs / daily_hours
-                rent_days_diff_hrs = rent_week_diff_hrs % daily_hours
-
-                if rent_days_diff_hrs > hourly_slab:
-                    rent_days += 1
+        # Calculate rent if counted as weeks and carry days and carry hours for given period
+        def calc_for_weeks(d, hours_rent_or_daily):
+            weeks = d / 7
+            weekly_period = {'months': 0, 'weeks': weeks, 'days': 0, 'hours': 0}
+            if weeks is 0:
+                rent = d * daily_price + carry_hours_rent_or_daily
+                # Get hours or a day
+                if carry_hours_rent_or_daily == daily_price:
+                    weekly_period.update({'weeks': 0, 'days': d + 1, 'hours': 0})
                 else:
-                    rent_hours = rent_days_diff_hrs
+                    weekly_period.update({'weeks': 0, 'days': d, 'hours': hours})
+                if rent > weekly_price:
+                    rent = weekly_price
+                    weekly_period.update({'weeks': 1, 'days': 0, 'hours': 0})
+                return rent, weekly_period
 
-        data['final'] = {
-            'months': rent_months, 'weeks': rent_weeks, 'days': rent_days, 'hours': rent_hours
+            # Count rent for carry days
+            week_carry_days = days % 7
+            # Decides if carry days rent is higher or weekly price
+            if week_carry_days * daily_price > weekly_price:
+                weekly_rent_or_daily = weekly_price
+                weekly_period.update({'weeks': weeks + 1})
+            else:
+                # Calculate carry days rent including carry hours
+                weekly_rent_or_daily = week_carry_days * daily_price + hours_rent_or_daily
+                weekly_period.update({'days': week_carry_days, 'hours': hours})
+                # If we found carry days + carry hours is higher than weekly_price, we'll swap it
+                if weekly_rent_or_daily > weekly_price:
+                    weekly_rent_or_daily = weekly_price
+                    weekly_period.update({'days': week_carry_days + 1, 'hours': 0})
+
+            return weeks * weekly_price + weekly_rent_or_daily, weekly_period
+
+        rent_as_weeks, weekly_effective_period = calc_for_weeks(days, carry_hours_rent_or_daily)
+
+        # Calculate as month
+        months = days / 28
+        monthly_effective_period = {'months': months, 'weeks': 0, 'days': 0, 'hours': 0}
+        if months == 0:
+            monthly_rent = monthly_price + carry_hours_rent_or_daily
+            if carry_hours_rent_or_daily == daily_price:
+                monthly_effective_period.update({'months': 1, 'weeks': 0, 'days': 1, 'hours': 0})
+            else:
+                monthly_effective_period.update(
+                    {'months': 1, 'weeks': 0, 'days': 0, 'hours': hours})
+        else:
+            month_carry_days = days % 28
+
+            # Count carry days rent as weeks
+            weekly_carry_rent, w_period = calc_for_weeks(month_carry_days,
+                                                         carry_hours_rent_or_daily)
+
+            w_period.update({'months': months})
+            if weekly_carry_rent > monthly_price:
+                monthly_effective_period.update({'months': months + 1})
+                weekly_rent_or_monthly = monthly_price
+            else:
+                monthly_effective_period.update(**w_period)
+                weekly_rent_or_monthly = weekly_carry_rent
+
+            monthly_rent = months * monthly_price + weekly_rent_or_monthly
+
+        period_rents = {
+            'hourly': rent_as_hours, 'daily': rent_as_days,
+            'weekly': rent_as_weeks, 'monthly': monthly_rent
         }
+        periods = {
+            'hourly': hourly_effective_period, 'daily': daily_effective_period,
+            'weekly': weekly_effective_period, 'monthly': monthly_effective_period
+        }
+
+        cheapest = ['hourly', period_rents['hourly']]
+        for k, v in period_rents.items():
+            if cheapest[1] > v:
+                cheapest[1] = v
+                cheapest[0] = k
+
+        # print period_rents, periods
+        # for period in periods.values():
+        # total = 0
+        #     for k, v in period.items():
+        #         if k == 'hours':
+        #             total += v * hourly_price
+        #         elif k == 'days':
+        #             total += v * daily_price
+        #         elif k == 'weeks':
+        #             total += v * weekly_price
+        #         else:
+        #             total += v * monthly_price
+        #     print total
+
+        data['final'] = periods[cheapest[0]]
         return data
