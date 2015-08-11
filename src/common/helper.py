@@ -93,3 +93,8 @@ def prop2pair(cls, out='tuple', startswith_only=None):
         d = d.items()
 
     return d
+
+
+class DictObjView(object):
+    def __init__(self, d):
+        self.__dict__ = d
