@@ -102,11 +102,11 @@ class TestDataSet(object):
 
         return cart
 
-    def add_item_to_cart(self, cart, product, add_as):
+    def add_item_to_cart(self, cart, product, add_as, **kwargs):
         if add_as == 'purchase':
             cart_factories.PurchaseItemFactory(cart=cart, product=product)
         else:
-            cart_factories.RentalItemFactory(cart=cart, product=product, is_postpaid=True)
+            cart_factories.RentalItemFactory(cart=cart, product=product, is_postpaid=True, **kwargs)
 
         cart.calculate_cost(force_item_calculation=True)
 
