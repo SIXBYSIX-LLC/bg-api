@@ -6,6 +6,7 @@ from django.utils.crypto import get_random_string
 from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import InheritanceManager
 
+from catalog.models import Product
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager, AddressBase
 from shipping import constants as ship_const
 from . import messages, signals
@@ -253,6 +254,15 @@ class Item(BaseModel):
     @property
     def total(self):
         return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
+
+    @property
+    def product(self):
+        data = self.detail.copy()
+        data['category_id'] = data.pop('category')
+        data['location_id'] = data.pop('location')
+        data['user_id'] = data.pop('user')
+        data.pop('images', None)
+        return Product(**data)
 
     def change_status(self, status, info=None, **kwargs):
         """
