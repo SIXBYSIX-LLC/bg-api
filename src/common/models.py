@@ -46,7 +46,7 @@ class AddressBase(BaseModel):
         (constants.Address.TYPE_BILLING, 'Billing'),
     )
     #: Owner of the object
-    user = models.ForeignKey('miniauth.User')
+    user = models.ForeignKey('miniauth.User', related_name="%(app_label)s_%(class)s_set")
     #: Location name
     name = models.CharField(max_length=30)
     first_name = models.CharField(max_length=35)
@@ -57,10 +57,10 @@ class AddressBase(BaseModel):
     address1 = models.CharField(max_length=254)
     #: Address 2
     address2 = models.CharField(max_length=254, blank=True, null=True, default=None)
-    city = models.ForeignKey('cities.City')
-    state = models.ForeignKey('cities.Region')
+    city = models.ForeignKey('cities.City', related_name='+')
+    state = models.ForeignKey('cities.Region', related_name='+')
+    country = models.ForeignKey('cities.Country', related_name='+')
     zip_code = models.CharField(max_length=20)
-    country = models.ForeignKey('cities.Country')
     #: Coordinates of the location
     coord = gis_models.PointField(null=True, blank=True)
     #: Type of address

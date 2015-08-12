@@ -2,15 +2,15 @@ import logging
 
 from django.db import models, transaction
 from django.db.models import Q
+from django.utils.crypto import get_random_string
 from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import InheritanceManager
 
-from common.models import BaseModel, DateTimeFieldMixin, BaseManager
+from common.models import BaseModel, DateTimeFieldMixin, BaseManager, AddressBase
 from shipping import constants as ship_const
 from . import messages, signals
 from common import errors, fields as ex_fields
 from constants import Status as sts_const
-from usr.serializers import AddressListSerializer
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -29,14 +29,23 @@ class OrderManager(BaseManager):
                                         messages.ERR_MISS_SHIPPING_KIND[1])
 
         with transaction.atomic():
+            # Copy address
+            shipping_address = Address(**self.model_to_dict(cart.location))
+            shipping_address.name = get_random_string()
+            shipping_address.save()
+
+            billing_address = Address(**self.model_to_dict(cart.billing_address))
+            billing_address.name = get_random_string()
+            billing_address.save()
+
             # Creating order
             order = self.model(cart=cart, user=cart.user)
             order.subtotal = cart.subtotal
             order.shipping_charge = cart.shipping_charge
             order.additional_charge = cart.additional_charge
             order.cost_breakup = cart.cost_breakup
-            order.shipping_address = AddressListSerializer(cart.location).data
-            order.billing_address = AddressListSerializer(cart.billing_address).data
+            order.shipping_address = shipping_address
+            order.billing_address = billing_address
             order.save()
 
             # Creating RentalItem
@@ -99,6 +108,15 @@ class OrderManager(BaseManager):
                 orderline.calculate_cost()
         return order
 
+    def model_to_dict(self, address):
+        kwargs = address.__dict__
+        for k, v in kwargs.items():
+            if k.startswith('_'):
+                kwargs.pop(k)
+
+        kwargs.pop('id', None)
+        return kwargs
+
 
 class Order(BaseModel, DateTimeFieldMixin):
     # Cart, just for reference
@@ -106,9 +124,9 @@ class Order(BaseModel, DateTimeFieldMixin):
     # The user, who is creating the order
     user = models.ForeignKey('miniauth.User')
     # Address, copied from cart
-    shipping_address = pg_fields.JSONField()
+    shipping_address = models.ForeignKey('Address', related_name='+')
     #: Billing Address
-    billing_address = pg_fields.JSONField()
+    billing_address = models.ForeignKey('Address', related_name='+')
     #: Subtotal of order value
     subtotal = ex_fields.FloatField(min_value=0.0, precision=2)
     #: Shipping charge of whole order
@@ -321,3 +339,7 @@ class Status(BaseModel, DateTimeFieldMixin):
     info = pg_fields.JSONField(null=True, default=None)
 
     Const = sts_const
+
+
+class Address(AddressBase):
+    pass

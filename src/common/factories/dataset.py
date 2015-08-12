@@ -96,8 +96,8 @@ class TestDataSet(object):
         cart = cart_factories.CartFactory(
             user=user,
             is_active=True,
-            location=user.address_set.filter(city__name_std='Rajkot')[0],
-            billing_address=user.address_set.filter(city__name_std='Rajkot')[0]
+            location=user.usr_address_set.filter(city__name_std='Rajkot')[0],
+            billing_address=user.usr_address_set.filter(city__name_std='Rajkot')[0]
         )
 
         return cart

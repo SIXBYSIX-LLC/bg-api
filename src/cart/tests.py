@@ -33,7 +33,7 @@ class CartTestCase(TestCase):
     def test_update_product(self):
         # Prepare cart
         cart = CartFactory(user=self.dataset.users[1],
-                           location=self.dataset.users[1].address_set.first())
+                           location=self.dataset.users[1].usr_address_set.first())
         rental_item = RentalItemFactory(cart=cart,
                                         product=self.dataset.users[3].product_set.first())
         c = self.get_client(self.dataset.users[1])
@@ -65,7 +65,7 @@ class CartTestCase(TestCase):
 
         # Prepare cart
         cart = CartFactory(user=self.dataset.users[1],
-                           location=self.dataset.users[1].address_set.first())
+                           location=self.dataset.users[1].usr_address_set.first())
         rental_item = RentalItemFactory(cart=cart,
                                         product=self.dataset.users[3].product_set.first())
         c = self.get_client(self.dataset.users[1])
@@ -79,7 +79,7 @@ class CartTestCase(TestCase):
 
     def test_is_shippable(self):
         # Cart with shipping address to rajkot
-        rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
+        rjt = self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot').first()
         cart = CartFactory(user=self.dataset.users[1], location=rjt)
 
         # Product from Rajkot
@@ -98,7 +98,7 @@ class CartTestCase(TestCase):
         self.assertFalse(resp.data.get('is_shippable'))
 
     def test_no_shipping_cost_when_pickup(self):
-        rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
+        rjt = self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot').first()
         cart = CartFactory(user=self.dataset.users[1], location=rjt)
 
         # Product from Rajkot
@@ -110,8 +110,8 @@ class CartTestCase(TestCase):
         self.assertEqual(resp.data['rental_products'][0].get('shipping_charge'), 0.0, resp)
 
     def test_cost_update_on_location_change(self):
-        srt = self.dataset.users[1].address_set.filter(city__name_std='Surat').first()
-        rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
+        srt = self.dataset.users[1].usr_address_set.filter(city__name_std='Surat').first()
+        rjt = self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot').first()
         # Initial cart location is Surat
         cart = CartFactory(user=self.dataset.users[1], location=srt)
 
@@ -136,7 +136,7 @@ class CartTestCase(TestCase):
     def test_cart_sales_tax(self):
         tax = SalesTax.objects.all().first()
         # Cart with shipping address to rajkot
-        rjt = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
+        rjt = self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot').first()
         cart = CartFactory(user=self.dataset.users[1], location=rjt)
 
         # Product from Rajkot
@@ -184,7 +184,7 @@ class CartTestCase(TestCase):
         self.assertEqual(resp.status_code, 422)
 
         # Setting the addresses
-        address = self.dataset.users[1].address_set.filter(city__name_std='Rajkot').first()
+        address = self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot').first()
         c.patch('/carts/%s' % cart_id, data={'location': address.id,
                                                             'billing_address': address.id})
 
