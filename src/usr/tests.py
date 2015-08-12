@@ -153,7 +153,7 @@ class TestUser(TestCase):
 
     def test_address_factory(self):
         factories.AddressFactory(user=self.user)
-        self.assertEqual(self.user.address_set.count(), 1)
+        self.assertEqual(self.user.usr_address_set.count(), 1)
 
     def test_add_address(self):
         data = factories.AddressBaseFactory()

@@ -12,8 +12,8 @@ class OrderTest(TestCase):
         self.cart = cart_factories.CartFactory(
             user=self.dataset.users[1],
             is_active=True,
-            location=self.dataset.users[1].address_set.filter(city__name_std='Rajkot')[0],
-            billing_address=self.dataset.users[1].address_set.filter(city__name_std='Rajkot')[0]
+            location=self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot')[0],
+            billing_address=self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot')[0]
         )
         prod1 = self.dataset.users[2].product_set.filter(
             location__city__name_std='Rajkot').order_by('?').first()

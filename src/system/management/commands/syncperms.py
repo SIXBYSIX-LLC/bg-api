@@ -25,10 +25,10 @@ class Command(BaseCommand):
             Permission.objects.get(codename='delete_profile'),
             Permission.objects.get(codename='view_profile'),
             # Address
-            Permission.objects.get(codename='add_address'),
-            Permission.objects.get(codename='change_address'),
-            Permission.objects.get(codename='delete_address'),
-            Permission.objects.get(codename='view_address'),
+            Permission.objects.get(codename='add_address', content_type__app_label='usr'),
+            Permission.objects.get(codename='change_address', content_type__app_label='usr'),
+            Permission.objects.get(codename='delete_address', content_type__app_label='usr'),
+            Permission.objects.get(codename='view_address', content_type__app_label='usr'),
             # Groups
             Permission.objects.get(codename='add_group', content_type=group_content_type),
             Permission.objects.get(codename='change_group', content_type_id=group_content_type),

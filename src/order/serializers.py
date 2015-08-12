@@ -5,7 +5,7 @@ from common.serializers import ModelSerializer, rf_serializers, Serializer
 from .models import Order, OrderLine, Item, RentalItem
 from order import messages
 from common.errors import OrderError
-from usr.serializers import UserRefSerializer
+from usr.serializers import UserRefSerializer, AddressSerializer
 from catalog.serializers import ProductRefSerializer
 from constants import Status as sts_const
 
@@ -46,6 +46,8 @@ class ItemListSerializer(ItemSerializer):
 class OrderSerializer(ModelSerializer):
     items = ItemSerializer(many=True, source='item_set')
     total = rf_serializers.FloatField(read_only=True)
+    shipping_address = AddressSerializer(read_only=True)
+    billing_address = AddressSerializer(read_only=True)
 
     class Meta:
         model = Order
