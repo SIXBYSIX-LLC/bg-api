@@ -1,6 +1,8 @@
 import logging
 
 from django.db import models, transaction
+from django.db.models import Q, Max
+from django.utils import timezone
 from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import QueryManager
 
@@ -8,6 +10,10 @@ from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
 from . import messages
 from transaction import constants as trans_const
+from order.models import RentalItem
+from order.constants import Status as item_status
+from charge.models import Calculator
+from charge import constants as charge_const
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -62,9 +68,56 @@ class InvoiceManager(BaseManager):
                     cost_breakup={'additional_charge': {}},
                     unit_price=0,
                     order_item=item,
+                    date_from=item.date_start,
+                    date_to=item.date_start
                 )
 
         return invoice
+
+    @transaction.atomic()
+    def generate_rental_invoices(self, num_days):
+        # Creating order
+        invoices = {}
+
+        # For regular start date and end date contract
+        qs = RentalItem.objects.filter(~Q(statuses__status=item_status.END_CONTRACT))
+        qs = qs.annotate(last_invoiced_date=Max('invoiceitem_set__date_to'))
+        qs = qs.annotate(invoiced_shipping_charge=Max('invoiceitem_set__shipping_charge'))
+        qs = qs.filter(last_invoiced_date__lte=timezone.now() - timezone.timedelta(days=num_days))
+
+        for item in qs.all():
+            order = item.order
+            buyer = item.user
+            seller_id = item.detail.get('user')
+            invoice = invoices.get(order.id)
+
+            if invoice is None:
+                invoice = Invoice.objects.create(order=order, user=buyer, is_approve=False)
+                invoices[order.id] = invoice
+
+            # Creating or getting invoiceline
+            invoiceline = InvoiceLine.objects.get_or_create(user_id=seller_id, invoice=invoice)[0]
+
+            invoice_item = Item(
+                user_id=seller_id,
+                invoice=invoice,
+                invoiceline=invoiceline,
+                order_item=item,
+                qty=item.qty,
+                unit_price=item.cost_breakup['subtotal'].get('unit_price'),
+                date_from=item.last_invoiced_date,
+                date_to=item.last_invoiced_date + timezone.timedelta(days=num_days)
+            )
+
+            invoice_item.description = "%s\nSKU: %s\nRent from %s to %s" % (
+                item.detail.get('name'), item.detail.get('sku'), invoice_item.date_from.isoformat(),
+                invoice_item.date_to.isoformat()
+            )
+
+            invoice_item.calculate_cost(order, item.invoiced_shipping_charge, save=False)
+            invoice_item.save()
+
+        return invoices.values()
 
 
 class Invoice(BaseModel, DateTimeFieldMixin):
@@ -79,7 +132,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
     #: Indicates if payment is done
     is_paid = models.BooleanField(default=False)
     #: Indicates if the invoice is for whole order or for rental items, also decides if the
-    # invoice is editable or not
+    # invoice is editable or not, it's kept null as to support unique index with other field
     is_for_order = models.NullBooleanField(default=None)
     #: Is invoice approved by seller
     is_approve = models.BooleanField(default=False)
@@ -254,7 +307,7 @@ class Item(BaseModel, DateTimeFieldMixin):
     #: InvoiceLine is Group by seller user
     invoiceline = models.ForeignKey(InvoiceLine)
     #: Order item which this item related to
-    order_item = models.ForeignKey('order.Item', related_name='invoice_item')
+    order_item = models.ForeignKey('order.Item', related_name='invoiceitem_set')
     #: Item description. Computer generated description would contain the item name,
     #: rental period, and other information
     description = models.CharField(max_length=500)
@@ -294,3 +347,31 @@ class Item(BaseModel, DateTimeFieldMixin):
         # approved seller is not allowed to edit it
         if self.invoiceline.is_approve is True:
             raise errors.InvoiceError(*messages.ERR_ITEM_EDIT)
+
+    def calculate_cost(self, order, invoiced_shipping_charge, save=True):
+        calc = Calculator(self.order_item.product, self.qty)
+        subtotal_breakup = calc.calc_rent(self.date_from, self.date_to)
+        subtotal = subtotal_breakup['amt']
+
+        shipping = 0
+        shipping_breakup = {'amt': 0}
+        if invoiced_shipping_charge == 0:
+            shipping_breakup = calc.calc_shipping_charge(order.shipping_address,
+                                                         self.order_item.shipping_kind)
+            shipping = shipping_breakup['amt']
+
+        st = calc.get_sales_tax(order.shipping_address.country, order.shipping_address.state)
+        sales_tax = calc.calc_sales_tax(subtotal + shipping, st)
+
+        additional_charge = calc.calc_additional_charge(subtotal, charge_const.ItemKind.RENTAL,
+                                                        {'sales_tax': sales_tax['amt']})
+
+        cost_breakup = {'subtotal': subtotal_breakup, 'additional_charge': additional_charge,
+                        'shippping': shipping_breakup, 'sales_tax': sales_tax}
+
+        self.subtotal = subtotal
+        self.shipping_charge = shipping
+        self.cost_breakup = cost_breakup
+
+        if save is True:
+            self.save(update_fields=['subtotal', 'shipping_charge', 'cost_breakup'])
