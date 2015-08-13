@@ -7,6 +7,7 @@ from shipping import factories as shp_factories
 from cart import factories as cart_factories
 from charge import factories as chrg_factories
 from order.models import Order
+from order import constants as ordr_const
 
 
 class TestDataSet(object):
@@ -28,6 +29,8 @@ class TestDataSet(object):
             vad = self.add_address(user, 'Vadodara')[0]
             srt = self.add_address(user, 'Surat')[0]
             rjt = self.add_address(user, 'Rajkot')[0]
+
+            self.create_additional_charge(user, 'Environment Fee')
 
             prods_ahm = self.add_product(user, ahm, 5)
             prods_vad = self.add_product(user, vad, 5)
@@ -110,5 +113,27 @@ class TestDataSet(object):
 
         cart.calculate_cost(force_item_calculation=True)
 
-    def add_order(self, cart):
-        return Order.objects.create_order(cart)
+    def add_order(self, cart, add_inventory=False, is_delivered=False):
+        order = Order.objects.create_order(cart)
+        if add_inventory is True:
+            for item in order.item_set.all():
+                item.add_inventories(*item.product.inventory_set.filter(is_active=True)[:item.qty])
+
+        if add_inventory is True and is_delivered is True:
+            self.change_order_status(order, (
+                (ordr_const.Status.CONFIRMED, None),
+                (ordr_const.Status.APPROVED, None),
+                (ordr_const.Status.READY_TO_SHIP, None),
+                (ordr_const.Status.DISPATCHED, None),
+                (ordr_const.Status.DELIVERED, None))
+            )
+        return order
+
+    @classmethod
+    def change_order_status(cls, order, statuses):
+        for item in order.item_set.all():
+            for status, info in statuses:
+                item.change_status(status, info)
+
+    def create_additional_charge(self, user, name):
+        chrg_factories.AdditionalChargeFactory(user=user, item_kind='all', name=name)
