@@ -337,8 +337,8 @@ class Status(BaseModel, DateTimeFieldMixin):
         sts_const.DISPATCHED: [sts_const.DELIVERED],
         sts_const.READY_TO_PICKUP: [sts_const.PICKED_UP],
         sts_const.CANCEL: [],
-        sts_const.PICKED_UP: [],
-        sts_const.DELIVERED: [],
+        sts_const.PICKED_UP: [sts_const.END_CONTRACT],
+        sts_const.DELIVERED: [sts_const.END_CONTRACT],
         sts_const.END_CONTRACT: [],
     }
     STATUS = [(getattr(sts_const, prop), getattr(sts_const, prop))
