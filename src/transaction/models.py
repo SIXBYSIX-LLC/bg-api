@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
 from paymentgateway import models as paymentgateway
-from . import constants
+from . import constants, messages
 
 
 L = logging.getLogger('bgapi.' + __name__)
@@ -18,6 +18,9 @@ L = logging.getLogger('bgapi.' + __name__)
 class TransactionManager(BaseManager):
     @transaction.atomic
     def pay_invoice(self, gateway, invoice, return_url, **kwargs):
+        if invoice.is_approve is False:
+            raise errors.InvoiceError(*messages.ERR_NO_APPROVE)
+
         # Getting payment gateway
         pg = paymentgateway.get_by_name(gateway)
         L.info('Invoice initiated transaction', extra={
