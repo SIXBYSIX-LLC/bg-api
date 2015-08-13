@@ -23,6 +23,7 @@ drf-extensions==0.2.7
 factory-boy==2.5.2
 fake-factory==0.5.1
 kombu==3.0.26
+mock==1.0.1
 psycopg2==2.6
 pycparser==2.13
 python-dateutil==2.4.2
