@@ -5,8 +5,7 @@ from django.conf import settings
 from rest_framework.test import APITestCase, APIClient as _APIClient
 from rest_framework import status
 from django.core.management import call_command
-
-# from mock import patch
+from mock import patch
 
 from common.factories.dataset import TestDataSet
 from usr import factories as usr_factories
@@ -92,7 +91,7 @@ class TestCase(APITestCase):
         c.credentials(HTTP_AUTHORIZATION='Token ' + user.auth_token.key)
         return c
 
-        # def mock_timezone_now(self, time):
-        # self.patcher = patch('django.utils.timezone.now', lambda: time)
-        #     self.addCleanup(self.patcher.stop)
-        #     self.patcher.start()
+    def mock_timezone_now(self, time):
+        self.patcher = patch('django.utils.timezone.now', lambda: time)
+        self.addCleanup(self.patcher.stop)
+        self.patcher.start()
