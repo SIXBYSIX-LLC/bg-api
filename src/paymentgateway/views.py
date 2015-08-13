@@ -11,4 +11,6 @@ class BraintreeViewSet(GenericViewSet):
 
     @list_route(methods=['GET'])
     def action_generate_token(self, request, *args, **kwargs):
+        """ Generates client token """
+
         return Response({'client_token': Braintree().generate_client_token()})

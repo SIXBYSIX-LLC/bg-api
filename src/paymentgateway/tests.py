@@ -6,6 +6,9 @@ from transaction.constants import Status as status_const
 
 
 class BraintreeTestCase(TestCase):
+    # noinspection PyUnresolvedReferences
+    from braintree.test.nonces import Nonces
+
     def prepare_invoice(self):
         cart = self.dataset.add_cart(self.dataset.users[1])
 
@@ -46,7 +49,7 @@ class BraintreeTestCase(TestCase):
             'gateway': 'braintree',
             'return_url': 'http://example.com/payment/result',
             'nonce': {
-                'token': self.Nonces.Transactable
+                'payment_method_nonce': self.Nonces.Transactable
             }
         }, format='json')
 
@@ -61,7 +64,7 @@ class BraintreeTestCase(TestCase):
             'gateway': 'braintree',
             'return_url': 'http://example.com/payment/result',
             'nonce': {
-                'token': self.Nonces.Consumed
+                'payment_method_nonce': self.Nonces.Consumed
             }
         }, format='json')
 
