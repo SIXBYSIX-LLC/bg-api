@@ -193,8 +193,8 @@ class InvoiceTestCase(TestCase):
         self.dataset.add_item_to_cart(cart2, prod2, 'rental',
                                       date_start=timezone.datetime(2015, 7, 13, 16, 30),
                                       date_end=timezone.datetime(2015, 9, 15, 20))
-        order1 = self.dataset.add_order(cart1, True)
-        order2 = self.dataset.add_order(cart2, True)
+        order1 = self.dataset.add_order(cart1, True, True)
+        order2 = self.dataset.add_order(cart2, True, True)
 
         Invoice.objects.create_from_order(order1)
         Invoice.objects.create_from_order(order2)
