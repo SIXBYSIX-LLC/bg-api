@@ -11,7 +11,7 @@ from common import fields as ex_fields, errors
 from . import messages
 from transaction import constants as trans_const
 from order.models import RentalItem
-from order.constants import Status as item_status
+from order import constants as ordr_const
 from charge.models import Calculator
 from charge import constants as charge_const
 
@@ -80,10 +80,14 @@ class InvoiceManager(BaseManager):
         invoices = {}
 
         # For regular start date and end date contract
-        qs = RentalItem.objects.filter(~Q(statuses__status=item_status.END_CONTRACT))
+        qs = RentalItem.objects.filter(~Q(invoiceitem_set__is_final_invoice=True))
         qs = qs.annotate(last_invoiced_date=Max('invoiceitem_set__date_to'))
         qs = qs.annotate(invoiced_shipping_charge=Max('invoiceitem_set__shipping_charge'))
-        qs = qs.filter(last_invoiced_date__lte=timezone.now() - timezone.timedelta(days=num_days))
+        qs = qs.filter(
+            Q(last_invoiced_date__lte=timezone.now() - timezone.timedelta(days=num_days),
+              statuses__status__in=[ordr_const.Status.DELIVERED, ordr_const.Status.PICKED_UP]) |
+            Q(statuses__status=ordr_const.Status.END_CONTRACT)
+        )
 
         for item in qs.all():
             order = item.order
@@ -106,8 +110,14 @@ class InvoiceManager(BaseManager):
                 qty=item.qty,
                 unit_price=item.cost_breakup['subtotal'].get('unit_price'),
                 date_from=item.last_invoiced_date,
-                date_to=item.last_invoiced_date + timezone.timedelta(days=num_days)
+                date_to=item.last_invoiced_date + timezone.timedelta(days=num_days),
+                is_final_invoice=False,
             )
+
+            # If status is contract ended, change end date to contract end date
+            if item.current_status.status == ordr_const.Status.END_CONTRACT:
+                invoice_item.date_to = item.current_status.date_created_at
+                invoice_item.is_final_invoice = True
 
             invoice_item.description = "%s\nSKU: %s\nRent from %s to %s" % (
                 item.detail.get('name'), item.detail.get('sku'), invoice_item.date_from.isoformat(),
@@ -116,6 +126,7 @@ class InvoiceManager(BaseManager):
 
             invoice_item.calculate_cost(order, item.invoiced_shipping_charge, save=False)
             invoice_item.save()
+            invoice_item.refresh_from_db()
 
         return invoices.values()
 
@@ -327,6 +338,8 @@ class Item(BaseModel, DateTimeFieldMixin):
     date_from = models.DateTimeField(default=None, null=True)
     #: For rental item, Date to
     date_to = models.DateTimeField(default=None, null=True)
+    #: Indicates if this item contract is ended and invoiced last time
+    is_final_invoice = models.BooleanField(default=False)
 
     @property
     def total(self):
