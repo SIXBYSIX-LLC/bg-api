@@ -67,3 +67,9 @@ class BraintreeTestCase(TestCase):
 
         self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
         self.assertEqual(resp.data['transaction']['status'], status_const.FAIL, resp)
+
+    def test_generate_token(self):
+        resp = self.user_client.get('/paymentgateway/braintree/actions/generate_token')
+
+        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
+        self.assertIsNotNone(resp.data['client_token'])
