@@ -1,0 +1,69 @@
+from django.utils import timezone
+
+from common.tests import TestCase
+from invoice.models import Invoice
+from transaction.constants import Status as status_const
+
+
+class BraintreeTestCase(TestCase):
+    def prepare_invoice(self):
+        cart = self.dataset.add_cart(self.dataset.users[1])
+
+        prod1 = self.dataset.users[2].product_set.filter(
+            location__city__name_std='Rajkot').order_by('?').first()
+        prod2 = self.dataset.users[3].product_set.filter(
+            location__city__name_std='Vadodara').order_by('?').first()
+        prod3 = self.dataset.users[3].product_set.filter(
+            location__city__name_std='Vadodara').order_by('?').first()
+
+        self.dataset.add_item_to_cart(cart, prod1, 'rental',
+                                      date_start=timezone.datetime(2015, 7, 1, 10),
+                                      date_end=timezone.datetime(2015, 9, 1))
+        self.dataset.add_item_to_cart(cart, prod2, 'rental',
+                                      date_start=timezone.datetime(2015, 7, 13, 16, 30),
+                                      date_end=timezone.datetime(2015, 9, 15, 20))
+        # This item should not be invoiced as it's far away from 28 days
+        self.dataset.add_item_to_cart(cart, prod3, 'rental',
+                                      date_start=timezone.datetime(2015, 7, 25, 16, 30),
+                                      date_end=timezone.datetime(2015, 9, 15, 20))
+        order = self.dataset.add_order(cart, True, True)
+
+        Invoice.objects.create_from_order(order)
+
+        invoices = Invoice.objects.generate_rental_invoices(num_days=28)
+        self.assertEqual(len(invoices), 1)
+        invoice = invoices[0]
+
+        invoice.approve(force=True)
+
+        return invoice
+
+    def test_invoice_pay_success(self):
+        invoice = self.prepare_invoice()
+
+        c = self.get_client(self.dataset.users[1])
+        resp = c.post('/invoices/%s/actions/pay' % invoice.id, data={
+            'gateway': 'braintree',
+            'return_url': 'http://example.com/payment/result',
+            'nonce': {
+                'token': self.Nonces.Transactable
+            }
+        }, format='json')
+
+        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
+        self.assertEqual(resp.data['transaction']['status'], status_const.SUCCESS, resp)
+
+    def test_invoice_pay_fail(self):
+        invoice = self.prepare_invoice()
+
+        c = self.get_client(self.dataset.users[1])
+        resp = c.post('/invoices/%s/actions/pay' % invoice.id, data={
+            'gateway': 'braintree',
+            'return_url': 'http://example.com/payment/result',
+            'nonce': {
+                'token': self.Nonces.Consumed
+            }
+        }, format='json')
+
+        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
+        self.assertEqual(resp.data['transaction']['status'], status_const.FAIL, resp)
