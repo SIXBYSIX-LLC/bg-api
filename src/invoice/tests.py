@@ -136,7 +136,7 @@ class InvoiceTestCase(TestCase):
 
         self.assertGreater(invoice.subtotal, 10)
         self.assertEqual(invoice.item_set.count(), 2)
-        self.assertGreater(invoice.cost_breakup['additional_charge']['environment_fee'], 10)
+        self.assertGreater(invoice.cost_breakup['additional_charge']['environment_fee'], 0)
 
     def test_rental_invoice_multiple_user_order(self):
         cart1 = self.dataset.add_cart(self.dataset.users[1])
