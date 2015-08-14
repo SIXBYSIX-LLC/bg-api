@@ -178,6 +178,7 @@ class Item(BaseModel):
 
         # Shipping charge
         shipping = self.calc.calc_shipping_charge(self.cart.location, self.shipping_kind)
+        self.shipping_charge = shipping['amt']
 
         # Additional charge
         ad_charge_total, ad_charge_breakup = self._calculate_additional_charge()

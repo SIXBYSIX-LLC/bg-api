@@ -9,7 +9,7 @@ from usr.factories import AddressFactory
 
 class StandardMethodBaseFactory(factory.DictFactory):
     country = factory.lazy_attribute(lambda x: fake.cities_country().id)
-    cost = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=3, right_digits=2,
+    cost = factory.lazy_attribute(lambda x: fake.pyfloat(left_digits=2, right_digits=2,
                                                          positive=True))
     zipcode_start = factory.lazy_attribute(lambda o: random.randint(360001, 360021))
     zipcode_end = factory.lazy_attribute(lambda o: random.randint(o.zipcode_start, 360021))
