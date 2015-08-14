@@ -7,6 +7,7 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import InheritanceManager
 
 from catalog.models import Product
+from charge.models import Calculator
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager, AddressBase
 from shipping import constants as ship_const
 from . import messages, signals
@@ -191,28 +192,13 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
         return PurchaseItem.objects.filter(orderline=self)
 
     def calculate_cost(self):
-        self.shipping_charge = 0
-        self.subtotal = 0
-        self.additional_charge = 0
-        self.cost_breakup = {}
-        additional_charge = {}
+        q = Q(rentalitem__is_postpaid=False) | Q(rentalitem__isnull=True)
+        cost = Calculator.calc_items_total(self.item_set.select_related('rentalitem').filter(q))
 
-        for item in self.item_set.select_related('rentalitem').all():
-            if getattr(item, 'rentalitem', None):
-                if item.rentalitem.is_postpaid:
-                    continue
-
-                self.shipping_charge += item.shipping_charge
-                self.subtotal += item.subtotal
-                self.additional_charge += item.additional_charge
-
-                for k, v in item.cost_breakup['additional_charge'].items():
-                    # Initialize value
-                    if additional_charge.get(k, None) is None:
-                        additional_charge[k] = 0.0
-                    additional_charge[k] += v
-
-        self.cost_breakup['additional_charge'] = additional_charge
+        self.shipping_charge = cost['shipping_charge']
+        self.subtotal = cost['subtotal']
+        self.additional_charge = cost['additional_charge']
+        self.cost_breakup = cost['cost_breakup']
 
         self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
                                  'additional_charge'])
