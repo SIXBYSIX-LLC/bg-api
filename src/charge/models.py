@@ -120,29 +120,54 @@ class Calculator(object):
 
         amt = 0.0
         data = []
-        charge_const = AdditionalCharge.Const
         charges = AdditionalCharge.objects.all_by_natural_key(
             self.product.user, item_kind, self.product.category
         )
 
         for charge in charges:
             c = AdditionalChargeSerializer(charge).data
-            if charge.unit == charge_const.Unit.FLAT:
-                c['amt'] = charge.value * self.qty
-                amt += charge.value * self.qty
-            elif charge.unit == charge_const.Unit.PERCENTAGE:
-                value = round((base_amount * charge.value) / 100, 2)
-                c['amt'] = value * self.qty
-                amt += value * self.qty
+
+            c['amt'] = self._calculate_pct_flat(base_amount, charge.unit, charge.value, self.qty)
+            amt += c['amt']
+
             data.append(c)
 
+        for ch in marge_other_charge:
+            ch['merged'] = True
         data.extend(marge_other_charge)
 
         # Add other charges amount to total amount
-        for charge in marge_other_charge:
-            amt += charge['amt']
+        amt += self._calc_total_dict_amt(*marge_other_charge)
 
         return amt, data
+
+    @classmethod
+    def _calculate_pct_flat(cls, base_amount, unit, value, qty):
+        amt = 0.0
+        charge_const = AdditionalCharge.Const
+
+        if unit == charge_const.Unit.FLAT:
+            amt = value * qty
+        elif unit == charge_const.Unit.PERCENTAGE:
+            value = round((base_amount * value) / 100, 2)
+            amt = value * qty
+
+        return amt
+
+    @classmethod
+    def _calc_total_dict_amt(cls, *charges):
+        """
+        Calculate total of amt key in list of dict
+
+        :param list charges: list of dict containing the `amt`
+        :return float: total amount
+        """
+
+        amt = 0.0
+        for charge in charges:
+            amt += charge['amt']
+
+        return amt
 
     def calc_shipping_charge(self, shipping_address, shipping_kind):
         shipping_method = self.product.get_standard_shipping_method(shipping_address)
