@@ -108,34 +108,39 @@ class Calculator(object):
                 'unit_price': unit_price}
         return data
 
-    def calc_additional_charge(self, base_amount, item_kind, marge_other_charge={}):
+    def calc_additional_charge(self, base_amount, item_kind, *marge_other_charge):
         """
         Calculates any additional charges levied by seller and sales tax
 
         :return dict:
         """
-        data = {'amt': 0.0}
+        from serializers import AdditionalChargeSerializer
+
+        amt = 0.0
+        data = []
         charge_const = AdditionalCharge.Const
         charges = AdditionalCharge.objects.all_by_natural_key(
             self.product.user, item_kind, self.product.category
         )
 
         for charge in charges:
-            k = slugify(charge.name).replace('-', '_')
+            c = AdditionalChargeSerializer(charge).data
             if charge.unit == charge_const.Unit.FLAT:
-                data[k] = charge.value
-                data['amt'] += charge.value * self.qty
+                c['amt'] = charge.value * self.qty
+                amt += charge.value * self.qty
             elif charge.unit == charge_const.Unit.PERCENTAGE:
                 value = round((base_amount * charge.value) / 100, 2)
-                data[k] = value
-                data['amt'] += value * self.qty
+                c['amt'] = value * self.qty
+                amt += value * self.qty
+            data.append(c)
 
-        data.update(**marge_other_charge)
+        data.extend(marge_other_charge)
+
         # Add other charges amount to total amount
-        for k, v in marge_other_charge.items():
-            data['amt'] += v
+        for charge in marge_other_charge:
+            amt += charge['amt']
 
-        return data
+        return amt, data
 
     def calc_shipping_charge(self, shipping_address, shipping_kind):
         shipping_method = self.product.get_standard_shipping_method(shipping_address)
@@ -159,8 +164,38 @@ class Calculator(object):
         return data
 
     @classmethod
+    def calc_items_cost(cls, items):
+        shipping_charge = 0
+        subtotal = 0
+        ad_charge_amt = 0
+        ad_charge_breakup = {}
+
+        for item in items:
+            shipping_charge += item.shipping_charge
+            subtotal += item.subtotal
+            ad_charge_amt += item.additional_charge
+
+            for charge in item.cost_breakup['additional_charge']:
+                k = slugify(charge.get('name')).replace('-', '_')
+                v = charge.get('amt')
+                # Initialize value
+                if ad_charge_breakup.get(k, None) is None:
+                    ad_charge_breakup[k] = 0.0
+                ad_charge_breakup[k] += v
+
+        return {
+            'shipping_charge': shipping_charge,
+            'subtotal': subtotal,
+            'additional_charge': ad_charge_amt,
+            'cost_breakup': {
+                'additional_charge': ad_charge_breakup
+            }
+        }
+
+
+    @classmethod
     def calc_sales_tax(cls, amt, sales_tax):
-        tax = {'pct': 0, 'amt': 0.0}
+        tax = {'pct': 0, 'amt': 0.0, 'name': 'Sales tax'}
 
         if sales_tax:
             tax['taxable_amt'] = amt
@@ -304,10 +339,10 @@ class Calculator(object):
         # print period_rents, periods
         # for period in periods.values():
         # total = 0
-        #     for k, v in period.items():
-        #         if k == 'hours':
-        #             total += v * hourly_price
-        #         elif k == 'days':
+        # for k, v in period.items():
+        # if k == 'hours':
+        # total += v * hourly_price
+        # elif k == 'days':
         #             total += v * daily_price
         #         elif k == 'weeks':
         #             total += v * weekly_price
