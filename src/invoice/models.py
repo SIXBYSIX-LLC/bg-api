@@ -13,7 +13,6 @@ from transaction import constants as trans_const
 from order.models import RentalItem
 from order import constants as ordr_const
 from charge.models import Calculator
-from charge import constants as charge_const
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -191,14 +190,9 @@ class Invoice(BaseModel, DateTimeFieldMixin):
 
     @property
     def cost_breakup(self):
-        breakup = {}
-        for item in Item.objects.filter(invoice=self):
-            for k, v in item.cost_breakup['additional_charge'].items():
-                if breakup.get(k, None) is None:
-                    breakup[k] = 0.0
-                breakup[k] += v
+        result = Calculator.calc_items_total(Item.objects.filter(invoice=self))
 
-        return {'additional_charge': breakup}
+        return result.get('cost_breakup')
 
     @transaction.atomic
     def mark_paid(self, force=False, confirm_order=True):
@@ -350,8 +344,8 @@ class Item(BaseModel, DateTimeFieldMixin):
     def additional_charge(self):
         charge = 0.0
 
-        for k, v in self.cost_breakup['additional_charge'].items():
-            charge += v
+        for ad_charge in self.cost_breakup['additional_charge']:
+            charge += ad_charge['amt']
 
         return charge
 
@@ -366,18 +360,17 @@ class Item(BaseModel, DateTimeFieldMixin):
         subtotal_breakup = calc.calc_rent(self.date_from, self.date_to)
         subtotal = subtotal_breakup['amt']
 
+        # Copy shipping charges from order
         shipping = 0
         shipping_breakup = {'amt': 0}
         if invoiced_shipping_charge == 0:
-            shipping_breakup = calc.calc_shipping_charge(order.shipping_address,
-                                                         self.order_item.shipping_kind)
+            shipping_breakup = self.order_item.cost_breakup.get('shipping')
             shipping = shipping_breakup['amt']
 
         st = calc.get_sales_tax(order.shipping_address.country, order.shipping_address.state)
         sales_tax = calc.calc_sales_tax(subtotal + shipping, st)
 
-        additional_charge = calc.calc_additional_charge(subtotal, charge_const.ItemKind.RENTAL,
-                                                        {'sales_tax': sales_tax['amt']})
+        additional_charge = self._calculate_additional_charge(subtotal, sales_tax)
 
         cost_breakup = {'subtotal': subtotal_breakup, 'additional_charge': additional_charge,
                         'shippping': shipping_breakup, 'sales_tax': sales_tax}
@@ -388,3 +381,22 @@ class Item(BaseModel, DateTimeFieldMixin):
 
         if save is True:
             self.save(update_fields=['subtotal', 'shipping_charge', 'cost_breakup'])
+
+    def _calculate_additional_charge(self, base_amount, *other_charges):
+        data = []
+
+        for charge in self.order_item.cost_breakup['additional_charge']:
+            # Ignore the merged charges as it needs to be calculated separately and usually
+            # provided with other_charges args
+            if charge.get('merged') is True:
+                continue
+
+            data.append(charge)
+            charge['amt'] = Calculator._calculate_pct_flat(base_amount, charge.get('unit'),
+                                                           charge.get('value'), self.qty)
+
+        for ch in other_charges:
+            ch['merged'] = True
+        data.extend(other_charges)
+
+        return data
