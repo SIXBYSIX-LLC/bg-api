@@ -56,37 +56,29 @@ class Cart(BaseModel, DateTimeFieldMixin):
         self.cost_breakup = {}
         additional_charge = {}
 
-        # Count rental products
-        for item in self.rentalitem_set.all():
-            if force_item_calculation is True:
+        # Calculate the item costs
+        if force_item_calculation is True:
+            for item in self.rentalitem_set.all():
                 item.calculate_cost()
-            if item.is_postpaid is True:
-                continue
-
-            self.shipping_charge += item.shipping_charge
-            self.subtotal += item.subtotal
-            self.additional_charge += item.additional_charge
-
-            for k, v in item.cost_breakup['additional_charge'].items():
-                # Initialize value
-                if additional_charge.get(k, None) is None:
-                    additional_charge[k] = 0.0
-                additional_charge[k] += v
-
-        # Count purchase products
-        for item in self.purchaseitem_set.all():
-            if force_item_calculation is True:
+            for item in self.purchaseitem_set.all():
                 item.calculate_cost()
 
-            self.shipping_charge += item.shipping_charge
-            self.subtotal += item.subtotal
-            self.additional_charge += item.additional_charge
+        # Calculate total items cost
+        rental_calc = Calculator.calc_items_cost(self.rentalitem_set.filter(is_postpaid=False))
+        purchase_calc = Calculator.calc_items_cost(self.purchaseitem_set.all())
 
-            for k, v in item.cost_breakup['additional_charge'].items():
-                # Initialize value
-                if additional_charge.get(k, None) is None:
-                    additional_charge[k] = 0.0
-                additional_charge[k] += v
+        self.subtotal = rental_calc['subtotal'] + purchase_calc['subtotal']
+        self.shipping_charge = rental_calc['shipping_charge'] + purchase_calc['shipping_charge']
+        self.additional_charge = (rental_calc['additional_charge'] +
+                                  purchase_calc['additional_charge'])
+
+        # Addition cost breakup of rental and purchase product
+        items = (purchase_calc['cost_breakup']['additional_charge'].items() +
+                 rental_calc['cost_breakup']['additional_charge'].items())
+        for k, v in items:
+            if additional_charge.get(k) is None:
+                additional_charge[k] = 0
+            additional_charge[k] += v
 
         self.cost_breakup['sales_tax_pct'] = getattr(self.get_sales_tax(), 'value', 0)
         self.cost_breakup['additional_charge'] = additional_charge
@@ -158,7 +150,7 @@ class Item(BaseModel):
     #: Item quantity
     qty = models.PositiveSmallIntegerField(default=1)
     #: Cost breakup
-    cost_breakup = pg_fields.JSONField(default={'additional_charge': {}}, editable=False)
+    cost_breakup = pg_fields.JSONField(default={'additional_charge': []}, editable=False)
 
     class Meta(BaseModel.Meta):
         abstract = True
@@ -185,32 +177,22 @@ class Item(BaseModel):
         self.subtotal = subtotal['amt']
 
         # Shipping charge
-        shipping = self._calculate_shipping_cost()
-        self.shipping_charge = shipping['amt']
+        shipping = self.calc.calc_shipping_charge(self.cart.location, self.shipping_kind)
 
         # Additional charge
-        additional_charge = self._calculate_additional_charge(
-            AdditionalCharge.Const.ItemKind.RENTAL
-        )
-        self.additional_charge = additional_charge['amt']
+        ad_charge_total, ad_charge_breakup = self._calculate_additional_charge()
+        self.additional_charge = ad_charge_total
 
         # Cost breakup
         self.cost_breakup['subtotal'] = subtotal
         self.cost_breakup['shipping'] = shipping
-        self.cost_breakup['additional_charge'] = additional_charge
+        self.cost_breakup['additional_charge'] = ad_charge_breakup
 
         self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
                                  'additional_charge'])
 
     def _calculate_subtotal(self):
         raise NotImplementedError
-
-    def _calculate_shipping_cost(self):
-        data = self.calc.calc_shipping_charge(self.cart.location, self.shipping_kind)
-
-        L.info('Shipping cost', extra=data)
-
-        return data
 
     def _calculate_sales_tax(self, amt):
         sales_tax = self.cart.get_sales_tax()
@@ -219,7 +201,7 @@ class Item(BaseModel):
 
         return tax
 
-    def _calculate_additional_charge(self, item_kind):
+    def _calculate_additional_charge(self):
         """
         Calculates any additional charges levied by seller and sales tax
 
@@ -228,11 +210,9 @@ class Item(BaseModel):
 
         # Sales tax
         sales_tax = self._calculate_sales_tax(self.subtotal + self.shipping_charge)
-        data = self.calc.calc_additional_charge(self.subtotal, item_kind, {
-            'sales_tax': sales_tax['amt']
-        })
+        total, breakup = self.calc.calc_additional_charge(self.subtotal, self.item_kind, sales_tax)
 
-        return data
+        return total, breakup
 
 
 class RentalItem(Item):
@@ -242,6 +222,8 @@ class RentalItem(Item):
     date_end = models.DateTimeField()
     #: Should pay later?
     is_postpaid = models.BooleanField(default=True)
+
+    item_kind = AdditionalCharge.Const.ItemKind.RENTAL
 
     class Meta(Item.Meta):
         unique_together = ('cart', 'product', 'date_start', 'date_end')
@@ -265,6 +247,8 @@ class RentalItem(Item):
 
 
 class PurchaseItem(Item):
+    item_kind = AdditionalCharge.Const.ItemKind.PURCHASE
+
     class Meta(Item.Meta):
         unique_together = ('cart', 'product')
 
