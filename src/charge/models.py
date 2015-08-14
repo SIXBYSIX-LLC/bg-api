@@ -112,6 +112,8 @@ class Calculator(object):
         """
         Calculates any additional charges levied by seller and sales tax
 
+        :param list marge_other_charge:
+            The charge object should be the dict and contain the `amt` and `name`
         :return dict:
         """
         from serializers import AdditionalChargeSerializer
@@ -164,7 +166,21 @@ class Calculator(object):
         return data
 
     @classmethod
-    def calc_items_cost(cls, items):
+    def calc_items_total(cls, items):
+        """
+        Calculates total of the items. Item should be th object of cart.Item or order.Item
+
+        :param list items: List of cart.Item or order.Item
+        :return dict:
+            {
+                'shipping_charge': float,
+                'subtotal': float,
+                'additional_charge': float,
+                'cost_breakup': {
+                    'additional_charge': BREAKUP_OF_ADDTIONAL_CHARGES
+                }
+            }
+        """
         shipping_charge = 0
         subtotal = 0
         ad_charge_amt = 0

@@ -64,8 +64,8 @@ class Cart(BaseModel, DateTimeFieldMixin):
                 item.calculate_cost()
 
         # Calculate total items cost
-        rental_calc = Calculator.calc_items_cost(self.rentalitem_set.filter(is_postpaid=False))
-        purchase_calc = Calculator.calc_items_cost(self.purchaseitem_set.all())
+        rental_calc = Calculator.calc_items_total(self.rentalitem_set.filter(is_postpaid=False))
+        purchase_calc = Calculator.calc_items_total(self.purchaseitem_set.all())
 
         self.subtotal = rental_calc['subtotal'] + purchase_calc['subtotal']
         self.shipping_charge = rental_calc['shipping_charge'] + purchase_calc['shipping_charge']
