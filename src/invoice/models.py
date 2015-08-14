@@ -6,6 +6,8 @@ from django.utils import timezone
 from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import QueryManager
 
+from common.helper import round_off
+
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
 from . import messages
@@ -162,7 +164,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         for item in Item.objects.filter(invoice=self):
             total += item.total
 
-        return total
+        return round_off(total)
 
     @property
     def subtotal(self):
@@ -170,7 +172,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         for item in Item.objects.filter(invoice=self):
             subtotal += item.subtotal
 
-        return subtotal
+        return round_off(subtotal)
 
     @property
     def shipping_charge(self):
@@ -178,7 +180,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         for item in Item.objects.filter(invoice=self):
             shipping += item.shipping
 
-        return shipping
+        return round_off(shipping)
 
     @property
     def additional_charge(self):
@@ -186,7 +188,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         for item in Item.objects.filter(invoice=self):
             charge += item.additional_charge
 
-        return charge
+        return round_off(charge)
 
     @property
     def cost_breakup(self):
@@ -337,8 +339,7 @@ class Item(BaseModel, DateTimeFieldMixin):
 
     @property
     def total(self):
-        return round(self.subtotal + self.shipping_charge + self.additional_charge +
-                     self.overuse_charge, 2)
+        return self.subtotal + self.shipping_charge + self.additional_charge + self.overuse_charge
 
     @property
     def additional_charge(self):

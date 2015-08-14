@@ -98,3 +98,7 @@ def prop2pair(cls, out='tuple', startswith_only=None):
 class DictObjView(object):
     def __init__(self, d):
         self.__dict__ = d
+
+
+def round_off(value, digits=2):
+    return float(("{0:.%sf}" % digits).format(value))

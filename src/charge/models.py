@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.utils.text import slugify
 
 from common.models import BaseModel, BaseManager
-from common import fields as ex_fields
+from common import fields as ex_fields, helper
 from . import constants
 from shipping import constants as ship_const
 
@@ -92,17 +92,17 @@ class Calculator(object):
         rent_period = self.effective_rent_period(start_date, end_date, **price)
 
         subtotal = {
-            'hourly': price['hourly_price'] * rent_period['final']['hours'],
-            'daily': price['daily_price'] * rent_period['final']['days'],
-            'weekly': price['weekly_price'] * rent_period['final']['weeks'],
-            'monthly': price['monthly_price'] * rent_period['final']['months'],
+            'hourly': helper.round_off(price['hourly_price'] * rent_period['final']['hours']),
+            'daily': helper.round_off(price['daily_price'] * rent_period['final']['days']),
+            'weekly': helper.round_off(price['weekly_price'] * rent_period['final']['weeks']),
+            'monthly': helper.round_off(price['monthly_price'] * rent_period['final']['months']),
         }
 
         amt = 0.0
         for v in subtotal.values():
             amt += v
 
-        unit_price = round(amt, 2)
+        unit_price = helper.round_off(amt)
         amt = unit_price * self.qty
         data = {'rent_period': rent_period, 'prices': price, 'subtotal': subtotal, 'amt': amt,
                 'unit_price': unit_price}
@@ -139,7 +139,7 @@ class Calculator(object):
         # Add other charges amount to total amount
         amt += self._calc_total_dict_amt(*marge_other_charge)
 
-        return amt, data
+        return helper.round_off(amt), data
 
     @classmethod
     def _calculate_pct_flat(cls, base_amount, unit, value, qty):
@@ -149,10 +149,10 @@ class Calculator(object):
         if unit == charge_const.Unit.FLAT:
             amt = value * qty
         elif unit == charge_const.Unit.PERCENTAGE:
-            value = round((base_amount * value) / 100, 2)
+            value = (base_amount * value) / 100
             amt = value * qty
 
-        return amt
+        return helper.round_off(amt)
 
     @classmethod
     def _calc_total_dict_amt(cls, *charges):
@@ -167,7 +167,7 @@ class Calculator(object):
         for charge in charges:
             amt += charge['amt']
 
-        return amt
+        return helper.round_off(amt)
 
     def calc_shipping_charge(self, shipping_address, shipping_kind):
         shipping_method = self.product.get_standard_shipping_method(shipping_address)
@@ -182,7 +182,7 @@ class Calculator(object):
             return data
 
         # Shipping standard method
-        data['amt'] = round(shipping_method.cost * self.qty, 2)
+        data['amt'] = helper.round_off(shipping_method.cost * self.qty)
         data['method'] = 'standard_shipping'
         data['id'] = shipping_method.id
 
@@ -225,14 +225,13 @@ class Calculator(object):
                 ad_charge_breakup[k] += v
 
         return {
-            'shipping_charge': shipping_charge,
-            'subtotal': subtotal,
-            'additional_charge': ad_charge_amt,
+            'shipping_charge': helper.round_off(shipping_charge),
+            'subtotal': helper.round_off(subtotal),
+            'additional_charge': helper.round_off(ad_charge_amt),
             'cost_breakup': {
                 'additional_charge': ad_charge_breakup
             }
         }
-
 
     @classmethod
     def calc_sales_tax(cls, amt, sales_tax):
@@ -242,7 +241,7 @@ class Calculator(object):
             tax['taxable_amt'] = amt
             tax['id'] = sales_tax.id
             tax['pct'] = sales_tax.value
-            tax['amt'] = round((amt * sales_tax.value) / 100, 2)
+            tax['amt'] = helper.round_off((amt * sales_tax.value) / 100)
 
         return tax
 
