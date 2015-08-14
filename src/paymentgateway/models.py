@@ -110,7 +110,7 @@ class Braintree(PaymentGateway):
 
         return ChargeResponse(
             redirect_url=None,
-            received_amt=result.transaction.amount if result.transaction else 0,
+            received_amt=result.transaction.amount if result.transaction else None,
             raw=self.to_json(result),
             status=status_const.SUCCESS if result.is_success else status_const.FAIL,
             message='Payment is successful' if result.is_success else result.message
