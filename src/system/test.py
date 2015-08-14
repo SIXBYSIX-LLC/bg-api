@@ -10,8 +10,5 @@ class ConfigTestCase(TestCase):
         self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
 
     def test_retrieve(self):
-        id = 'braintree'
-        factories.ConfigFactory(id=id)
-
-        resp = self.admin_client.get('/system/configs/%s' % id)
+        resp = self.admin_client.get('/system/configs/braintree')
         self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK)
