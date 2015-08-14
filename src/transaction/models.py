@@ -7,9 +7,9 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from django.utils.crypto import get_random_string
 
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
-from common import fields as ex_fields
-from system import paymentgateway
-from . import constants
+from common import fields as ex_fields, errors
+from paymentgateway import models as paymentgateway
+from . import constants, messages
 
 
 L = logging.getLogger('bgapi.' + __name__)
@@ -18,6 +18,9 @@ L = logging.getLogger('bgapi.' + __name__)
 class TransactionManager(BaseManager):
     @transaction.atomic
     def pay_invoice(self, gateway, invoice, return_url, **kwargs):
+        if invoice.is_approve is False:
+            raise errors.InvoiceError(*messages.ERR_NO_APPROVE)
+
         # Getting payment gateway
         pg = paymentgateway.get_by_name(gateway)
         L.info('Invoice initiated transaction', extra={
@@ -43,7 +46,7 @@ class TransactionManager(BaseManager):
         L.debug('Transaction is created', extra={'transaction': t.id})
 
         # Call for the charge by payment gateway
-        response = pg.charge(invoice, _id)
+        response = pg.charge(invoice, _id, **kwargs)
         L.debug('Charged by payment gateway', extra={
             'status': response.status, 'message': response.message,
             'redirect_url': response.redirect_url
@@ -53,9 +56,12 @@ class TransactionManager(BaseManager):
         # redirect user to return url with status
         if response.redirect_url is None:
             # As payment is processed already, we can make transaction a success
-            t.mark_success(response)
-            L.debug('Payment is processed server side and transaction is marked as %s',
-                    t.status)
+            try:
+                t.mark_success(response)
+                L.debug('Payment is processed server side and transaction is marked as %s',
+                        t.status)
+            except errors.PaymentError:
+                pass
 
             # Preparing query params for return url
             q_params = urllib.urlencode({

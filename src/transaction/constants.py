@@ -6,4 +6,4 @@ class Status(object):
 
 class PaymentGateway(object):
     POSTPAID = 'postpaid'
-    BRAINTREE = 'Braintree'
+    BRAINTREE = 'braintree'

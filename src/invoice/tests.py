@@ -82,46 +82,6 @@ class InvoiceTestCase(TestCase):
         resp = c.get('/invoices/%s' % resp.data[0].get('id'))
         self.assertEqual(len(resp.data.get('items')), 2, resp)
 
-    def test_payment_zero_amount(self):
-        cart = self.dataset.add_cart(self.dataset.users[1])
-
-        prod1 = self.dataset.users[2].product_set.filter(
-            location__city__name_std='Rajkot').order_by('?').first()
-        prod2 = self.dataset.users[3].product_set.filter(
-            location__city__name_std='Vadodara').order_by('?').first()
-
-        self.dataset.add_item_to_cart(cart, prod1, 'rental')
-        self.dataset.add_item_to_cart(cart, prod2, 'rental')
-        order = self.dataset.add_order(cart)
-
-        invoice = Invoice.objects.create_from_order(order)
-
-        c = self.get_client(invoice.user)
-        resp = c.post('/invoices/%s/actions/pay' % invoice.id, data={
-            'gateway': 'postpaid', 'return_url': 'http://example.com'
-        })
-        self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK, resp)
-
-    def test_payment_postpaid_non_zero_amount(self):
-        cart = self.dataset.add_cart(self.dataset.users[1])
-
-        prod1 = self.dataset.users[2].product_set.filter(
-            location__city__name_std='Rajkot').order_by('?').first()
-        prod2 = self.dataset.users[3].product_set.filter(
-            location__city__name_std='Vadodara').order_by('?').first()
-
-        self.dataset.add_item_to_cart(cart, prod1, 'rental')
-        self.dataset.add_item_to_cart(cart, prod2, 'purchase')
-        order = self.dataset.add_order(cart)
-
-        invoice = Invoice.objects.create_from_order(order)
-
-        c = self.get_client(invoice.user)
-        resp = c.post('/invoices/%s/actions/pay' % invoice.id, data={
-            'gateway': 'postpaid', 'return_url': 'http://example.com'
-        })
-        self.assertEqual(resp.status_code, 422, resp)
-
     def test_mark_paid(self):
         cart = self.dataset.add_cart(self.dataset.users[1])
 
@@ -176,7 +136,7 @@ class InvoiceTestCase(TestCase):
 
         self.assertGreater(invoice.subtotal, 10)
         self.assertEqual(invoice.item_set.count(), 2)
-        self.assertGreater(invoice.cost_breakup['additional_charge']['environment_fee'], 10)
+        self.assertGreater(invoice.cost_breakup['additional_charge']['environment_fee'], 0)
 
     def test_rental_invoice_multiple_user_order(self):
         cart1 = self.dataset.add_cart(self.dataset.users[1])

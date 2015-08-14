@@ -8,6 +8,7 @@ from cart import factories as cart_factories
 from charge import factories as chrg_factories
 from order.models import Order
 from order import constants as ordr_const
+from system.models import Config
 
 
 class TestDataSet(object):
@@ -74,6 +75,7 @@ class TestDataSet(object):
             self.add_inventory(product, is_active=False, batch_size=1)
 
         chrg_factories.SalesTaxFactory()
+        self.braintree_sandbox_config()
 
     def add_address(self, to_user, city_name, batch_size=1):
         zip_code = getattr(self, 'ZIP_RANGE_%s' % city_name.upper())
@@ -137,3 +139,11 @@ class TestDataSet(object):
 
     def create_additional_charge(self, user, name):
         chrg_factories.AdditionalChargeFactory(user=user, item_kind='all', name=name)
+
+    def braintree_sandbox_config(self):
+        Config.objects.update_or_create(id='braintree', config={
+            'environment': 'Sandbox',
+            'merchant_id': 's22q4zwcs8rsdb4y',
+            'public_key': '5jbzrdvk5rn9y49z',
+            'private_key': '51f2d485949da343465ef953b34cacf5'
+        })
