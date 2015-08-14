@@ -141,7 +141,7 @@ class TestDataSet(object):
         chrg_factories.AdditionalChargeFactory(user=user, item_kind='all', name=name)
 
     def braintree_sandbox_config(self):
-        Config.objects.create(id='braintree', config={
+        Config.objects.update_or_create(id='braintree', config={
             'environment': 'Sandbox',
             'merchant_id': 's22q4zwcs8rsdb4y',
             'public_key': '5jbzrdvk5rn9y49z',
