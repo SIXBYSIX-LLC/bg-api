@@ -13,6 +13,7 @@ class StandardMethodBaseFactory(factory.DictFactory):
                                                          positive=True))
     zipcode_start = factory.lazy_attribute(lambda o: random.randint(360001, 360021))
     zipcode_end = factory.lazy_attribute(lambda o: random.randint(o.zipcode_start, 360021))
+    delivery_days = 7
     origin = factory.lazy_attribute(lambda o: AddressFactory(user_id=o.user).id)
 
 
