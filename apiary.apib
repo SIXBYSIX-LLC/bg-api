@@ -1722,10 +1722,26 @@ This endpoing will return the current cart of the user. Response will contain th
                         "is_shippable": false,
                         "qty": 1,
                         "cost_breakup": {
-                            "additional_charge": {
-                                "amt": 0,
-                                "sales_tax": 0
-                            },
+                            "additional_charge": [
+                                {
+                                    "name": "Environment Fee",
+                                    "categories": [],
+                                    "value": 4.68,
+                                    "amt": 25.17,
+                                    "user": 6,
+                                    "item_kind": "all",
+                                    "id": 3,
+                                    "unit": "pct"
+                                },
+                                {
+                                    "name": "Sales tax",
+                                    "pct": 3.2,
+                                    "amt": 166.84,
+                                    "taxable_amt": 5213.68,
+                                    "id": 1,
+                                    "merged": true
+                                }
+                            ],
                             "subtotal": {
                                 "rent_unit_days": 30,
                                 "unit_price": 7502.652000000001,
@@ -1757,10 +1773,26 @@ This endpoing will return the current cart of the user. Response will contain th
                         "is_shippable": false,
                         "qty": 1,
                         "cost_breakup": {
-                            "additional_charge": {
-                                "amt": 0,
-                                "sales_tax": 0
-                            },
+                            "additional_charge": [
+                                {
+                                    "name": "Environment Fee",
+                                    "categories": [],
+                                    "value": 4.68,
+                                    "amt": 25.17,
+                                    "user": 6,
+                                    "item_kind": "all",
+                                    "id": 3,
+                                    "unit": "pct"
+                                },
+                                {
+                                    "name": "Sales tax",
+                                    "pct": 3.2,
+                                    "amt": 166.84,
+                                    "taxable_amt": 5213.68,
+                                    "id": 1,
+                                    "merged": true
+                                }
+                            ],
                             "subtotal": {
                                 "amt": 8023.61,
                                 "unit_price": 8023.61
@@ -1780,8 +1812,8 @@ This endpoing will return the current cart of the user. Response will contain th
                     "additional_charge": 56.23,
                     "cost_breakup": {
                         "additional_charge": {
-                            "amt": 56.23,
-                            "sales_tax": 56.23
+                            "environment_fee": 26.130000000000003,
+                            "sales_tax": 391
                         },
                         "sales_tax_pct": 2.7
                     },
@@ -1847,10 +1879,26 @@ This resource allow you to manage (add/update/remove) rental items in the cart. 
                             "is_shippable": false,
                             "qty": 1,
                             "cost_breakup": {
-                                "additional_charge": {
-                                    "amt": 0,
-                                    "sales_tax": 0
-                                },
+                                "additional_charge": "additional_charge": [
+                                    {
+                                        "name": "Environment Fee",
+                                        "categories": [],
+                                        "value": 4.68,
+                                        "amt": 25.17,
+                                        "user": 6,
+                                        "item_kind": "all",
+                                        "id": 3,
+                                        "unit": "pct"
+                                    },
+                                    {
+                                        "name": "Sales tax",
+                                        "pct": 3.2,
+                                        "amt": 166.84,
+                                        "taxable_amt": 5213.68,
+                                        "id": 1,
+                                        "merged": true
+                                    }
+                                ],
                                 "subtotal": {
                                     "amt": 8023.61,
                                     "unit_price": 8023.61
@@ -1871,8 +1919,8 @@ This resource allow you to manage (add/update/remove) rental items in the cart. 
                     "additional_charge": 0,
                     "cost_breakup": {
                         "additional_charge": {
-                            "amt": 0,
-                            "sales_tax": 0
+                            "environment_fee": 26.130000000000003,
+                            "sales_tax": 391
                         },
                         "sales_tax_pct": 0
                     },
@@ -1930,10 +1978,26 @@ You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
                             "is_shippable": false,
                             "qty": 1,
                             "cost_breakup": {
-                                "additional_charge": {
-                                    "amt": 0,
-                                    "sales_tax": 0
-                                },
+                                "additional_charge": [
+                                    {
+                                        "name": "Environment Fee",
+                                        "categories": [],
+                                        "value": 4.68,
+                                        "amt": 25.17,
+                                        "user": 6,
+                                        "item_kind": "all",
+                                        "id": 3,
+                                        "unit": "pct"
+                                    },
+                                    {
+                                        "name": "Sales tax",
+                                        "pct": 3.2,
+                                        "amt": 166.84,
+                                        "taxable_amt": 5213.68,
+                                        "id": 1,
+                                        "merged": true
+                                    }
+                                ],
                                 "subtotal": {
                                     "amt": 8023.61,
                                     "unit_price": 8023.61
@@ -1954,8 +2018,8 @@ You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
                     "additional_charge": 0,
                     "cost_breakup": {
                         "additional_charge": {
-                            "amt": 0,
-                            "sales_tax": 0
+                            "environment_fee": 26.130000000000003,
+                            "sales_tax": 391
                         },
                         "sales_tax_pct": 0
                     },
@@ -1991,7 +2055,6 @@ You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
                     "additional_charge": 0,
                     "cost_breakup": {
                         "additional_charge": {
-                            "amt": 0,
                             "sales_tax": 0
                         },
                         "sales_tax_pct": 0
@@ -2208,10 +2271,26 @@ If all item is cancelled the entire order is said to be cancelled.
                             "shipping_charge": 2368.94,
                             "additional_charge": 3.75,
                             "cost_breakup": {
-                                "additional_charge": {
-                                    "amt": 3.75,
-                                    "sales_tax": 3.75
-                                },
+                                "additional_charge": [
+                                    {
+                                        "name": "Environment Fee",
+                                        "categories": [],
+                                        "value": 4.68,
+                                        "amt": 25.17,
+                                        "user": 6,
+                                        "item_kind": "all",
+                                        "id": 3,
+                                        "unit": "pct"
+                                    },
+                                    {
+                                        "name": "Sales tax",
+                                        "pct": 3.2,
+                                        "amt": 166.84,
+                                        "taxable_amt": 5213.68,
+                                        "id": 1,
+                                        "merged": true
+                                    }
+                                ],
                                 "subtotal": {
                                     "rent_unit_days": 30,
                                     "unit_price": 1379.448,
@@ -2267,10 +2346,26 @@ If all item is cancelled the entire order is said to be cancelled.
                             "shipping_charge": 0,
                             "additional_charge": 6.34,
                             "cost_breakup": {
-                                "additional_charge": {
-                                    "amt": 6.34,
-                                    "sales_tax": 6.34
-                                },
+                                "additional_charge": [
+                                    {
+                                        "name": "Environment Fee",
+                                        "categories": [],
+                                        "value": 4.68,
+                                        "amt": 25.17,
+                                        "user": 6,
+                                        "item_kind": "all",
+                                        "id": 3,
+                                        "unit": "pct"
+                                    },
+                                    {
+                                        "name": "Sales tax",
+                                        "pct": 3.2,
+                                        "amt": 166.84,
+                                        "taxable_amt": 5213.68,
+                                        "id": 1,
+                                        "merged": true
+                                    }
+                                ],
                                 "subtotal": {
                                     "amt": 6344.57,
                                     "unit_price": 6344.57
@@ -2334,8 +2429,8 @@ If all item is cancelled the entire order is said to be cancelled.
                     "additional_charge": 18.65,
                     "cost_breakup": {
                         "additional_charge": {
-                            "amt": 18.65,
-                            "sales_tax": 18.65
+                            "environment_fee": 26.130000000000003,
+                            "sales_tax": 391
                         },
                         "sales_tax_pct": 0.1
                     },
@@ -2830,8 +2925,8 @@ List all the invoices
                         "additional_charge": 530.4,
                         "cost_breakup": {
                             "additional_charge": {
-                                "amt": 265.2,
-                                "sales_tax": 265.2
+                                "environment_fee": 26.130000000000003,
+                                "sales_tax": 391
                             }
                         },
                         "user": {
@@ -2924,8 +3019,8 @@ Get invoice detail
                     "additional_charge": 1065.98,
                     "cost_breakup": {
                         "additional_charge": {
-                            "amt": 532.99,
-                            "sales_tax": 532.99
+                            "environment_fee": 26.130000000000003,
+                            "sales_tax": 391
                         }
                     },
                     "user": {
@@ -2984,10 +3079,26 @@ Get invoice detail
                             "shipping_charge": 0,
                             "overuse_charge": 0,
                             "cost_breakup": {
-                                "additional_charge": {
-                                    "amt": 532.99,
-                                    "sales_tax": 532.99
-                                },
+                                "additional_charge": [
+                                    {
+                                        "name": "Environment Fee",
+                                        "categories": [],
+                                        "value": 4.68,
+                                        "amt": 25.17,
+                                        "user": 6,
+                                        "item_kind": "all",
+                                        "id": 3,
+                                        "unit": "pct"
+                                    },
+                                    {
+                                        "name": "Sales tax",
+                                        "pct": 3.2,
+                                        "amt": 166.84,
+                                        "taxable_amt": 5213.68,
+                                        "id": 1,
+                                        "merged": true
+                                    }
+                                ],
                                 "subtotal": {
                                     "amt": 6277.9,
                                     "unit_price": 6277.9
@@ -3022,6 +3133,7 @@ Each parameter is described in attribute section.
 If invoice amount is 0, there is a special dummy gateway is designed called `postpaid`. 
 When cart amount is 0 i.e. when cart contains only rental items, you must provide gateway name is `postpaid`
 
+As soon as you receive the response, you should redirect user to `redirect_url` found in the response.
 
 + Parameters
     + id (required, number, `1`) ... Invoice id
@@ -3067,7 +3179,429 @@ When cart amount is 0 i.e. when cart contains only rental items, you must provid
             }
 
 
-As soon as you receive the response, you should redirect user to `redirect_url` found in the response.
+# Group Settings
+
+Settings are user's preferences towards system's default or new parameters. Currently there are 3 setting profiles that user can
+change; General / Shippings and Additional charges.
+
+## General Setting [/v1/users/{id}/setting]
+
+### Update the Settings [PATCH]
+
++ Attributes
+    + minimum_contract_period: 3 (optional, number) - Minimum contract period in days, default is 0
+    
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+        
+    + Body
+        
+            {"minimum_contract_period": 2}
+                
++ Response 204 (application/json)
+
+### Retreive [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+        
+                
++ Response 200 (application/json)
+
+
+            {"minimum_contract_period": 2}
+
+
+# Group Shipping
+This resource is intended for price rules for shipping equipments to destination location.
+Currently system supports only single kind of shipping method `Standard Shipping`.
+
+## Standard Shipping Method [/v1/settings/shipping/standard]
+
+User has to define the shipping cost for the each zip code or zip code range.
+For eg, Charge $100 if destination zip code falls between 360001-361234. 
+Use can define rules as many as he wants.
+
+### Add a Rule [POST]
+
++ Attributes
+    + origin: 2 (required, number) - Job site id as origin of the shipping
+    + country: 2 (required, number) - Country id as destination
+    + zipcode_start: 123 (required, number) - Zip code start offset
+    + zipcode_end: 345 (required, number) - Zip code limit offset
+    + cost: 12.43 (required, number) - Shipping charge for the given zip code that falls into `zipcode_start` and `zipcode_end`
+    + delivery_days: 4 (required, number) - Estimated delivery business days
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body 
+    
+            {   
+                "origin": 17
+                "country": 1269750,
+                "cost": 100,
+                "zipcode_start": 360020
+                "zipcode_end": 360021
+                "delivery_days": 7
+            }
+            
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 17,
+                    "zipcode_start": 360020,
+                    "zipcode_end": 360021,
+                    "delivery_days": 7,
+                    "cost": 1100,
+                    "user": 3,
+                    "origin": 17,
+                    "country": 1269750
+                }
+            }
+
+
+### List Rules [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 17,
+                    "next": "http://testserver/settings/shipping/standard?page=2",
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 1,
+                        "zipcode_start": 360001,
+                        "zipcode_end": 365480,
+                        "delivery_days": 7,
+                        "cost": 4665.76,
+                        "user": 4,
+                        "origin": 4,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 2,
+                        "zipcode_start": 380001,
+                        "zipcode_end": 393130,
+                        "delivery_days": 7,
+                        "cost": 5209.82,
+                        "user": 4,
+                        "origin": 1,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 3,
+                        "zipcode_start": 360001,
+                        "zipcode_end": 365480,
+                        "delivery_days": 7,
+                        "cost": 5160.83,
+                        "user": 4,
+                        "origin": 2,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 4,
+                        "zipcode_start": 388710,
+                        "zipcode_end": 396510,
+                        "delivery_days": 7,
+                        "cost": 9485.69,
+                        "user": 4,
+                        "origin": 2,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 5,
+                        "zipcode_start": 360001,
+                        "zipcode_end": 365480,
+                        "delivery_days": 7,
+                        "cost": 4905.37,
+                        "user": 5,
+                        "origin": 8,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 6,
+                        "zipcode_start": 380001,
+                        "zipcode_end": 393130,
+                        "delivery_days": 7,
+                        "cost": 5110.42,
+                        "user": 5,
+                        "origin": 5,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 7,
+                        "zipcode_start": 360001,
+                        "zipcode_end": 365480,
+                        "delivery_days": 7,
+                        "cost": 6909.38,
+                        "user": 5,
+                        "origin": 6,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 8,
+                        "zipcode_start": 388710,
+                        "zipcode_end": 396510,
+                        "delivery_days": 7,
+                        "cost": 8292.33,
+                        "user": 5,
+                        "origin": 6,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 9,
+                        "zipcode_start": 360001,
+                        "zipcode_end": 365480,
+                        "delivery_days": 7,
+                        "cost": 4633.51,
+                        "user": 6,
+                        "origin": 12,
+                        "country": 1269750
+                    },
+                    {
+                        "id": 10,
+                        "zipcode_start": 380001,
+                        "zipcode_end": 393130,
+                        "delivery_days": 7,
+                        "cost": 5129.15,
+                        "user": 6,
+                        "origin": 9,
+                        "country": 1269750
+                    }
+                ]
+            }
+
+
+## Rule Object [/v1/settings/shipping/standard/{id}]
+
+### Retreive [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 17,
+                    "zipcode_start": 360020,
+                    "zipcode_end": 360021,
+                    "delivery_days": 7,
+                    "cost": 1100,
+                    "user": 3,
+                    "origin": 17,
+                    "country": 1269750
+                }
+            }
+
+### Update [PATCH]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body 
+    
+            {   
+                "cost": 150
+            }
+            
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 17,
+                    "zipcode_start": 360020,
+                    "zipcode_end": 360021,
+                    "delivery_days": 7,
+                    "cost": 150,
+                    "user": 3,
+                    "origin": 17,
+                    "country": 1269750
+                }
+            }
+
+
+# Group Additional Charges
+Additional charges are defined as any other extra charges defined by the seller and seperated from the standard charges. Additional charges are applied on subtotal of the items.
+
+User can define additional charges either flat or percentage of item cost.
+
+### ENUM
+
+* unit: 
+    * `flat`: Defines flat charge irrespective of item cost
+    * `pct`: Pertage of the item cost
+
+* item_kind:
+    * `rental`: Rental item only
+    * `purchase`: Purchase item only
+    * `both`: All item
+
+
+## Additional Charge Collection [/v1/charges/additional_charges]
+
+### Create a New Charge [POST]
+
++ Attributes
+    + name: VAT (required, string) - Name of the charge. It'll be visible in invoice
+    + value: 300.34 (required, number) - Value of the charge. Indicates percentage if unit is `pct`
+    + unit: flat (required, string) - Can be one of Unit enum
+    + `item_kind`: rental (required, string) - It defines, what item this charge should be applied for. One of item_kind enum
+    + catagories: 34 (optional, array) - It defines, charge application only when item falls into one of these catagories.
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "value": 3.75,
+                "categories": [163, 61, 196],
+                "name": "Environment fee", "unit": "pct",
+                "item_kind": "rental"
+            }
+
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 5,
+                    "name": "Environment fee",
+                    "value": 3.75,
+                    "unit": "pct",
+                    "item_kind": "rental",
+                    "user": 3,
+                    "categories": [
+                        163, 61, 196
+                    ]
+                }
+            }
+
+### List [GET]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 1,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 5,
+                        "name": "environment",
+                        "value": 7.55,
+                        "unit": "pct",
+                        "item_kind": "rental",
+                        "user": 3,
+                        "categories": [
+                            63,
+                            134,
+                            213
+                        ]
+                    }
+                ]
+            }
+
+## Additional Charge [/v1/charges/additional_charges/{id}]
+
++ Parameters
+    + id (required, number, `1`) ... Additional charge id
+
+### Retreive [GET]
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 5,
+                    "name": "Environment fee",
+                    "value": 3.75,
+                    "unit": "pct",
+                    "item_kind": "rental",
+                    "user": 3,
+                    "categories": [
+                        163, 61, 196
+                    ]
+                }
+            }
+
+### Update [PATCH]
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "value": 5.75,
+            }
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 5,
+                    "name": "Environment fee",
+                    "value": 5.75,
+                    "unit": "pct",
+                    "item_kind": "rental",
+                    "user": 3,
+                    "categories": [
+                        163, 61, 196
+                    ]
+                }
+            }
+
 
 # Group System
 This api provides some system related informative endpoints like countries, states, enums etc
