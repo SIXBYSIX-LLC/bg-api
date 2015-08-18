@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import Q
 from django.utils.text import slugify
 
+from taxrates.models import TaxRate
 from common.models import BaseModel, BaseManager
 from common import fields as ex_fields, helper
 from . import constants
@@ -24,14 +25,6 @@ class Charge(BaseModel):
 
     class Meta(BaseModel.Meta):
         abstract = True
-
-
-class SalesTax(Charge):
-    country = models.ForeignKey('cities.Country')
-    state = models.ForeignKey('cities.Region', null=True)
-
-    class Meta(Charge.Meta):
-        unique_together = ('country', 'state')
 
 
 class AdditionalChargeManager(BaseManager):
@@ -234,30 +227,29 @@ class Calculator(object):
         }
 
     @classmethod
-    def calc_sales_tax(cls, amt, sales_tax):
+    def calc_sales_tax(cls, amt, rate):
         tax = {'pct': 0, 'amt': 0.0, 'name': 'Sales tax'}
 
-        if sales_tax:
+        if rate:
             tax['taxable_amt'] = amt
-            tax['id'] = sales_tax.id
-            tax['pct'] = sales_tax.value
-            tax['amt'] = helper.round_off((amt * sales_tax.value) / 100)
+            tax['pct'] = rate
+            tax['amt'] = helper.round_off((amt * rate) / 100)
 
         return tax
 
     @classmethod
-    def get_sales_tax(cls, country, state):
+    def get_sales_tax(cls, address):
         """
         :return: Get sales tax percentage
         """
         try:
-            tax = SalesTax.objects.get(country=country, state=state)
-        except SalesTax.DoesNotExist:
-            return None
+            tax = TaxRate.objects.get(country=address.country.code, zip_code=address.zip_code)
+        except TaxRate.DoesNotExist:
+            return 0
         except AttributeError:
-            return None
+            return 0
         else:
-            return tax
+            return tax.rate
 
     @classmethod
     def effective_rent_period(cls, start_date, end_date, **kwargs):
@@ -383,7 +375,7 @@ class Calculator(object):
         # if k == 'hours':
         # total += v * hourly_price
         # elif k == 'days':
-        #             total += v * daily_price
+        # total += v * daily_price
         #         elif k == 'weeks':
         #             total += v * weekly_price
         #         else:

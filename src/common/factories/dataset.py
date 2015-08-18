@@ -74,7 +74,6 @@ class TestDataSet(object):
             self.add_inventory(product, is_active=True, batch_size=4)
             self.add_inventory(product, is_active=False, batch_size=1)
 
-        chrg_factories.SalesTaxFactory()
         self.braintree_sandbox_config()
 
     def add_address(self, to_user, city_name, batch_size=1):

@@ -1,11 +1,6 @@
 from common.viewsets import ModelViewSet
-from .serializers import SalesTaxSerializer, AdditionalChargeSerializer
-from .models import SalesTax, AdditionalCharge
-
-
-class SalesTaxViewSet(ModelViewSet):
-    serializer_class = SalesTaxSerializer
-    queryset = SalesTax.objects.all()
+from .serializers import AdditionalChargeSerializer
+from .models import AdditionalCharge
 
 
 class AdditionalChargeViewSet(ModelViewSet):

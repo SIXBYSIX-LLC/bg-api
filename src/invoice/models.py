@@ -7,7 +7,6 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from model_utils.managers import QueryManager
 
 from common.helper import round_off
-
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
 from . import messages
@@ -368,7 +367,7 @@ class Item(BaseModel, DateTimeFieldMixin):
             shipping_breakup = self.order_item.cost_breakup.get('shipping')
             shipping = shipping_breakup['amt']
 
-        st = calc.get_sales_tax(order.shipping_address.country, order.shipping_address.state)
+        st = calc.get_sales_tax(order.shipping_address)
         sales_tax = calc.calc_sales_tax(subtotal + shipping, st)
 
         additional_charge = self._calculate_additional_charge(subtotal, sales_tax)

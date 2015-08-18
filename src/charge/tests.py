@@ -8,13 +8,6 @@ from . import constants
 from .models import AdditionalCharge, Calculator
 
 
-class SalesTaxTest(TestCase):
-    def test_create(self):
-        st = factories.SalesTaxBaseFactory(state=1270771)
-        resp = self.admin_client.post('/charges/sales_taxes', data=st)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED, resp)
-
-
 class AdditionalChargeTest(TestCase):
     def test_create(self):
         st = factories.AdditionalChargeBaseFactory()

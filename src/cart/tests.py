@@ -1,7 +1,7 @@
 from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
-from charge.models import SalesTax
+from taxrates.models import TaxRate
 
 
 class CartTestCase(TestCase):
@@ -134,10 +134,12 @@ class CartTestCase(TestCase):
         self.assertEqual(rmresp.data['total'], 0, rmresp)
 
     def test_cart_sales_tax(self):
-        tax = SalesTax.objects.all().first()
         # Cart with shipping address to rajkot
         rjt = self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot').first()
         cart = CartFactory(user=self.dataset.users[1], location=rjt)
+
+        tax = TaxRate.objects.create(country='IN', state='GJ', zip_code=rjt.zip_code, rate=7.45,
+                                     tax_region_name='Rajkot')
 
         # Product from Rajkot
         prod = self.dataset.users[3].product_set.filter(
@@ -146,7 +148,7 @@ class CartTestCase(TestCase):
         c = self.get_client(self.dataset.users[1])
         c.post('/carts/%s/purchases' % cart.id, data=purchase_item)
         resp = c.get('/carts/current')
-        self.assertEqual(resp.data['cost_breakup']['sales_tax_pct'], tax.value)
+        self.assertEqual(resp.data['cost_breakup']['sales_tax_pct'], tax.rate)
         self.assertGreater(resp.data['cost_breakup']['additional_charge']['sales_tax'], 10)
 
     def test_add_purchases_product(self):

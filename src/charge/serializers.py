@@ -1,10 +1,5 @@
-from .models import SalesTax, AdditionalCharge
+from .models import AdditionalCharge
 from common.serializers import ModelSerializer
-
-
-class SalesTaxSerializer(ModelSerializer):
-    class Meta:
-        model = SalesTax
 
 
 class AdditionalChargeSerializer(ModelSerializer):
