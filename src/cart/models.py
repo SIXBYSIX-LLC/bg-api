@@ -6,7 +6,7 @@ from djangofuture.contrib.postgres import fields as pg_fields
 from cart.validators import validate_date_start
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
 from common import fields as ex_fields, errors
-from charge.models import SalesTax, AdditionalCharge, Calculator
+from charge.models import AdditionalCharge, Calculator
 from . import constants, messages
 from shipping import constants as ship_const
 from order.models import Order
@@ -80,25 +80,11 @@ class Cart(BaseModel, DateTimeFieldMixin):
                 additional_charge[k] = 0
             additional_charge[k] += v
 
-        self.cost_breakup['sales_tax_pct'] = getattr(self.get_sales_tax(), 'value', 0)
+        self.cost_breakup['sales_tax_pct'] = Calculator.get_sales_tax(self.location)
         self.cost_breakup['additional_charge'] = additional_charge
 
         self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
                                  'additional_charge'])
-
-    def get_sales_tax(self):
-        """
-        :return: Get sales tax percentage
-        """
-        try:
-            tax = SalesTax.objects.get(country=self.location.country, state=self.location.state)
-        except SalesTax.DoesNotExist:
-            return None
-        except AttributeError:
-            L.debug('Cart location is not set', extra={'cart': self.id})
-            return None
-        else:
-            return tax
 
     def deactivate(self):
         self.is_active = False
@@ -196,7 +182,7 @@ class Item(BaseModel):
         raise NotImplementedError
 
     def _calculate_sales_tax(self, amt):
-        sales_tax = self.cart.get_sales_tax()
+        sales_tax = Calculator.get_sales_tax(self.cart.location)
 
         tax = self.calc.calc_sales_tax(amt, sales_tax)
 
