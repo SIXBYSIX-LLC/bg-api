@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from datetime import timedelta
 import os
 
 from kombu import Queue
@@ -155,6 +156,12 @@ CELERY_QUEUES = (
     Queue('push_notification', routing_key='push_notification'),
     Queue('email', routing_key='email'),
 )
+CELERYBEAT_SCHEDULE = {
+    'auto-approve-invoice': {
+        'task': 'invoice.tasks.auto_approve_invoice',
+        'schedule': timedelta(days=1)
+    }
+}
 
 CELERY_ACCEPT_CONTENT = ['pickle', 'json']
 BROKER_URL = 'redis://localhost:6379/9'
