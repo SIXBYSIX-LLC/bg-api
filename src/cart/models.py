@@ -25,9 +25,9 @@ class Cart(BaseModel, DateTimeFieldMixin):
     #: Billing address
     billing_address = models.ForeignKey('usr.Address', null=True, default=None, related_name='+')
     #: Cart owner
-    user = models.ForeignKey('miniauth.User', blank=True, editable=False)
+    user = models.ForeignKey('miniauth.User', blank=True, editable=False, db_index=True)
     #: This value can be false in case it's converted to order or by other conditions in future
-    is_active = models.BooleanField(default=True, editable=False)
+    is_active = models.BooleanField(default=True, editable=False, db_index=True)
     #: Subtotal
     subtotal = models.FloatField(editable=False, default=0)
     #: Shipping charge

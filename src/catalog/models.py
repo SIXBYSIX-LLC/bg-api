@@ -54,7 +54,7 @@ class Product(BaseModel):
     )
 
     #: Product name
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, db_index=True)
     #: Product images, up to 10
     images = models.ManyToManyField('static.File', blank=True)
     #: Product description
@@ -72,9 +72,10 @@ class Product(BaseModel):
     #: Selling price
     sell_price = ex_fields.FloatField(min_value=0.0, max_value=999999999, precision=2)
     #: Product category
-    category = models.ForeignKey('category.Category', validators=[validate_category_is_leaf])
+    category = models.ForeignKey('category.Category', validators=[validate_category_is_leaf],
+                                 db_index=True)
     #: Is active and searchable
-    is_active = models.BooleanField(blank=True, default=False)
+    is_active = models.BooleanField(blank=True, default=False, db_index=True)
     #: Product location
     location = models.ForeignKey('usr.Address')
     #: SKU id, auto generated in-case of received blank
@@ -128,7 +129,7 @@ class Inventory(BaseModel):
     #: The source of inventory, either owned, re-rent from others
     source = models.CharField(choices=SOURCE, default='purchased', blank=True, max_length=50)
     #: Is inventory available
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(db_index=True)
     date_created_at = models.DateTimeField(auto_now_add=True, blank=True, editable=False)
     user = models.ForeignKey('miniauth.User', editable=False, blank=True, default=None)
 

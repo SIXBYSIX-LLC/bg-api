@@ -39,8 +39,8 @@ class StandardMethod(ShippingBase):
     #: County that rule belongs to
     country = models.ForeignKey('cities.Country')
     #: Zip code range or only zip code
-    zipcode_start = models.PositiveIntegerField()
-    zipcode_end = models.PositiveIntegerField(default=0)
+    zipcode_start = models.PositiveIntegerField(db_index=True)
+    zipcode_end = models.PositiveIntegerField(default=0, db_index=True)
     delivery_days = models.PositiveSmallIntegerField()
     # Shipping cost for the rule
     cost = ex_fields.FloatField(min_value=0, max_value=9999, precision=2)

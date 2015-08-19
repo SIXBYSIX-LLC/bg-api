@@ -96,7 +96,7 @@ class Transaction(BaseModel, DateTimeFieldMixin):
     #: Payment gateway name
     using = models.CharField(max_length=30)
     #: Status of the transaction
-    status = models.CharField(max_length=30, default=constants.Status.INITIATE)
+    status = models.CharField(max_length=30, default=constants.Status.INITIATE, db_index=True)
     #: Response from the payment gateway
     response = pg_fields.JSONField(default=None, null=True)
     #: Return url after successful payment

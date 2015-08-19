@@ -61,7 +61,7 @@ class AdditionalCharge(Charge):
         (constants.ItemKind.ALL, 'All'),
     )
     #: Either applicable on rental or purchase or all
-    item_kind = models.CharField(choices=ITEM_KIND, max_length=30)
+    item_kind = models.CharField(choices=ITEM_KIND, max_length=30, db_index=True)
     #: User can specify the category on which
     categories = models.ManyToManyField('category.Category')
     #: Owner

@@ -144,12 +144,12 @@ class Invoice(BaseModel, DateTimeFieldMixin):
     #: Order which this invoice is related to
     order = models.ForeignKey('order.Order')
     #: Indicates if payment is done
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False, db_index=True)
     #: Indicates if the invoice is for whole order or for rental items, also decides if the
     # invoice is editable or not, it's kept null as to support unique index with other field
-    is_for_order = models.NullBooleanField(default=None)
+    is_for_order = models.NullBooleanField(default=None, db_index=True)
     #: Is invoice approved by seller
-    is_approve = models.BooleanField(default=False)
+    is_approve = models.BooleanField(default=False, db_index=True)
 
     objects = InvoiceManager()
     approved = QueryManager(is_approve=True)
@@ -250,7 +250,7 @@ class InvoiceLine(BaseModel):
     #: Invoice
     invoice = models.ForeignKey(Invoice)
     #: Indicates if seller has approved his part of the invoice or not. Once mark as approved
-    is_approve = models.BooleanField(default=False)
+    is_approve = models.BooleanField(default=False, db_index=True)
     #: Just for seller's note, not visible to buyer
     remark = models.TextField(default='')
 
@@ -339,11 +339,11 @@ class Item(BaseModel, DateTimeFieldMixin):
     #: Cost break up of subtotal / shipping charge and additional charge
     cost_breakup = pg_fields.JSONField(default={})
     #: For rental item, Date from
-    date_from = models.DateTimeField(default=None, null=True)
+    date_from = models.DateTimeField(default=None, null=True, db_index=True)
     #: For rental item, Date to
-    date_to = models.DateTimeField(default=None, null=True)
+    date_to = models.DateTimeField(default=None, null=True, db_index=True)
     #: Indicates if this item contract is ended and invoiced last time
-    is_final_invoice = models.BooleanField(default=False)
+    is_final_invoice = models.BooleanField(default=False, db_index=True)
 
     @property
     def total(self):
