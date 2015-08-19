@@ -18,6 +18,7 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class OrderManager(BaseManager):
+    @transaction.atomic()
     def create_order(self, cart):
 
         def check_shipping(item):
@@ -30,84 +31,84 @@ class OrderManager(BaseManager):
                 raise errors.OrderError(messages.ERR_MISS_SHIPPING_KIND[0] % item.product.name,
                                         messages.ERR_MISS_SHIPPING_KIND[1])
 
-        with transaction.atomic():
-            # Copy address
-            shipping_address = Address(**self.model_to_dict(cart.location))
-            shipping_address.name = get_random_string()
-            shipping_address.save()
+        # Copy address
+        shipping_address = Address(**self.model_to_dict(cart.location))
+        shipping_address.name = get_random_string()
+        shipping_address.save()
 
-            billing_address = Address(**self.model_to_dict(cart.billing_address))
-            billing_address.name = get_random_string()
-            billing_address.save()
+        billing_address = Address(**self.model_to_dict(cart.billing_address))
+        billing_address.name = get_random_string()
+        billing_address.save()
 
-            # Creating order
-            order = self.model(cart=cart, user=cart.user)
-            order.subtotal = cart.subtotal
-            order.shipping_charge = cart.shipping_charge
-            order.additional_charge = cart.additional_charge
-            order.cost_breakup = cart.cost_breakup
-            order.shipping_address = shipping_address
-            order.billing_address = billing_address
-            order.save()
+        # Creating order
+        order = self.model(cart=cart, user=cart.user)
+        order.subtotal = cart.subtotal
+        order.shipping_charge = cart.shipping_charge
+        order.additional_charge = cart.additional_charge
+        order.cost_breakup = cart.cost_breakup
+        order.shipping_address = shipping_address
+        order.billing_address = billing_address
+        order.save()
 
-            # Creating RentalItem
-            from catalog.serializers import ProductSerializer
+        # Creating RentalItem
+        from catalog.serializers import ProductSerializer
 
-            # Rental Item
-            for item in cart.rentalitem_set.all():
-                check_shipping(item)
+        # Rental Item
+        for item in cart.rentalitem_set.all():
+            check_shipping(item)
 
-                orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
+            orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
 
-                product_serializer = ProductSerializer(item.product)
+            product_serializer = ProductSerializer(item.product)
 
-                rental_item = RentalItem.objects.create(
-                    order=order,
-                    orderline=orderline,
-                    qty=item.qty,
-                    user=cart.user,
-                    shipping_kind=item.shipping_kind,
-                    detail=product_serializer.data,
-                    shipping_method=item.shipping_method.name if item.shipping_method else None,
-                    date_start=item.date_start,
-                    date_end=item.date_end,
-                    subtotal=item.subtotal,
-                    shipping_charge=item.shipping_charge,
-                    additional_charge=item.additional_charge,
-                    cost_breakup=item.cost_breakup,
-                    is_postpaid=item.is_postpaid
-                )
-                rental_item.change_status(sts_const.NOT_CONFIRMED)
+            rental_item = RentalItem.objects.create(
+                order=order,
+                orderline=orderline,
+                qty=item.qty,
+                user=cart.user,
+                shipping_kind=item.shipping_kind,
+                detail=product_serializer.data,
+                shipping_method=item.shipping_method.name if item.shipping_method else None,
+                date_start=item.date_start,
+                date_end=item.date_end,
+                subtotal=item.subtotal,
+                shipping_charge=item.shipping_charge,
+                additional_charge=item.additional_charge,
+                cost_breakup=item.cost_breakup,
+                is_postpaid=item.is_postpaid
+            )
+            rental_item.change_status(sts_const.NOT_CONFIRMED)
 
-            # Purchase Item
-            for item in cart.purchaseitem_set.all():
-                check_shipping(item)
+        # Purchase Item
+        for item in cart.purchaseitem_set.all():
+            check_shipping(item)
 
-                orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
+            orderline = OrderLine.objects.get_or_create(user=item.product.user, order=order)[0]
 
-                product_serializer = ProductSerializer(item.product)
+            product_serializer = ProductSerializer(item.product)
 
-                purchase_item = PurchaseItem.objects.create(
-                    order=order,
-                    orderline=orderline,
-                    qty=item.qty,
-                    user=cart.user,
-                    shipping_kind=item.shipping_kind,
-                    detail=product_serializer.data,
-                    shipping_method=item.shipping_method.name if item.shipping_method else None,
-                    subtotal=item.subtotal,
-                    shipping_charge=item.shipping_charge,
-                    additional_charge=item.additional_charge,
-                    cost_breakup=item.cost_breakup
-                )
-                purchase_item.change_status(sts_const.NOT_CONFIRMED)
+            purchase_item = PurchaseItem.objects.create(
+                order=order,
+                orderline=orderline,
+                qty=item.qty,
+                user=cart.user,
+                shipping_kind=item.shipping_kind,
+                detail=product_serializer.data,
+                shipping_method=item.shipping_method.name if item.shipping_method else None,
+                subtotal=item.subtotal,
+                shipping_charge=item.shipping_charge,
+                additional_charge=item.additional_charge,
+                cost_breakup=item.cost_breakup
+            )
+            purchase_item.change_status(sts_const.NOT_CONFIRMED)
 
-            # Make cart inactive
-            cart.deactivate()
+        # Make cart inactive
+        cart.deactivate()
 
-            # Calculate orderline cost
-            for orderline in order.orderline_set.all():
-                orderline.calculate_cost()
+        # Calculate orderline cost
+        for orderline in order.orderline_set.all():
+            orderline.calculate_cost()
+
         return order
 
     def model_to_dict(self, address):

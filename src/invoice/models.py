@@ -130,6 +130,11 @@ class InvoiceManager(BaseManager):
 
         return invoices.values()
 
+    def unapproved_for_days(self, days):
+        return self.filter(
+            is_approve=False, date_created_at__lte=timezone.now() - timezone.timedelta(days=days)
+        )
+
 
 class Invoice(BaseModel, DateTimeFieldMixin):
     """
