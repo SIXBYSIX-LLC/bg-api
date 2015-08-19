@@ -121,6 +121,9 @@ class OrderManager(BaseManager):
 
 
 class Order(BaseModel, DateTimeFieldMixin):
+    """
+    (Can not be deleted)
+    """
     # Cart, just for reference
     cart = models.ForeignKey('cart.Cart')
     # The user, who is creating the order
@@ -205,6 +208,9 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
 
 
 class Item(BaseModel):
+    """
+    (Can not be deleted)
+    """
     #: Reference to order
     order = models.ForeignKey(Order)
     orderline = models.ForeignKey(OrderLine)
@@ -302,6 +308,9 @@ class Item(BaseModel):
 
 
 class RentalItem(Item):
+    """
+    (Can not be deleted)
+    """
     #: Rental period
     date_start = models.DateTimeField()
     date_end = models.DateTimeField()

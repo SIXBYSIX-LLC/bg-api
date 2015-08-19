@@ -18,6 +18,9 @@ class ThreadManager(BaseManager):
 
 
 class Thread(BaseModel, DateTimeFieldMixin):
+    """
+    (Can not be deleted)
+    """
     #: Related product to be inquired
     product = models.ForeignKey('catalog.Product', null=True, default=None, blank=True)
     #: Subject, but it'll auto generated from first message
@@ -30,6 +33,9 @@ class Thread(BaseModel, DateTimeFieldMixin):
 
 
 class Message(BaseModel, DateTimeFieldMixin):
+    """
+    (Can not be deleted)
+    """
     #: Message thread
     thread = models.ForeignKey('Thread')
     #: Message text

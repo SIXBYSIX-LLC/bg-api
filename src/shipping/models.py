@@ -33,6 +33,8 @@ class ShippingBase(BaseModel):
 class StandardMethod(ShippingBase):
     """
     Standard shipping
+
+    (can be delete)
     """
     #: County that rule belongs to
     country = models.ForeignKey('cities.Country')

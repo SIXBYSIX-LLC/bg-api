@@ -44,6 +44,8 @@ class ProductManager(BaseManager):
 class Product(BaseModel):
     """
     Product information that are to be shown to buyer
+
+    (Can not be deleted, use is_active)
     """
 
     CONDITION = (
@@ -113,6 +115,8 @@ class InventoryManager(BaseManager):
 class Inventory(BaseModel):
     """
     Inventory for products
+
+    (Can not be deleted, use is_active)
     """
     SOURCE = (
         (constats.Inventory.SOURCE_PURCHASED, 'Purchased'),

@@ -9,6 +9,9 @@ class CategoryManager(BaseManager):
 
 
 class Category(BaseModel):
+    """
+    (Can not be delete)
+    """
     #: Category name
     name = models.CharField(max_length=50)
     #: image

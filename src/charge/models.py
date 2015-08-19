@@ -51,6 +51,8 @@ class AdditionalCharge(Charge):
     This charge is the addition/extra charges that user can define. For eg, environment fee, vat
 
     This can be configured either for rental or purchase item and various categories only
+
+    (Can be delete)
     """
 
     ITEM_KIND = (

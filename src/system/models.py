@@ -5,5 +5,8 @@ from common.models import BaseModel, DateTimeFieldMixin
 
 
 class Config(BaseModel, DateTimeFieldMixin):
+    """
+    (Cannot be deleted)
+    """
     id = models.CharField(primary_key=True, max_length=50)
     config = pg_fields.JSONField(default={})

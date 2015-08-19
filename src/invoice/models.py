@@ -132,6 +132,9 @@ class InvoiceManager(BaseManager):
 
 
 class Invoice(BaseModel, DateTimeFieldMixin):
+    """
+    (Can not be deleted)
+    """
     #: Buyer
     user = models.ForeignKey('miniauth.User')
     #: Note mentioned while checkout (special instruction)
@@ -239,6 +242,9 @@ class Invoice(BaseModel, DateTimeFieldMixin):
 
 
 class InvoiceLine(BaseModel):
+    """
+    (Can not be deleted)
+    """
     #: User as seller
     user = models.ForeignKey('miniauth.User')
     #: Invoice
@@ -307,6 +313,9 @@ class InvoiceLine(BaseModel):
 
 
 class Item(BaseModel, DateTimeFieldMixin):
+    """
+    (Can not be deleted)
+    """
     #: Seller
     user = models.ForeignKey('miniauth.User', related_name='+')
     invoice = models.ForeignKey(Invoice)

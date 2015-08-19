@@ -113,6 +113,9 @@ class FileManager(BaseManager):
 
 
 class File(BaseModel):
+    """
+    (Can be deleted)
+    """
     TARGETS = (
         (constants.Target.PRODUCT_IMAGE, 'Product Image'),
         (constants.Target.CATEGORY_IMAGE, 'Category Image'),
