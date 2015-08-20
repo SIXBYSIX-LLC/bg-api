@@ -213,6 +213,7 @@ class Order(BaseModel, DateTimeFieldMixin):
             vars_item = {
                 'NAME': item.detail.get('name'),
                 'PRICE': item.subtotal,
+                'IMAGE': item.detail.images[0]['url'] if item.detail.images else None,
                 'QUANTITY': item.qty,
                 'SHIPPING_CHARGE': item.shipping_charge,
                 'ADDITIONAL_CHARGE': item.additional_charge,
@@ -296,6 +297,91 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
 
         self.save(update_fields=['cost_breakup', 'shipping_charge', 'subtotal',
                                  'additional_charge'])
+
+    def send_confirmation_email(self, **kwargs):
+        """
+        Sends order receive email to seller. The following variable will be available in the
+        template
+        Variables:
+
+        * **CONFIRM_DATE**: Order Confirmation date
+        * **SHIPPING_ADDRESS**:
+            * **FIRST_NAME**
+            * **LAST_NAME**
+            * **ADDRESS1**
+            * **ADDRESS2**
+            * **ZIP_CODE**
+            * **CITY**
+            * **STATE**
+            * **COUNTRY**
+            * **PHONE**
+        * **FULL_NAME**: Buyer's full name
+        * **ORDER_ID**: Order id
+        * **PAYMENT_METHOD**: Payment method name
+        * **TOTAL**: Total order amount
+        * **SUBTOTAL**: Subtotal order amount
+        * **ITEMS**:
+            * **NAME**
+            * **PRICE**
+            * **QUANTITY**
+            * **SHIPPING_CHARGE**
+            * **ADDITIONAL_CHARGE**
+            * **TOTAL**
+            * **PAID_ON**
+            * **SHIPPING_METHOD**
+            * **ORDER_FOR**
+            * **SHIPPING_KIND**
+        """
+        msg = EmailMessage(to=[self.user.email])
+        msg.template_name = settings.ETPL_ORDER_CONFIRM
+        # Merge tags in template
+        now = kwargs.pop('now', None) or timezone.now()
+        vars_items = []
+        for item in self.item_set.all():
+            vars_item = {
+                'NAME': item.detail.get('name'),
+                'PRICE': item.subtotal,
+                'QUANTITY': item.qty,
+                'SHIPPING_CHARGE': item.shipping_charge,
+                'ADDITIONAL_CHARGE': item.additional_charge,
+                'TOTAL': item.total,
+                'PAID_ON': now,
+                'SHIPPING_METHOD': item.shipping_method.name if item.shipping_method else None,
+                'SHIPPING_KIND': item.shipping_kind,
+                # 'ORDER_FOR': 'purchase' if not item.rentalitem else 'rental'
+            }
+            vars_items.append(vars_item)
+
+        msg.global_merge_vars = {
+            'FULL_NAME': self.user.profile.fullname,
+            'CONFIRM_DATE': now,
+            'ORDER_ID': self.order_id,
+            'ORDERLINE_ID': self.id,
+            'TOTAL': self.total,
+            'SUBTOTAL': self.subtotal,
+
+            # 'PAYMENT_METHOD': self.subtotal,
+            'SHIPPING_ADDRESS': {
+                'FIRST_NAME': self.shipping_address.first_name,
+                'LAST_NAME': self.shipping_address.last_name,
+                'ADDRESS1': self.shipping_address.address1,
+                'ADDRESS2': self.shipping_address.address2,
+                'ZIP_CODE': self.shipping_address.zip_code,
+                'CITY': self.shipping_address.city.name_std,
+                'STATE': self.shipping_address.state.name_std,
+                'COUNTRY': self.shipping_address.country.name,
+                'PHONE': self.shipping_address.phone
+            },
+            'ITEMS': vars_items
+
+        }
+        # User templates subject and from address
+        msg.use_template_subject = True
+        msg.use_template_from = True
+        # Send it right away
+        msg.send()
+
+        return True
 
 
 class Item(BaseModel):
