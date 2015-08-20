@@ -14,6 +14,12 @@ def send_email_verification(sender, **kwargs):
     user.send_email_verification()
 
 
+@async_receiver(signals.user_verified_email)
+def send_welcome_email(sender, **kwargs):
+    user = kwargs.get('instance')
+    user.send_welcome_email()
+
+
 @receiver(post_save, sender=models.Profile)
 def assign_group(sender, **kwargs):
     """
