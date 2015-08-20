@@ -106,18 +106,20 @@ class OrderLineListSerializer(OrderLineSerializer):
 class ChangeStatusSerializer(Serializer):
     status = rf_serializers.CharField()
     info = rf_serializers.DictField(required=False)
+    user = rf_serializers.ReadOnlyField()
 
     def validate(self, validated_data):
         item = self.context['item']
         request = self.context['request']
         user = request.parent_user or request.user
+        validated_data['user'] = user
 
         # Ensure that order user can only change status to cancel and delivered status
         if item.order.user == user:
             if validated_data['status'] not in [sts_const.CANCEL, sts_const.DELIVERED]:
                 raise PermissionDenied
 
-        return validated_data
+        return super(ChangeStatusSerializer, self).validate(validated_data)
 
 
 class AddInventorySerializer(Serializer):

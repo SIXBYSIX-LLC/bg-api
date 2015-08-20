@@ -459,7 +459,7 @@ class Item(BaseModel):
         if status == sts_const.APPROVED:
             self.__change_status_approve()
 
-        self.statuses.add(Status.objects.create(status=status, info=info))
+        self.statuses.add(Status.objects.create(status=status, info=info, user=kwargs.get('user')))
 
         signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
 
@@ -519,6 +519,7 @@ class Status(BaseModel, DateTimeFieldMixin):
     #: The rental item status order
     status = models.CharField(max_length=30, choices=STATUS)
     info = pg_fields.JSONField(null=True, default=None)
+    user = models.ForeignKey('miniauth.User', null=True, default=None)
 
     Const = sts_const
 
