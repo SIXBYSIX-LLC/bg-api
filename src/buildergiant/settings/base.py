@@ -59,6 +59,7 @@ THIRD_PARTY_APPS = (
     'miniauth',
     'cities',
     'corsheaders',
+    'djrill'
 )
 
 LOCAL_APPS = (
