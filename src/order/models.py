@@ -444,7 +444,6 @@ class Item(BaseModel):
         old_status_obj = self.current_status
         old_status = getattr(old_status_obj, 'status', None)
 
-        signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status_obj)
         L.debug('Changing status', extra={'new_status': status, 'old_status': old_status})
 
         # Check if new status can be changed from old status
@@ -459,9 +458,8 @@ class Item(BaseModel):
         if status == sts_const.APPROVED:
             self.__change_status_approve()
 
-        self.statuses.add(Status.objects.create(status=status, info=info, user=kwargs.get('user')))
-
-        signals.pre_status_change.send(instance=self, new_status=status, old_status=old_status)
+        return self.statuses.add(Status.objects.create(status=status, info=info,
+                                                       user=kwargs.get('user')))
 
     def add_inventories(self, *inventories):
         """
