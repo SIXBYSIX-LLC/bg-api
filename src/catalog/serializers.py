@@ -26,14 +26,10 @@ class ProductListSerializer(ProductSerializer):
 
 
 class ProductRefSerializer(ProductSerializer):
-    image = rf_serializers.SerializerMethodField()
+    image = rf_serializers.ReadOnlyField()
 
     class Meta(ProductSerializer.Meta):
         fields = ('name', 'image', 'id')
-
-    def get_image(self, obj):
-        img = obj.images.first()
-        return img.url if img else img
 
 
 class InventorySerializer(serializers.ModelSerializer):

@@ -96,6 +96,10 @@ class Product(BaseModel):
     class Meta(BaseModel.Meta):
         unique_together = ('user', 'sku')
 
+    @property
+    def image(self):
+        return self.images.first()
+
     def get_standard_shipping_method(self, to_location):
         user = self.user
         try:
