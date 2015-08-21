@@ -178,7 +178,7 @@ ETPL_VERIFICATION = 'email-verification'
 #: To user, after successful email verification
 ETPL_WELCOME = 'welcome'
 #: To opposition, according to who has created the message
-ETPL_INQUIRY_MSG = 'inquiry_msg'
+ETPL_INQUIRY_MSG = 'inquiry-msg'
 #: To buyer, upon successful order confirmation
 ETPL_ORDER_CONFIRM = 'order-confirmation'
 #: To opposition, according to who has changed the status of order item
