@@ -181,6 +181,22 @@ class Profile(User):
     def parent(self):
         return self.user
 
+    @property
+    def pytz(self):
+        """
+        :return: pytz object of user's timezone
+        """
+        return timezone.pytz.timezone(self.timezone)
+
+    def localtime(self, dt):
+        """
+        Convert datetime object to user's time zone
+
+        :param DateTime dt: Date time object to be converted
+        :return: Converted date time object
+        """
+        return timezone.localtime(dt, self.pytz)
+
     def change_password(self, old_password, new_password):
         LOG.debug('Changing password', extra={'old_password': old_password,
                                               'new_password': new_password})
