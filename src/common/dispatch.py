@@ -35,6 +35,13 @@ def async_receiver(signal, sender=None, **kwargs):
     return _decorator
 
 
+def reducer(self):
+    return django.dispatch.Signal, (self.providing_args,)
+
+
+django.dispatch.Signal.__reduce__ = reducer
+
+
 class Signal(django.dispatch.Signal):
     def __init__(self, providing_args=None, use_caching=False, sender=None):
         self.sender = sender
@@ -42,8 +49,4 @@ class Signal(django.dispatch.Signal):
 
     def send(self, **named):
         super(Signal, self).send(sender=self.sender, **named)
-
-    def __reduce__(self, *args, **kwargs):
-        return (Signal, (self.providing_args,))
-
 
