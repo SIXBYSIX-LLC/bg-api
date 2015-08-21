@@ -138,3 +138,14 @@ class OrderTest(TestCase):
 
         unconfirmed_count = order.item_set.filter(~Q(statuses__status=sts_const.CONFIRMED)).count()
         self.assertEqual(unconfirmed_count, 0)
+
+        # @override_settings(EMAIL_BACKEND='djrill.mail.backends.djrill.DjrillBackend')
+        # def test_send_email(self):
+        # self.prepare_data()
+        #
+        #     c = self.get_client(self.dataset.users[1])
+        #     resp = c.post('/orders', data={'cart': self.cart.id})
+        #     order = Order.objects.get(id=resp.data['id'])
+        #     order.user.email = 'in.abhi9@gmail.com'
+        #     order.user.save()
+        #     order.send_confirmation_email()
