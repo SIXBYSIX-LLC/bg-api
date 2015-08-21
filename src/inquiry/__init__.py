@@ -9,3 +9,4 @@ Implementation Detail
 The messages are implemented based on threads. For each product only one thread is
 possible.
 """
+default_app_config = 'inquiry.apps.InquiryConfig'

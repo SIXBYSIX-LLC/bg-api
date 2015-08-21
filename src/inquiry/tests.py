@@ -89,3 +89,13 @@ class InquiryTest(TestCase):
         # Ensure mark as read
         resp = self.get_client(user).get('/inquiries')
         self.assertEqual(resp.data[0]['unread_count'], 0)
+
+        # @override_settings(EMAIL_BACKEND='djrill.mail.backends.djrill.DjrillBackend')
+        # def test_send_email(self):
+        # user = UserFactory(email='in.abhi9@gmail.com')
+        #     product = ProductFactory(user=user)
+        #     thread = factories.ThreadFactory.create(product=product, user=self.user)
+        #     resp = self.user_client.post('/inquiries/%s/messages' % thread.id,
+        #                                  data=MessageBaseFactory())
+        #     message = Message.objects.all().first()
+        #     message.send_message_email()

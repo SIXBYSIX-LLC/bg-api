@@ -14,7 +14,7 @@ class ThreadFactory(factory.DjangoModelFactory):
 
 
 class MessageBaseFactory(factory.DictFactory):
-    text = factory.LazyAttribute(lambda x: fake.paragraphs(nb=2))
+    text = factory.LazyAttribute(lambda x: fake.paragraphs(nb=2)[0])
 
 
 class MessageFactory(factory.DjangoModelFactory, MessageBaseFactory):
