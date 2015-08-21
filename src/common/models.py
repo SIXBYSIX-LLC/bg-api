@@ -5,6 +5,7 @@ Provides base models for other django.model subclass
 """
 from django.db import models
 from django.contrib.gis.db import models as gis_models
+from django.core.exceptions import FieldDoesNotExist
 
 import constants
 import validators
@@ -24,6 +25,17 @@ class BaseModel(models.Model):
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view')
         abstract = True
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+
+        # Add date_updated_at to update_fields if update_fields is specified
+        if update_fields is not None and isinstance(update_fields, list):
+            try:
+                self._meta.get_field('date_updated_at')
+                update_fields.append('date_updated_at')
+            except FieldDoesNotExist:
+                pass
 
 
 class DateTimeFieldMixin(models.Model):
