@@ -321,3 +321,21 @@ class InvoiceTestCase(TestCase):
         self.assertEqual(len(invoices), 1)
         self.assertEqual(invoices[0].order, order2)
         self.assertEqual(invoices[0].item_set.count(), 1)
+
+        # @override_settings(EMAIL_BACKEND='djrill.mail.backends.djrill.DjrillBackend')
+        # def test_email(self):
+        # cart = self.dataset.add_cart(self.dataset.users[1])
+        #
+        #     prod1 = self.dataset.users[2].product_set.filter(
+        #         location__city__name_std='Rajkot').order_by('?').first()
+        #     prod2 = self.dataset.users[3].product_set.filter(
+        #         location__city__name_std='Vadodara').order_by('?').first()
+        #
+        #     self.dataset.add_item_to_cart(cart, prod1, 'rental')
+        #     self.dataset.add_item_to_cart(cart, prod2, 'purchase')
+        #     order = self.dataset.add_order(cart)
+        #
+        #     invoice = Invoice.objects.create_from_order(order)
+        #     invoice.mark_paid(True)
+        #
+        #     email.send_invoice_paid(invoice)

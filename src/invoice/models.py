@@ -203,6 +203,13 @@ class Invoice(BaseModel, DateTimeFieldMixin):
 
         return result.get('cost_breakup')
 
+    def last_transaction(self, status=None):
+        fq = {}
+        if status is not None:
+            fq['status'] = status
+
+        return self.transaction_set.filter(**fq).last()
+
     @transaction.atomic
     def mark_paid(self, force=False, confirm_order=True):
         """
@@ -230,6 +237,9 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         # Marking order as confirm
         if confirm_order is True:
             self.order.confirm()
+
+            # signals.invoice_paid.send(instance=self, force=force, confirm_order=confirm_order,
+            # now=self.date_updated_at)
 
     @transaction.atomic
     def approve(self, force=False):
