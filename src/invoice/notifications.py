@@ -78,5 +78,33 @@ class EmailNotification(BaseEmailNotification):
 
         return self._send(to=to, template_name=self.ETPL_INVOICE_GENERATE)
 
+    def send_approved(self, invoice_instance, **kwargs):
+        """
+        Sends email when all the invoicelines are approved by the sellers and invoice is
+        available to buyer to pay. The following variables will be available in the template.
+
+        * **INVOICE_ID**
+        * **TOTAL**
+        * **ORDER_ID**
+        * **FULL**
+        * **ORDER_ID**
+
+        .. todo::
+
+            * Attache PDF
+        """
+        L.info('Sending email notification to buyer for new invoice')
+        instance = invoice_instance
+
+        self.msg.global_merge_vars = {
+            'USER_FULLNAME': instance.user.profile.fullname,
+            'USER_EMAIL': instance.user.email,
+            'TOTAL': instance.total,
+            'INVOICE_ID': instance.id,
+            'ORDER_ID': instance.order_id,
+        }
+
+        return self._send(to=[instance.user.email], template_name=self.ETPL_INVOICE_APPROVE)
+
 
 email = EmailNotification()

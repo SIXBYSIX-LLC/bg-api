@@ -256,6 +256,8 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         self.is_approve = True
         self.save(update_fields=['is_approve'])
 
+        signals.post_invoice_approve.send(instance=self, force=force)
+
 
 class InvoiceLine(BaseModel):
     """
@@ -326,6 +328,8 @@ class InvoiceLine(BaseModel):
             self.invoice.approve()
         except errors.InvoiceError:
             pass
+
+        signals.post_invoiceline_approve.send(instance=self)
 
 
 class Item(BaseModel, DateTimeFieldMixin):

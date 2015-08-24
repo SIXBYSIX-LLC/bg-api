@@ -35,7 +35,7 @@ def send_invoice_paid_invoice(sender, **kwargs):
 
 
 @async_receiver(signals.new_invoice_generated)
-def send_invoice_paid_invoice(sender, **kwargs):
+def send_invoice_paid(sender, **kwargs):
     instance = kwargs.get('instance')
 
     if instance.is_for_order is True:
@@ -45,3 +45,13 @@ def send_invoice_paid_invoice(sender, **kwargs):
 
     email.send_invoice_generate(instance=instance)
 
+
+@async_receiver(signals.post_invoice_approve)
+def send_invoice_approve(sender, **kwargs):
+    instance = kwargs.get('instance')
+
+    if kwargs.get('force') is True:
+        L.info('Invoice is approved forcefully, hence not triggering the email notification')
+        return
+
+    email.send_approved(instance=instance)
