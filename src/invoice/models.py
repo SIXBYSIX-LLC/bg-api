@@ -128,7 +128,10 @@ class InvoiceManager(BaseManager):
             invoice_item.calculate_cost(order, item.invoiced_shipping_charge, save=False)
             invoice_item.save()
 
-        signals.new_invoice_generated.send(instance=invoice)
+        # Sending signal for each invoices
+        for invoice in invoices.values():
+            signals.new_invoice_generated.send(instance=invoice)
+
         return invoices.values()
 
     def unapproved_for_days(self, days):
@@ -256,6 +259,8 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         self.is_approve = True
         self.save(update_fields=['is_approve'])
 
+        signals.post_invoice_approve.send(instance=self, force=force)
+
 
 class InvoiceLine(BaseModel):
     """
@@ -326,6 +331,8 @@ class InvoiceLine(BaseModel):
             self.invoice.approve()
         except errors.InvoiceError:
             pass
+
+        signals.post_invoiceline_approve.send(instance=self)
 
 
 class Item(BaseModel, DateTimeFieldMixin):
