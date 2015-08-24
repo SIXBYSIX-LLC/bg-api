@@ -9,7 +9,7 @@ from model_utils.managers import QueryManager
 from common.helper import round_off
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
-from . import messages
+from . import messages, signals
 from transaction import constants as trans_const
 from order.models import RentalItem
 from order import constants as ordr_const
@@ -72,6 +72,7 @@ class InvoiceManager(BaseManager):
                 date_to=item.date_start
             )
 
+        signals.new_invoice_generated.send(instance=invoice)
         return invoice
 
     @transaction.atomic()
@@ -126,8 +127,8 @@ class InvoiceManager(BaseManager):
 
             invoice_item.calculate_cost(order, item.invoiced_shipping_charge, save=False)
             invoice_item.save()
-            invoice_item.refresh_from_db()
 
+        signals.new_invoice_generated.send(instance=invoice)
         return invoices.values()
 
     def unapproved_for_days(self, days):
@@ -238,8 +239,8 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         if confirm_order is True:
             self.order.confirm()
 
-            # signals.invoice_paid.send(instance=self, force=force, confirm_order=confirm_order,
-            # now=self.date_updated_at)
+        signals.invoice_paid.send(instance=self, force=force, confirm_order=confirm_order,
+                                  now=self.date_updated_at)
 
     @transaction.atomic
     def approve(self, force=False):
