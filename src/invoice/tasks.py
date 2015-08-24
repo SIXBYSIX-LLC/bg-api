@@ -32,3 +32,16 @@ def send_invoice_paid_invoice(sender, **kwargs):
         return
 
     email.send_invoice_paid(instance=instance, now=now)
+
+
+@async_receiver(signals.new_invoice_generated)
+def send_invoice_paid_invoice(sender, **kwargs):
+    instance = kwargs.get('instance')
+
+    if instance.is_for_order is True:
+        L.info('New invoice is of order so not sending notification to seller as it is already '
+               'approved')
+        return
+
+    email.send_invoice_generate(instance=instance)
+
