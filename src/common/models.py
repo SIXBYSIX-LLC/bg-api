@@ -37,6 +37,9 @@ class BaseModel(models.Model):
             except FieldDoesNotExist:
                 pass
 
+        super(BaseModel, self).save(force_insert=force_insert, force_update=force_update,
+                                    using=using, update_fields=update_fields)
+
 
 class DateTimeFieldMixin(models.Model):
     """
