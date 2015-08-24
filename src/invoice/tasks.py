@@ -2,7 +2,7 @@ import logging
 
 from celery import shared_task
 
-from invoice.models import Invoice
+from invoice.models import Invoice, InvoiceLine
 from common.dispatch import async_receiver
 from . import signals
 from .notifications import email
@@ -12,6 +12,11 @@ L = logging.getLogger('bgapi.' + __name__)
 
 @shared_task()
 def auto_approve_invoice():
+    """
+    Approve invoices if approval is pending for more than 15 days
+
+    *Periodic task (every day)*
+    """
     L.info('Begins auto approving task')
 
     invoices = Invoice.objects.unapproved_for_days(16)
@@ -22,6 +27,18 @@ def auto_approve_invoice():
     for invoice in invoices:
         invoice.approve(force=True)
         email.send_auto_approved(invoice)
+
+
+@shared_task()
+def approve_reminder():
+    """
+    Remind seller to review and approve the newly generated invoice
+
+    *Periodic task (every 3days)*
+    """
+    invoicelines = InvoiceLine.objects.filter(is_approve=False)
+    for invoiceline in invoicelines:
+        email.send_review_reminder(invoiceline)
 
 
 @async_receiver(signals.invoice_paid)

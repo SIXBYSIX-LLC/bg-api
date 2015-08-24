@@ -54,29 +54,7 @@ class EmailNotification(BaseEmailNotification):
         """
         L.info('Sending email notification to seller for new invoice')
 
-        instance = invoice_instance
-        merge_vars = {}
-        to = []
-
-        # Collect variables per email id to replace in template
-        for invoiceline in instance.invoiceline_set.all():
-            _email = invoiceline.user.email
-            _vars = {
-                'USER_FULLNAME': invoiceline.user.profile.fullname,
-                'USER_EMAIL': _email,
-                'TOTAL': invoiceline.total,
-            }
-            # Receivers
-            to.append(_email)
-            merge_vars[_email] = _vars
-
-        self.msg.merge_vars = merge_vars
-        self.msg.global_merge_vars = {
-            'ORDER_ID': instance.order_id,
-            'INVOICE_ID': instance.id
-        }
-
-        return self._send(to=to, template_name=self.ETPL_INVOICE_GENERATE)
+        return self._send_to_seller(invoice_instance, self.ETPL_INVOICE_GENERATE)
 
     def send_approved(self, invoice_instance, **kwargs):
         """
@@ -119,6 +97,50 @@ class EmailNotification(BaseEmailNotification):
         """
         L.info('Sending email notification to seller for review period lapse')
 
+        return self._send_to_seller(invoice_instance, self.ETPL_INVOICE_AUTO_APPROVE)
+
+    def send_review_reminder(self, invoiceline_instance, **kwargs):
+        """
+        Sends email to seller for invoice approval reminder.
+        The following variables will be available in the template.
+
+        * **INVOICE_ID**
+        * **TOTAL**
+        * **ORDER_ID**
+        * **USER_FULLNAME**
+        * **ORDER_ID**
+
+        .. todo::
+
+            * Attache PDF
+        """
+        L.info('Sending email notification to buyer for new invoice')
+        instance = invoiceline_instance
+
+        self.msg.global_merge_vars = {
+            'USER_FULLNAME': instance.user.profile.fullname,
+            'USER_EMAIL': instance.user.email,
+            'TOTAL': instance.total,
+            'INVOICE_ID': instance.invoice.id,
+            'ORDER_ID': instance.invoice.order_id,
+        }
+
+        return self._send(to=[instance.user.email],
+                          template_name=self.ETPL_INVOICE_APPROVE_REMINDER)
+
+    def _send_to_seller(self, invoice_instance, template, **kwargs):
+        """
+        Sends email to sellers by invoice.
+        The following variables will be available in the template.
+
+        * **INVOICE_ID**
+        * **TOTAL**
+        * **ORDER_ID**
+        * **USER_FULLNAME**
+        * **ORDER_ID**
+        """
+        L.info('Sending email notification to seller for review period lapse')
+
         instance = invoice_instance
         merge_vars = {}
         to = []
@@ -141,6 +163,6 @@ class EmailNotification(BaseEmailNotification):
             'INVOICE_ID': instance.id
         }
 
-        return self._send(to=to, template_name=self.ETPL_INVOICE_GENERATE)
+        return self._send(to=to, template_name=template)
 
 email = EmailNotification()

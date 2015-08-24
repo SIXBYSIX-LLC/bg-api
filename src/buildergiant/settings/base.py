@@ -161,6 +161,10 @@ CELERYBEAT_SCHEDULE = {
     'auto-approve-invoice': {
         'task': 'invoice.tasks.auto_approve_invoice',
         'schedule': timedelta(days=1)
+    },
+    'approve-invoice-reminder': {
+        'task': 'invoice.tasks.approve_reminder',
+        'schedule': timedelta(days=3)
     }
 }
 
