@@ -102,6 +102,8 @@ class InvoiceTestCase(TestCase):
         self.assertGreater(invoice.order.item_set.filter(statuses__status='confirmed').count(), 0)
 
     def test_rental_invoice_ongoing_contract(self):
+        self.mock_timezone_now(timezone.datetime(2015, 8, 13, 10))
+
         cart = self.dataset.add_cart(self.dataset.users[1])
 
         prod1 = self.dataset.users[2].product_set.filter(
