@@ -21,6 +21,7 @@ def auto_approve_invoice():
 
     for invoice in invoices:
         invoice.approve(force=True)
+        email.send_auto_approved(invoice)
 
 
 @async_receiver(signals.invoice_paid)

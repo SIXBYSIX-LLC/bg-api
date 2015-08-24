@@ -86,7 +86,7 @@ class EmailNotification(BaseEmailNotification):
         * **INVOICE_ID**
         * **TOTAL**
         * **ORDER_ID**
-        * **FULL**
+        * **USER_FULLNAME**
         * **ORDER_ID**
 
         .. todo::
@@ -106,5 +106,41 @@ class EmailNotification(BaseEmailNotification):
 
         return self._send(to=[instance.user.email], template_name=self.ETPL_INVOICE_APPROVE)
 
+    def send_auto_approved(self, invoice_instance, **kwargs):
+        """
+        Sends email to seller when under reviewed invoice is auto approved by system.
+        The following variables will be available in the template.
+
+        * **INVOICE_ID**
+        * **TOTAL**
+        * **ORDER_ID**
+        * **FULL**
+        * **ORDER_ID**
+        """
+        L.info('Sending email notification to seller for review period lapse')
+
+        instance = invoice_instance
+        merge_vars = {}
+        to = []
+
+        # Collect variables per email id to replace in template
+        for invoiceline in instance.invoiceline_set.filter(is_approve=False):
+            _email = invoiceline.user.email
+            _vars = {
+                'USER_FULLNAME': invoiceline.user.profile.fullname,
+                'USER_EMAIL': _email,
+                'TOTAL': invoiceline.total,
+            }
+            # Receivers
+            to.append(_email)
+            merge_vars[_email] = _vars
+
+        self.msg.merge_vars = merge_vars
+        self.msg.global_merge_vars = {
+            'ORDER_ID': instance.order_id,
+            'INVOICE_ID': instance.id
+        }
+
+        return self._send(to=to, template_name=self.ETPL_INVOICE_GENERATE)
 
 email = EmailNotification()
