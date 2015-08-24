@@ -128,7 +128,10 @@ class InvoiceManager(BaseManager):
             invoice_item.calculate_cost(order, item.invoiced_shipping_charge, save=False)
             invoice_item.save()
 
-        signals.new_invoice_generated.send(instance=invoice)
+        # Sending signal for each invoices
+        for invoice in invoices.values():
+            signals.new_invoice_generated.send(instance=invoice)
+
         return invoices.values()
 
     def unapproved_for_days(self, days):
