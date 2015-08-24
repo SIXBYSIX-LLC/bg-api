@@ -139,6 +139,8 @@ class InvoiceTestCase(TestCase):
         self.assertGreater(invoice.cost_breakup['additional_charge']['environment_fee'], 0)
 
     def test_rental_invoice_multiple_user_order(self):
+        self.mock_timezone_now(timezone.datetime(2015, 8, 13, 10))
+
         cart1 = self.dataset.add_cart(self.dataset.users[1])
         cart2 = self.dataset.add_cart(self.dataset.users[2])
 
