@@ -10,7 +10,6 @@ from common.helper import round_off
 from common.models import BaseModel, DateTimeFieldMixin, BaseManager
 from common import fields as ex_fields, errors
 from . import messages
-from invoice import signals
 from transaction import constants as trans_const
 from order.models import RentalItem
 from order import constants as ordr_const
@@ -204,7 +203,6 @@ class Invoice(BaseModel, DateTimeFieldMixin):
 
         return result.get('cost_breakup')
 
-    @property
     def last_transaction(self, status=None):
         fq = {}
         if status is not None:
@@ -240,8 +238,8 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         if confirm_order is True:
             self.order.confirm()
 
-        signals.invoice_paid.send(instance=self, force=force, confirm_order=confirm_order,
-                                  now=self.date_updated_at)
+            # signals.invoice_paid.send(instance=self, force=force, confirm_order=confirm_order,
+            # now=self.date_updated_at)
 
     @transaction.atomic
     def approve(self, force=False):
