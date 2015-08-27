@@ -81,6 +81,7 @@ class Command(BaseCommand):
             # Invoice
             Permission.objects.get(codename='view_invoice'),
             Permission.objects.get(codename='action_pay'),
+            Permission.objects.get(codename='action_export'),
             Permission.objects.get(codename='view_invoiceline'),
             Permission.objects.get(codename='change_invoiceline'),
             Permission.objects.get(codename='action_approve'),
