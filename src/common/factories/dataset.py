@@ -150,5 +150,11 @@ class TestDataSet(object):
 
     def core_config(self):
         return Config.objects.update_or_create(id='core', config={
-            'net_terms': 10
+            'net_terms': 10,
+            'company_detail': {
+                'name': 'Marketplace LLC',
+                'address': '2214 High Meadow Lane\nBloomsburg, PA 17815',
+                'phone': '+15704869182',
+                'email': 'support@marketplace.com'
+            }
         })
