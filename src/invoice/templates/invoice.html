@@ -1,0 +1,314 @@
+{% load humanize %}
+
+<html>
+<head lang="en">
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+            font-family: "helvetica";
+            line-height: 1.3em;
+            font-size: 12px;
+        }
+
+        h1 {
+            font-size: 36px;
+        }
+
+        body {
+            height: 29.7cm;
+            width: 24cm;
+            margin: 25px;
+        }
+
+        .row {
+            clear: both;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .clearfix {
+            margin-bottom: 40px;
+            clear: both;
+            overflow: hidden;
+        }
+
+        .right {
+            float: right
+        }
+
+        .left {
+            float: left
+        }
+
+        .col-3 {
+            width: 33%;
+            float: left;
+        }
+
+        .col-2 {
+            width: 50%;
+            float: left;
+        }
+
+        table {
+            border-collapse: collapse;
+            border-spacing: 0px;
+        }
+
+        .item-table {
+            width: 100%;
+        }
+
+        .item-table td, .item-table th {
+            padding: 6px;
+        }
+
+        .item-table th {
+            font-weight: 700;
+        }
+
+        .item-table th {
+            border-top: thin solid grey;
+            border-bottom: thin solid grey;
+        }
+
+        .item-table td.border-top {
+            border-top: thin solid grey;
+        }
+
+        .item-table td.border-bottom {
+            border-bottom: thin solid grey;
+        }
+
+        .item-table td:first-child, .item-table th:first-child {
+            border-left: thin solid grey;
+        }
+
+        .item-table td:last-child, .item-table th:last-child {
+            border-right: thin solid grey;
+        }
+
+        .item-table td.item {
+            width: 600px;
+        }
+
+        .item-table td.center {
+            text-align: center;
+        }
+
+        .item-table .totals td {
+            font-size: 15px;
+            height: 50px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="row">
+    <!-- Company -->
+    <div class="col-3">
+        <img src="{{ template_path }}/logo.png" height="75px"> <br/>
+        <span> {{ coreconf.company_detail.name }} </span> <br/>
+        <span> {{ coreconf.company_detail.address|linebreaksbr }} </span> <br/>
+        <span> {{ coreconf.company_detail.phone }} </span> <br/>
+        <span> {{ coreconf.company_detail.email }} </span> <br/>
+    </div>
+    <!-- End: Company -->
+
+    <!-- Status -->
+    <div style="padding-top: 75px" class="col-3">
+        <h1 style="color: lightgrey">
+            {% if invoice.is_paid %}
+                PAID
+            {% else %}
+                UNPAID
+            {% endif %}
+        </h1>
+    </div>
+    <!-- End: Status -->
+
+    <!-- Summary -->
+    <div class="right">
+        <div style="height: 75px;">
+            <h1 style="padding-top: 22px; font-weight: 100; color: grey">INVOICE</h1>
+        </div>
+
+        <table style="width: 250px">
+            <tr class="bottom-line">
+                <td class="tg-031e">Invoice</td>
+                <td class="tg-031e">{{ invoice.id }}</td>
+            </tr>
+            <tr class="bottom-line">
+                <td class="tg-031e">Order</td>
+                <td class="tg-031e">{{ invoice.order_id }}</td>
+            </tr>
+            <tr class="bottom-line">
+                <td class="tg-031e">Date</td>
+                <td class="tg-031e">{{ invoice.date_created_at|date:"SHORT_DATE_FORMAT" }}</td>
+            </tr>
+            <tr class="bottom-line">
+                <td class="tg-031e">Balance Due</td>
+                <td class="tg-031e">${{ invoice.total|intcomma }}</td>
+            </tr>
+            <tr class="bottom-line">
+                <td class="tg-031e">Customer PO#:</td>
+                <td class="tg-031e">{{ invoice.po }}</td>
+            </tr>
+
+        </table>
+    </div>
+    <!-- End: Summary -->
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <div class="col-3">
+        <strong>Bill To:</strong> <br/>
+        {% with invoice.order.billing_address as address %}
+            <span>{{ address.company_name }}</span>
+            {% if not address.company_name %}
+                <span>{{ address.first_name }}</span>&nbsp;
+                <span>{{ address.last_name }}</span>
+            {% endif %}
+
+            <br/>
+            <span>
+                {{ address.address1 }}
+                {% if address.address2 %}<br/>{% endif %}
+            </span>
+            <span>{{ address.address2|default_if_none:'' }}</span> <br/>
+            <span>
+                {{ address.city.name_std }},&nbsp;
+                {{ address.state.name_std }}&nbsp;
+                {{ address.zip_code }}
+            </span> <br/>
+            <span>{{ address.phone }}</span>
+        {% endwith %}
+    </div>
+
+    <div class="col-3">
+        <strong>Ship To:</strong> <br/>
+        {% with invoice.order.shipping_address as address %}
+            <span>{{ address.company_name }}</span>
+            {% if not address.company_name %}
+                <span>{{ address.first_name }}</span>&nbsp;
+                <span>{{ address.last_name }}</span>
+            {% endif %}
+
+            <br/>
+            <span>
+                {{ address.address1 }}
+                {% if address.address2 %}<br/>{% endif %}
+            </span>
+            <span>{{ address.address2|default_if_none:'' }}</span> <br/>
+            <span>
+                {{ address.city.name_std }},&nbsp;
+                {{ address.state.name_std }}&nbsp;
+                {{ address.zip_code }}
+            </span> <br/>
+            <span>{{ address.phone }}</span>
+        {% endwith %}
+    </div>
+
+    <div class="col-3">
+        <strong>Shipping method:</strong> <br/>
+        <span>Standard shipping</span>
+    </div>
+</div>
+
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <table class="item-table">
+        <thead>
+        <tr>
+            <th width="600px">Item</th>
+            <th>Qty</th>
+            <th>Subtotal ($)</th>
+            <th>Shipping ($)</th>
+            <th>Total ($)</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for item in invoice.item_set.all %}
+            <!-- Item -->
+            <tr>
+                <td class="item border-top">
+                    {{ item.description|linebreaksbr }}
+                </td>
+                <td class="center border-top">
+                    {{ item.qty|intcomma }}
+                </td>
+                <td class="center border-top">
+                    {{ item.subtotal|intcomma }}
+                </td>
+                <td class="center border-top">
+                    {{ item.shipping_charge|intcomma }}
+                </td>
+                <td class="center border-top">
+                    <strong>{{ item.total|intcomma }}</strong>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="item border-bottom" colspan="2">
+                    {% for charge in item.cost_breakup.additional_charge %}
+                        {{ charge.name }}:
+                        {% if charge.unit == 'pct' %}
+                            {{ charge.value }}%
+                        {% else %}
+                            {{ charge.value|intcomma }}
+                        {% endif %}
+                        <br/>
+                    {% endfor %}
+                </td>
+                <td class="center border-bottom">
+                    {% for charge in item.cost_breakup.additional_charge %}
+                        {{ charge.amt|intcomma }} <br/>
+                    {% endfor %}
+                </td>
+                <td class="center border-bottom"
+                </td>
+                <td class="center border-bottom"></td>
+            </tr>
+            <!-- End: Item -->
+        {% endfor %}
+
+        <!-- Grand total -->
+        <tr>
+            <td colspan="3" style="text-align: right; font-size: 22px; border-left: None"
+                class="border-bottom">
+                Grand Total &nbsp;
+            </td>
+
+            <td class="center center border-bottom" colspan="2" style="border-right: None">
+                <strong style="font-size: 22px">{{ invoice.total|intcomma }}</strong>
+            </td>
+        </tr>
+        <!-- End: Grand total -->
+
+        </tbody>
+    </table>
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <strong>Notes</strong> <br/>
+    Thanks you for transacting with us!
+</div>
+
+<div class="clearfix"></div>
+
+<div class="row">
+    <strong>Terms and Conditions</strong> <br/>
+    Net {{ coreconf.net_terms }} Days
+</div>
+
+
+</body>
+</html>

@@ -167,6 +167,7 @@ class Invoice(BaseModel, DateTimeFieldMixin):
         unique_together = ('user', 'order', 'is_for_order')
         permissions = (
             ('action_pay', 'Can pay invoice'),
+            ('action_export', 'Can export invoice'),
         )
 
     @property

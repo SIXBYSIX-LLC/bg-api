@@ -230,11 +230,12 @@ class Calculator(object):
 
     @classmethod
     def calc_sales_tax(cls, amt, rate):
-        tax = {'pct': 0, 'amt': 0.0, 'name': 'Sales tax'}
+        tax = {'pct': 0, 'amt': 0.0, 'name': 'Sales tax', 'value': 0, 'unit': 'pct'}
 
         if rate:
             tax['taxable_amt'] = amt
             tax['pct'] = rate
+            tax['value'] = rate
             tax['amt'] = helper.round_off((amt * rate) / 100)
 
         return tax
@@ -378,7 +379,7 @@ class Calculator(object):
         # total += v * hourly_price
         # elif k == 'days':
         # total += v * daily_price
-        #         elif k == 'weeks':
+        # elif k == 'weeks':
         #             total += v * weekly_price
         #         else:
         #             total += v * monthly_price

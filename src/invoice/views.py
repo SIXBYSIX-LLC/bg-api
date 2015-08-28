@@ -1,3 +1,5 @@
+from django.http import HttpResponse
+from django.utils.encoding import smart_str
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin, UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework import decorators, status
@@ -9,6 +11,7 @@ from .serializers import (InvoiceSerializer, InvoiceRetrieveSerializer, InvoiceL
                           ItemSerializer, InvoicePaymentSerializer)
 from transaction.models import Transaction
 from transaction.serializer import TransactionRefSerializer
+from . import pdf
 
 
 class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
@@ -31,6 +34,18 @@ class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
         t_serializer = TransactionRefSerializer(transaction)
 
         return Response({'redirect_url': redirect_url, 'transaction': t_serializer.data})
+
+    @decorators.detail_route(methods=['GET'], permission_classes=(IsOwnerPermissions,
+                                                                  CustomActionPermissions,))
+    def action_export(self, request, *args, **kwargs):
+        invoice = self.get_object()
+        file_name = pdf.create_invoice_pdf(invoice)
+        response = HttpResponse(mimetype='application/force-download')
+        response['Content-Disposition'] = 'attachment; filename=invoice_%s' % smart_str(invoice.id)
+        response['X-Sendfile'] = smart_str(file_name)
+        # It's usually a good idea to set the 'Content-Length' header too.
+        # You can also set any other required headers: Cache-Control, etc.
+        return response
 
 
 class InvoiceLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, UpdateModelMixin):

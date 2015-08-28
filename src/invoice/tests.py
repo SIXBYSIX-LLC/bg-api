@@ -1,8 +1,11 @@
+import os
+
 from django.utils import timezone
 
 from common.tests import TestCase
 from .models import Invoice
 from order import constants as ordr_const
+from pdf import create_invoice_pdf
 
 
 class InvoiceTestCase(TestCase):
@@ -326,11 +329,17 @@ class InvoiceTestCase(TestCase):
         self.assertEqual(invoices[0].order, order2)
         self.assertEqual(invoices[0].item_set.count(), 1)
 
+    def test_export_pdf(self):
+        invoice = self.test_create_invoice()
+        file_name = create_invoice_pdf(invoice)
+        stats = os.stat(file_name)
+        self.assertGreater(stats.st_size, 100000)
+
         # @override_settings(EMAIL_BACKEND='djrill.mail.backends.djrill.DjrillBackend')
         # def test_email(self):
         # cart = self.dataset.add_cart(self.dataset.users[1])
         #
-        #     prod1 = self.dataset.users[2].product_set.filter(
+        # prod1 = self.dataset.users[2].product_set.filter(
         #         location__city__name_std='Rajkot').order_by('?').first()
         #     prod2 = self.dataset.users[3].product_set.filter(
         #         location__city__name_std='Vadodara').order_by('?').first()

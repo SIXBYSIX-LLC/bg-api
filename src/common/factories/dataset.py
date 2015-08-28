@@ -75,6 +75,7 @@ class TestDataSet(object):
             self.add_inventory(product, is_active=False, batch_size=1)
 
         self.braintree_sandbox_config()
+        self.core_config()
 
     def add_address(self, to_user, city_name, batch_size=1):
         zip_code = getattr(self, 'ZIP_RANGE_%s' % city_name.upper())
@@ -145,4 +146,15 @@ class TestDataSet(object):
             'merchant_id': 's22q4zwcs8rsdb4y',
             'public_key': '5jbzrdvk5rn9y49z',
             'private_key': '51f2d485949da343465ef953b34cacf5'
+        })
+
+    def core_config(self):
+        return Config.objects.update_or_create(id='core', config={
+            'net_terms': 10,
+            'company_detail': {
+                'name': 'Marketplace LLC',
+                'address': '2214 High Meadow Lane\nBloomsburg, PA 17815',
+                'phone': '+15704869182',
+                'email': 'support@marketplace.com'
+            }
         })
