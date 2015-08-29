@@ -98,7 +98,10 @@ class Product(BaseModel):
 
     @property
     def image(self):
-        return self.images.first()
+        image = self.images.first()
+        if image:
+            return image.url
+        return image
 
     def get_standard_shipping_method(self, to_location):
         user = self.user
