@@ -2113,6 +2113,7 @@ User should pay the invoice in order to confirm the order.
     + `picked_up`: Item is picked up
     + `delivered`: Item is delivered
     + `cancelled`: Item is canceled by either seller or buyer. Can be cancelled only when status is or before ready_to_pickup / ready_to_ship
+    + `end_contract`: When buyer want to end the rental Item contract.
 
 
 ## Order Collection [/v1/orders]
@@ -3135,6 +3136,16 @@ When cart amount is 0 i.e. when cart contains only rental items, you must provid
 
 As soon as you receive the response, you should redirect user to `redirect_url` found in the response.
 
+### >0 amount invoice, using Braintree
+
+If invoice amount is >0, you can pay invoice using Braintree gateway.
+
+Visit braintree guide for more detail and flow. While using the Braintree, `nonce` will be of following object.
+
+    {
+        "token": "afawe6faw87efg6hg8d7ghn89gfhm9087"
+    }
+
 + Parameters
     + id (required, number, `1`) ... Invoice id
 
@@ -3158,6 +3169,7 @@ As soon as you receive the response, you should redirect user to `redirect_url` 
                 "gateway": "postpaid",
                 "return_url": "http://mysite.com"
             }
+    
 
 + Response 200 (application/json)
 
@@ -3603,6 +3615,207 @@ User can define additional charges either flat or percentage of item cost.
             }
 
 
+
+# Group Inquiry
+
+This resource provides chatting like mechanism for buyer to ask anything  to seller about product.
+
+This whole module is consist of two things, `Message Threads` and `Message` itself.
+Whenever user wants to raise new product inquiry prior to purchase, first *thread* should be created, then after message.
+
+Once the thread is created, additional message from buyer and seller on same topic gets started within the thread.
+
+## Thread Collection [/v1/inquiries]
+
+### List Inquiries/Threads [GET]
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+
+            {
+                "meta": {
+                    "count": 1,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 2,
+                        "thread": 2,
+                        "unread_count": 0,
+                        "message_count": 0,
+                        "date_created_at": "2015-08-31T12:15:09.314889Z",
+                        "date_updated_at": "2015-08-31T12:15:09.314908Z",
+                        "subject": "Inquiry about Earlene",
+                        "product": 81,
+                        "to_user": 8,
+                        "user": 3
+                    }
+                ]
+            }
+
+
+### Create Inquiry/Thread [POST]
+
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "product": 3,
+                "text": "This is the enquiry",
+                "subject": "Inquiry about Yamilet"
+            }
+
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 1,
+                    "thread": 1,
+                    "date_created_at": "2015-08-31T12:30:12.307620Z",
+                    "date_updated_at": "2015-08-31T12:30:12.307644Z",
+                    "subject": "Inquiry about Yamilet",
+                    "product": 81,
+                    "to_user": 8,
+                    "user": 3
+                }
+            }
+
+
+
+## Message Collection [/v1/inquiries/{id}/messages]
+
+
+### List Messages [GET]
+
++ Parameters
+    + id (required, number, `1`) ... Thread/Inquiry id for which message to be listed
+    
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 7,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 7,
+                        "date_created_at": "2015-08-31T12:36:14.852776Z",
+                        "date_updated_at": "2015-08-31T12:36:14.852796Z",
+                        "text": "Ut itaque ea consequatur animi modi reiciendis. Non commodi sit repellendus tenetur velit itaque ut. Vero praesentium quod voluptates aut nam aut reiciendis.",
+                        "is_read": true,
+                        "thread": 1,
+                        "user": 8
+                    },
+                    {
+                        "id": 6,
+                        "date_created_at": "2015-08-31T12:36:14.850246Z",
+                        "date_updated_at": "2015-08-31T12:36:14.850266Z",
+                        "text": "Perferendis maiores perspiciatis qui. Distinctio et magnam voluptatem quae cumque mollitia. Ipsa ut quo maiores quam quia accusantium temporibus. Aut iure eum et.",
+                        "is_read": true,
+                        "thread": 1,
+                        "user": 8
+                    },
+                    {
+                        "id": 5,
+                        "date_created_at": "2015-08-31T12:36:14.847710Z",
+                        "date_updated_at": "2015-08-31T12:36:14.847730Z",
+                        "text": "Enim et quisquam in voluptatibus cumque modi. Qui eius sunt officiis et animi optio doloremque. Voluptas est qui id natus est molestiae et. Non quod ab ut dolore officiis incidunt. Itaque ut quibusdam aut.",
+                        "is_read": true,
+                        "thread": 1,
+                        "user": 8
+                    },
+                    {
+                        "id": 4,
+                        "date_created_at": "2015-08-31T12:36:14.845182Z",
+                        "date_updated_at": "2015-08-31T12:36:14.845204Z",
+                        "text": "Dicta expedita eos dolor neque iste quam ab recusandae. Eveniet odio ratione perferendis inventore repellat harum.",
+                        "is_read": true,
+                        "thread": 1,
+                        "user": 8
+                    },
+                    {
+                        "id": 3,
+                        "date_created_at": "2015-08-31T12:36:14.842535Z",
+                        "date_updated_at": "2015-08-31T12:36:14.842556Z",
+                        "text": "Sed ipsa quibusdam dolorem soluta. Voluptates cupiditate enim facilis voluptas ipsam. Odio et quasi voluptas ipsam.",
+                        "is_read": true,
+                        "thread": 1,
+                        "user": 8
+                    },
+                    {
+                        "id": 2,
+                        "date_created_at": "2015-08-31T12:36:14.839844Z",
+                        "date_updated_at": "2015-08-31T12:36:14.839866Z",
+                        "text": "Totam aut at dolore delectus eius explicabo eligendi. Nesciunt amet aut dignissimos tenetur voluptatem quibusdam. Dolorem quaerat illum vel est nemo voluptates quo sunt.",
+                        "is_read": true,
+                        "thread": 1,
+                        "user": 3
+                    },
+                    {
+                        "id": 1,
+                        "date_created_at": "2015-08-31T12:36:14.836462Z",
+                        "date_updated_at": "2015-08-31T12:36:14.836479Z",
+                        "text": "Soluta sunt vero voluptate. Nobis velit voluptates quasi consequatur natus illo deleniti doloremque. Et inventore aut illum.",
+                        "is_read": true,
+                        "thread": 1,
+                        "user": 3
+                    }
+                ]
+            }
+
+
+### Create Message [POST]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "message": "This is test message"
+            }
+
++ Response 201 (application/json)
+
+
+            {
+                "id": 7,
+                "date_created_at": "2015-08-31T12:36:14.852776Z",
+                "date_updated_at": "2015-08-31T12:36:14.852796Z",
+                "text": "This is test message",
+                "is_read": true,
+                "thread": 1,
+                "user": 8
+            }
+
+
 # Group System
 This api provides some system related informative endpoints like countries, states, enums etc
 
@@ -3720,3 +3933,20 @@ List of countries. Returns the key-value pair of id and name
                 }
             }
             
+
+# Group Payment Gateway
+
+## Braintree - Generate Client Token [GET /v1/paymentgateway/braintree/actions/generate_token]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+
+            {
+                "client_token": "awe89f76a9g8yvq873ytr67q39y4t3q4tfcq34tfq34tq34tfq34tq34tg34tf34rtgq34thqb346n5y4hb99568uyun68yq036yb3"
+            }
