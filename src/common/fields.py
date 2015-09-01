@@ -30,3 +30,14 @@ class FloatField(models.FloatField):
         return self.to_python(value)
 
 
+class SmallIntegerField(models.SmallIntegerField):
+    def __init__(self, min_value=None, max_value=None, **kwargs):
+        self.min_value, self.max_value = min_value, max_value
+
+        self.validators = kwargs.pop('validators', [])
+        if self.min_value is not None:
+            self.validators.append(MinValueValidator(self.min_value))
+        if self.max_value is not None:
+            self.validators.append(MaxValueValidator(self.max_value))
+
+        super(SmallIntegerField, self).__init__(**kwargs)
