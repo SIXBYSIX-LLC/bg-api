@@ -87,6 +87,9 @@ class Command(BaseCommand):
             Permission.objects.get(codename='action_approve'),
             Permission.objects.get(codename='view_item', content_type__app_label='invoice'),
             Permission.objects.get(codename='change_item', content_type__app_label='invoice'),
+            # Review
+            Permission.objects.get(codename='view_orderitem', content_type__app_label='review'),
+            Permission.objects.get(codename='add_orderitem', content_type__app_label='review'),
         )
 
         # Assign device group permission
