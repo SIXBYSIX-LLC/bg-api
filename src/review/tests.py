@@ -49,3 +49,9 @@ class ReviewTestCase(TestCase):
         resp = c.post('/reviews', data=self.data)
         self.assertEqual(resp.status_code, 422)
 
+    def test_list_reviews(self):
+        self.test_create_review()
+
+        resp = self.user_client.get('/reviews')
+
+        self.assertEqual(resp.meta.get('count'), 2)
