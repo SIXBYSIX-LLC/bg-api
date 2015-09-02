@@ -3698,12 +3698,11 @@ Once the thread is created, additional message from buyer and seller on same top
 
 ## Message Collection [/v1/inquiries/{id}/messages]
 
-
-### List Messages [GET]
-
 + Parameters
     + id (required, number, `1`) ... Thread/Inquiry id for which message to be listed
-    
+
+
+### List Messages [GET]
 
 + Request (application/json)
 
@@ -3813,6 +3812,94 @@ Once the thread is created, additional message from buyer and seller on same top
                 "is_read": true,
                 "thread": 1,
                 "user": 8
+            }
+
+
+# Group Reviews
+
+Reviews are those buyer/seller gives each other on completing the order item. They share their experience feedback about how they likely to transact again with each other.
+
+Review system is consist of simple *1-5  Star* and a comment box.
+
+
+## Review Collection [/v1/reviews{?reviewer,product}]
+
+### List Reviews [GET]
+
++ Parameters
+
+    + reviewer (optional, string, `buyer`) ... Filter by buyer or seller. Either `buyer` or `seller`
+    + product (optional, number, `2`) ... Filter reviews by product id
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 2,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 1,
+                        "reviewer": "buyer",
+                        "comment": "nice",
+                        "rating": 3,
+                        "user": 5,
+                        "to_user": 7,
+                        "product": 70,
+                        "order_item": 2
+                    },
+                    {
+                        "id": 2,
+                        "reviewer": "seller",
+                        "comment": "nice",
+                        "rating": 3,
+                        "user": 7,
+                        "to_user": 5,
+                        "product": 70,
+                        "order_item": 2
+                    }
+                ]
+            }
+
+
+### Create A Review [POST]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "rating": 3,
+                "comment": "nice",
+                "order_item": 1
+            }
+
+
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 1,
+                    "reviewer": "buyer",
+                    "comment": "nice",
+                    "rating": 3,
+                    "user": 5,
+                    "to_user": 7,
+                    "product": 67,
+                    "order_item": 2
+                }
             }
 
 
