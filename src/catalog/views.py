@@ -14,7 +14,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     list_serializer_class = retrieve_serializer_class = serializers.ProductListSerializer
     queryset = models.Product.objects.all()
     filter_fields = {'category': ['exact'], 'is_active': ['exact'], 'user': ['exact'],
-                     'daily_price': ['gte', 'lte'], 'sell_price': ['gte', 'lte']}
+                     'daily_price': ['gte', 'lte'], 'sell_price': ['gte', 'lte'],
+                     'location': ['exact']}
     search_manager = models.Product.objects
     facets_fields = ('location',)
 
