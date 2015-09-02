@@ -9,4 +9,5 @@ class OrderItemViewSet(ModelViewSet):
 
     ownership_fields = ('user',)
     filter_fields = ('reviewer', 'product')
+    skip_owner_filter = True
 
