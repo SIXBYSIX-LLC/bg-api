@@ -45,7 +45,7 @@ class ReviewTestCase(TestCase):
         """
         self.create_order()
 
-        c = self.get_client(self.dataset.users[2])
+        c = self.get_client(self.dataset.users[3])
         resp = c.post('/reviews', data=self.data)
         self.assertEqual(resp.status_code, 422)
 
