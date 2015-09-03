@@ -1,5 +1,6 @@
 from common.dispatch import async_receiver
 from . import signals
+from .notifications import email
 
 
 @async_receiver(signals.order_confirm)
@@ -9,7 +10,7 @@ def send_order_confirmation(sender, **kwargs):
     """
     order = kwargs.get('instance')
     confirmation_now = kwargs.get('now')
-    order.send_confirmation_email(now=confirmation_now)
+    email.send_confirmation_email_to_buyer(order, now=confirmation_now)
 
 
 @async_receiver(signals.order_confirm)
@@ -21,4 +22,4 @@ def send_order_receive_email(sender, **kwargs):
     confirmation_now = kwargs.get('now')
 
     for orderline in order.orderline_set.all():
-        orderline.send_confirmation_email(now=confirmation_now)
+        email.send_confirmation_email_to_seller(orderline, now=confirmation_now)
