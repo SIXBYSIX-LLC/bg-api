@@ -4,12 +4,10 @@ anyjson==0.3.3
 argparse==1.2.1
 bcrypt==1.1.1
 billiard==3.3.0.20
-boto==2.38.0
 braintree==3.18.0
 celery==3.1.18
 cffi==1.1.2
 cloudinary==1.1.2
-django-boto==0.3.9
 django-cities==0.4.1
 django-cors-headers==1.1.0
 django-filter==0.10.0
