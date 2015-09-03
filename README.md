@@ -78,7 +78,11 @@ To install Python dependencies, `pip` utility can be used.
 ## Import US Sales Tax Database
 
     ./manage.py taxrates --import=all
-    
+
+
+# Running Application
+
+    ./manage.py runserver
 
 # Running Tests
 
