@@ -1,5 +1,6 @@
 import string
 
+from django.utils import timezone
 import factory
 from factory import fuzzy
 
@@ -35,7 +36,7 @@ class UserFactory(RegistrationFactory, factory.DjangoModelFactory):
     is_staff = False
     is_active = True
     auth_token = factory.RelatedFactory(TokenFactory, 'user')
-    store_name = factory.LazyAttribute(lambda x: fake.company())
+    store_name = factory.LazyAttribute(lambda x: fake.company() + timezone.now().strftime('%f'))
 
     @factory.post_generation
     def default_group(self, create, extracted, **kwargs):
