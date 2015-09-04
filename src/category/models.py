@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 
@@ -10,7 +16,9 @@ class CategoryManager(BaseManager):
 
 class Category(BaseModel):
     """
-    (Can not be delete)
+    Class to store categories
+
+    .. note:: Can not be delete
     """
     #: Category name
     name = models.CharField(max_length=50)
@@ -20,7 +28,7 @@ class Category(BaseModel):
     #: Parent category if any
     parent = models.ForeignKey('Category', null=True, blank=True, default=None)
     #: This holds the array of full hierarchy of the category starting from root to last child
-    # element.
+    #: element.
     hierarchy = pg_fields.ArrayField(models.IntegerField(), blank=True, null=True)
 
     objects = CategoryManager()
@@ -30,6 +38,9 @@ class Category(BaseModel):
         unique_together = ('name', 'parent')
 
     def build_hierarchy(self):
+        """
+        Builds and saves category hierarchy from parents to child
+        """
         cats = []
 
         cat = self
