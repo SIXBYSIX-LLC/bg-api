@@ -1,8 +1,13 @@
+"""
+======
+Models
+======
+"""
 from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 from django.core.exceptions import ValidationError
 
-from common.models import BaseManager, BaseModel
+from common.models import BaseManager, BaseModel, DateTimeFieldMixin
 from common import fields as ex_fields
 from . import constats, messages
 
@@ -41,11 +46,11 @@ class ProductManager(BaseManager):
         return self.extra(where=[where], params=[query, '%' + query + '%', '%' + query + '%'])
 
 
-class Product(BaseModel):
+class Product(BaseModel, DateTimeFieldMixin):
     """
-    Product information that are to be shown to buyer
+    Class to store Product information
 
-    (Can not be deleted, use is_active)
+    .. note:: Can not be deleted, use ``Product.is_active`` to make it unusable
     """
 
     CONDITION = (
@@ -74,11 +79,11 @@ class Product(BaseModel):
     #: Product category
     category = models.ForeignKey('category.Category', validators=[validate_category_is_leaf],
                                  db_index=True)
-    #: Is active and searchable
+    #: Is active and usable
     is_active = models.BooleanField(blank=True, default=False, db_index=True)
     #: Product location
     location = models.ForeignKey('usr.Address')
-    #: SKU id, auto generated in-case of received blank
+    #: SKU id, auto generated in-case of received blank using ``pre_save`` signal
     sku = models.CharField(max_length=30, blank=True, default=None)
     #: Additional attributes
     attributes = pg_fields.JSONField(null=True, blank=True)
@@ -88,8 +93,6 @@ class Product(BaseModel):
     user = models.ForeignKey('miniauth.User', editable=False, blank=True, default=None)
     #: Condition
     condition = models.CharField(choices=CONDITION, max_length=50)
-    date_created_at = models.DateTimeField(auto_now_add=True, editable=False)
-    date_updated_at = models.DateTimeField(auto_now=True, editable=False)
 
     objects = ProductManager()
 
@@ -98,12 +101,18 @@ class Product(BaseModel):
 
     @property
     def image(self):
+        """
+        Shortcut property to get first image.
+        """
         image = self.images.first()
         if image:
             return image.url
         return image
 
     def get_standard_shipping_method(self, to_location):
+        """
+        Get standard shipping object available to to_location
+        """
         user = self.user
         try:
             return user.standardmethod_set.filter(
@@ -122,9 +131,9 @@ class InventoryManager(BaseManager):
 
 class Inventory(BaseModel):
     """
-    Inventory for products
+    Class to store inventories for products
 
-    (Can not be deleted, use is_active)
+    .. note:: Can not be deleted, use ``Inventory.is_active`` to make it unusable
     """
     SOURCE = (
         (constats.Inventory.SOURCE_PURCHASED, 'Purchased'),
@@ -132,8 +141,9 @@ class Inventory(BaseModel):
     )
 
     product = models.ForeignKey(Product)
+    #: Serial number for the inventory
     serial_no = models.CharField(max_length=50, blank=True, null=True)
-    #: The source of inventory, either owned, re-rent from others
+    #: Defines how the inventory is collected, either `purchased` or `rented` from others
     source = models.CharField(choices=SOURCE, default='purchased', blank=True, max_length=50)
     #: Is inventory available
     is_active = models.BooleanField(db_index=True)

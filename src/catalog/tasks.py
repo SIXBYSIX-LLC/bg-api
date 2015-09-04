@@ -1,3 +1,8 @@
+"""
+=====
+Tasks
+=====
+"""
 from django.db.models.signals import pre_save
 from django.template.defaultfilters import slugify
 from django.utils import timezone
@@ -11,10 +16,13 @@ def assign_sku(sender, **kwargs):
     """
     Assign SKU to product object is it's received as blank. It's composed of
 
-    - category id
-    - first 3 characters of product name
-    - user id
+    - Category id
+    - First 3 characters of product name
+    - User id
     - Timestamp in second
+
+    :on signal: pre_save, Product
+    :sync: True
     """
     product = kwargs.get('instance')
 
