@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 import logging
 
 from django.db import models, transaction
@@ -20,6 +26,10 @@ class CartManager(BaseManager):
 
 
 class Cart(BaseModel, DateTimeFieldMixin):
+    """
+    Class for storing cart summary and related information.
+    """
+
     #: Shipping Location
     location = models.ForeignKey('usr.Address', null=True, default=None)
     #: Billing address
@@ -48,7 +58,11 @@ class Cart(BaseModel, DateTimeFieldMixin):
 
     def calculate_cost(self, force_item_calculation=True):
         """
-        :return:
+        Calculate total costs for the cart, including subtotal, shipping_charge,
+        additional_charge and cost_breakup.
+
+        :param bool force_item_calculation: If True, It'll calculate individual item cost first \
+        then sum them up to cart total.
         """
         self.subtotal = 0.0
         self.shipping_charge = 0.0
@@ -87,11 +101,20 @@ class Cart(BaseModel, DateTimeFieldMixin):
                                  'additional_charge'])
 
     def deactivate(self):
+        """
+        Deactivate the cart, i.e. setting is_active to False
+        """
         self.is_active = False
         self.save(update_fields=['is_active'])
 
     @transaction.atomic
     def checkout(self):
+        """
+        Creates order and invoice from cart.
+
+        :return tuple: (order, invoice)
+        :raise errors.CartError:
+        """
         L.info('Checking out the cart')
         if self.is_active is False:
             L.warning(messages.ERR_CHKT_CART_INACTIVE[0])
@@ -116,6 +139,9 @@ class Cart(BaseModel, DateTimeFieldMixin):
 
 
 class Item(BaseModel):
+    """
+    Abstract class to store cart item/product information.
+    """
     SHIPPING_KIND = (
         (ship_const.SHIPPING_PICKUP, 'Pickup'),
         (ship_const.SHIPPING_DELIVERY, 'Delivery'),
@@ -142,6 +168,9 @@ class Item(BaseModel):
         abstract = True
 
     def __init__(self, *args, **kwargs):
+        """
+        Initiate the cost Calculator
+        """
         super(Item, self).__init__(*args, **kwargs)
 
         self.calc = Calculator(self.product, self.qty)
@@ -179,6 +208,9 @@ class Item(BaseModel):
                                  'additional_charge'])
 
     def _calculate_subtotal(self):
+        """
+        Should implement in subclass to calculates subtotal consist of item cost as per quantity.
+        """
         raise NotImplementedError
 
     def _calculate_sales_tax(self, amt):
@@ -192,7 +224,7 @@ class Item(BaseModel):
         """
         Calculates any additional charges levied by seller and sales tax
 
-        :return dict:
+        :return tuple: (float, dict)
         """
 
         # Sales tax
@@ -203,6 +235,9 @@ class Item(BaseModel):
 
 
 class RentalItem(Item):
+    """
+    Class to store rental item information
+    """
     # Item to be delivered by
     date_start = models.DateTimeField(validators=[validate_date_start])
     # Item to be returned
@@ -220,6 +255,9 @@ class RentalItem(Item):
         Calculate product rent for date_start and date_end range
 
         :return Dict:
+
+        .. code::
+
             {
                 'rent_per': rent_per, 'product': self.product.id, 'cart': self.cart.id,
                 'daily_rent': daily_rent, 'rent': rent, 'num_days': num_days, 'rent_days': rent_days
@@ -234,6 +272,9 @@ class RentalItem(Item):
 
 
 class PurchaseItem(Item):
+    """
+    Class to store purchase item
+    """
     item_kind = AdditionalCharge.Const.ItemKind.PURCHASE
 
     class Meta(Item.Meta):

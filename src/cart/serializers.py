@@ -1,3 +1,9 @@
+"""
+===========
+Serializers
+===========
+"""
+
 from rest_framework.validators import UniqueTogetherValidator
 
 from cart.models import Cart, RentalItem, Item, PurchaseItem
@@ -16,6 +22,9 @@ class ItemSerializer(ModelSerializer):
         read_only_fields = ['shipping_charge', 'subtotal', 'is_shippable', 'cost_breakup']
 
     def create(self, validated_data):
+        """
+        Override to call ``cart.calculate_cost()``
+        """
         instance = super(ItemSerializer, self).create(validated_data)
         instance.cart.calculate_cost()
 

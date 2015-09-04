@@ -1,10 +1,10 @@
 """
 Settings
-=======================
+========
 
 Settings are composed of two things
 
-* **base**: These settings don't change with environments. Refers to file
+* **base**: These settings don't change with environments. Refers to file \
 ``buildergiant/settings/base.py``
 * **local**: Add / override settings parameters according your local environments \
 ``buildergiant/settings/local.py``.
