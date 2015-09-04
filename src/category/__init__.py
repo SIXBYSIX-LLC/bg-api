@@ -1,6 +1,7 @@
 """
+**********
 Categories
-----------
+**********
 The categories endpoint supports getting specific information about one category, subcategory, or a
 collection of categories.
 

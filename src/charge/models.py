@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 import logging
 
 from django.db import models
@@ -15,6 +21,9 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class Charge(BaseModel):
+    """
+    Base class for charges
+    """
     UNITS = (
         (constants.Unit.PERCENTAGE, 'Percentage'),
         (constants.Unit.FLAT, 'Flat'),
@@ -28,7 +37,19 @@ class Charge(BaseModel):
 
 
 class AdditionalChargeManager(BaseManager):
+    """
+    Manger class
+    """
     def all_by_natural_key(self, user, item_kind, category):
+        """
+        Fetch charges by fix set of keys
+
+        :param User user: Charges only defined by user
+        :param str item_kind: Either `rent` or `purchase` or `all`
+        :param Category category: Charges only for category
+        :return Queryset: Of filtered charges
+        """
+
         hierarchy = category.hierarchy + [category.id]
 
         # Get charges that applies on all item and categories
@@ -52,7 +73,7 @@ class AdditionalCharge(Charge):
 
     This can be configured either for rental or purchase item and various categories only
 
-    (Can be delete)
+    .. note:: Can be deleted
     """
 
     ITEM_KIND = (
@@ -62,7 +83,7 @@ class AdditionalCharge(Charge):
     )
     #: Either applicable on rental or purchase or all
     item_kind = models.CharField(choices=ITEM_KIND, max_length=30, db_index=True)
-    #: User can specify the category on which
+    #: Specifies the categories for which the charge should apply
     categories = models.ManyToManyField('category.Category')
     #: Owner
     user = models.ForeignKey('miniauth.User', default=None)
@@ -76,10 +97,42 @@ class AdditionalCharge(Charge):
 
 
 class Calculator(object):
+    """
+    Helper class that provides various method to calculate item cost and any additional
+    cost of item.
+    """
     def __init__(self, product, qty):
+        """
+        Initialize object
+
+        :param Product product:
+        :param int qty: Quantity
+        """
         self.product, self.qty = product, qty
 
     def calc_rent(self, start_date, end_date):
+        """
+        Calculate the rent for the product for given start and end date
+
+        :param DateTime start_date: Start date
+        :param DateTime end_date: End date
+        :return dict:
+
+        .. code::
+
+            {
+                'rent_period': dict return by Calculator.effective_rent_period,
+                'prices': {
+                    'daily_price': Daily price if applicable,
+                    'weekly_price': Weekly price if applicable,
+                    'monthly_price': Monthly price if applicable,
+                    'hourly_price': Hourly price if applicable
+                },
+                'subtotal': Total amount without quantity count,
+                'amt': Total amount,
+                'unit_price': Unit price
+            }
+        """
         price = {
             'daily_price': self.product.daily_price, 'weekly_price': self.product.weekly_price,
             'monthly_price': self.product.monthly_price, 'hourly_price': self.product.hourly_price
@@ -138,6 +191,15 @@ class Calculator(object):
 
     @classmethod
     def _calculate_pct_flat(cls, base_amount, unit, value, qty):
+        """
+        Calculates percentage or flat amount for base_amount and quantity
+
+        :param float base_amount: Base amount
+        :param charge_const.Unit unit: One of from ``charge_const.Unit``
+        :param float value: Value of unit
+        :param int qty: Quantity
+        :return float: Amount
+        """
         amt = 0.0
         charge_const = AdditionalCharge.Const
 
@@ -152,10 +214,10 @@ class Calculator(object):
     @classmethod
     def _calc_total_dict_amt(cls, *charges):
         """
-        Calculate total of amt key in list of dict
+        Calculate total for ``amt`` key in list of dict
 
-        :param list charges: list of dict containing the `amt`
-        :return float: total amount
+        :param list charges: list of dict containing the ``amt`` key
+        :return float: Total amount
         """
 
         amt = 0.0
@@ -165,6 +227,21 @@ class Calculator(object):
         return helper.round_off(amt)
 
     def calc_shipping_charge(self, shipping_address, shipping_kind):
+        """
+        Calculates shipping charge
+
+        :param Address shipping_address:
+        :param str shipping_kind: Any of shipping.constants
+        :return dict:
+
+        .. code::
+
+            {
+                'amt': Total shipping charge,
+                'method': 'standard_shipping',
+                'id': id of StandardMethod instance
+            }
+        """
         shipping_method = self.product.get_standard_shipping_method(shipping_address)
 
         data = {'amt': 0.0}
@@ -188,10 +265,13 @@ class Calculator(object):
     @classmethod
     def calc_items_total(cls, items):
         """
-        Calculates total of the items. Item should be th object of cart.Item or order.Item
+        Calculates total of the items. Item should be th object of ``cart.Item`` or ``order.Item``
 
-        :param list items: List of cart.Item or order.Item
+        :param list items: List of ``cart.Item`` or ``order.Item``
         :return dict:
+
+        .. code::
+
             {
                 'shipping_charge': float,
                 'subtotal': float,
@@ -230,6 +310,23 @@ class Calculator(object):
 
     @classmethod
     def calc_sales_tax(cls, amt, rate):
+        """
+        Calculates sales tax for the given amt
+
+        :param float amt: Amount to calculate sales tax for
+        :param float rate: sales tax percentage rate
+        :return dict:
+
+        .. code::
+
+            {
+                'pct': given rate,
+                'amt': Total sales tax to be levied
+                'name': 'Sales tax',
+                'value': given rate,
+                'unit': 'pct'
+            }
+        """
         tax = {'pct': 0, 'amt': 0.0, 'name': 'Sales tax', 'value': 0, 'unit': 'pct'}
 
         if rate:
@@ -243,7 +340,10 @@ class Calculator(object):
     @classmethod
     def get_sales_tax(cls, address):
         """
-        :return: Get sales tax percentage
+        Get sales tax rate for given address
+
+        :param Address address: Address object
+        :return: Get sales tax percentage rate
         """
         try:
             tax = TaxRate.objects.get(country=address.country.code, zip_code=address.zip_code)
@@ -257,12 +357,31 @@ class Calculator(object):
     @classmethod
     def effective_rent_period(cls, start_date, end_date, **kwargs):
         """
-        This function needs cleanup and should simplified
+        Calculates effective rental period in months, weeks, days and hours from given start and
+        end date
 
-        :param start_date:
-        :param end_date:
+        :param DateTime start_date: Start date
+        :param DateTime end_date: End date
         :param kwargs:
-        :return:
+            :hourly_price
+            :daily_price
+            :weekly_price
+            :monthly_price
+        :return dict:
+
+        .. code::
+
+            {
+                'actual': str of diff of start and end date
+                'adjusted': Diff of start and end date in terms of hours and minutes
+                'final': {
+                    'weeks': Effective weeks,
+                    'days': Effective days,
+                    'hours': Effective hours
+                }
+            }
+
+        .. note:: This function needs cleanup and be simplified
         """
         hourly_price = kwargs.get('hourly_price')
         daily_price = kwargs.get('daily_price')
