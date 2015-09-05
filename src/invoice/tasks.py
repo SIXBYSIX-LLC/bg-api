@@ -1,3 +1,8 @@
+"""
+=====
+Tasks
+=====
+"""
 import logging
 
 from celery import shared_task
@@ -15,7 +20,7 @@ def auto_approve_invoice():
     """
     Approve invoices if approval is pending for more than 15 days
 
-    *Periodic task (every day)*
+    :scheduled: Every day
     """
     L.info('Begins auto approving task')
 
@@ -34,7 +39,7 @@ def approve_reminder():
     """
     Remind seller to review and approve the newly generated invoice
 
-    *Periodic task (every 3days)*
+    :scheduled: Every 3 days
     """
     invoicelines = InvoiceLine.objects.filter(is_approve=False)
     for invoiceline in invoicelines:

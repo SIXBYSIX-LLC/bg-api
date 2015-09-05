@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 import logging
 
 from django.db import models, transaction
@@ -19,8 +25,17 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class InvoiceManager(BaseManager):
+    """
+    Manager class for Invoice
+    """
     @transaction.atomic()
     def create_from_order(self, order):
+        """
+        Convenient method to create invoice from order instance
+
+        :param Order order: Order instance
+        :return Invoice: Instance of invoice
+        """
         # Creating order
         invoice = self.model(order=order, user=order.user, is_approve=True,
                              is_for_order=True)
@@ -77,13 +92,25 @@ class InvoiceManager(BaseManager):
 
     @transaction.atomic()
     def generate_rental_invoices(self, num_days):
+        """
+        Shortcut method to generate rental invoice for all on-going contracts for given days.
+
+        It also checks if shipping charge is generated in previous invoice. If not it'll include
+        in new invoice.
+
+        :param int num_days: Invoice for number of days to be generated
+        :return list: List of invoice generated
+        """
         # Creating order
         invoices = {}
 
-        # For regular start date and end date contract
+        # Exclude items whose final invoice is generated meaning contract is over and final
+        # invoice is generated
         qs = RentalItem.objects.filter(~Q(invoiceitem_set__is_final_invoice=True))
         qs = qs.annotate(last_invoiced_date=Max('invoiceitem_set__date_to'))
         qs = qs.annotate(invoiced_shipping_charge=Max('invoiceitem_set__shipping_charge'))
+        # Filter items whose last invoice date is older than given days and status is delivered
+        # meaning on-going. Also include items which are ended and invoice is yet to generate
         qs = qs.filter(
             Q(last_invoiced_date__lte=timezone.now() - timezone.timedelta(days=num_days),
               statuses__status__in=[ordr_const.Status.DELIVERED, ordr_const.Status.PICKED_UP]) |
@@ -142,7 +169,9 @@ class InvoiceManager(BaseManager):
 
 class Invoice(BaseModel, DateTimeFieldMixin):
     """
-    (Can not be deleted)
+    Class to store invoice information
+
+    .. note:: Can not be deleted
     """
     #: Buyer
     user = models.ForeignKey('miniauth.User')
@@ -248,6 +277,15 @@ class Invoice(BaseModel, DateTimeFieldMixin):
 
     @transaction.atomic
     def approve(self, force=False):
+        """
+        Mark invoice as approved
+
+        :param bool force: If True, all the invoiceline associated with this invoice will also be \
+        marked as approved
+        :raise errors.InvoiceError:
+            * If force is False and any of invoicelines are pending approved
+        :send signal: post_invoice_approve
+        """
         L.debug('Approving invoice', extra={'force': force})
 
         unapproved_cnt = InvoiceLine.objects.filter(invoice=self, is_approve=False).count()
@@ -265,7 +303,9 @@ class Invoice(BaseModel, DateTimeFieldMixin):
 
 class InvoiceLine(BaseModel):
     """
-    (Can not be deleted)
+    Class to store summary of items grouped by sellers
+
+    .. note:: Can not be deleted
     """
     #: User as seller
     user = models.ForeignKey('miniauth.User')
@@ -325,6 +365,11 @@ class InvoiceLine(BaseModel):
         return {'additional_charge': breakup}
 
     def approve(self):
+        """
+        Mark invoiceline as approved. Also tries to mark associated invoice as approved.
+
+        :send signal: post_invoiceline_approve
+        """
         self.is_approve = True
         self.save(update_fields=['is_approve'])
 
@@ -338,7 +383,9 @@ class InvoiceLine(BaseModel):
 
 class Item(BaseModel, DateTimeFieldMixin):
     """
-    (Can not be deleted)
+    Class to store invoice items
+
+    .. note:: Can not be deleted
     """
     #: Seller
     user = models.ForeignKey('miniauth.User', related_name='+')
@@ -389,6 +436,13 @@ class Item(BaseModel, DateTimeFieldMixin):
             raise errors.InvoiceError(*messages.ERR_ITEM_EDIT)
 
     def calculate_cost(self, order, invoiced_shipping_charge, save=True):
+        """
+        Calculates total item cost
+
+        :param Order order: Order instance
+        :param float invoiced_shipping_charge: Shipping charge if any for the item
+        :param bool save: Update the item
+        """
         calc = Calculator(self.order_item.product, self.qty)
         subtotal_breakup = calc.calc_rent(self.date_from, self.date_to)
         subtotal = subtotal_breakup['amt']

@@ -1,5 +1,8 @@
-__all__ = ['email']
-
+"""
+=============
+Notifications
+=============
+"""
 import logging
 
 from django.utils import timezone
@@ -11,6 +14,9 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class EmailNotification(BaseEmailNotification):
+    """
+    Helper class the send email notification
+    """
     def send_invoice_paid(self, invoice_instance, **kwargs):
         """
         Sends order receive email to seller. The following variable will be available in the
@@ -68,7 +74,6 @@ class EmailNotification(BaseEmailNotification):
         * **ORDER_ID**
 
         .. todo::
-
             * Attache PDF
         """
         L.info('Sending email notification to buyer for new invoice')
@@ -111,7 +116,6 @@ class EmailNotification(BaseEmailNotification):
         * **ORDER_ID**
 
         .. todo::
-
             * Attache PDF
         """
         L.info('Sending email notification to buyer for new invoice')
