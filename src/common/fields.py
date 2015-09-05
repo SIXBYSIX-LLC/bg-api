@@ -1,9 +1,25 @@
+"""
+======
+Fields
+======
+Extended or custom db fields module.
+"""
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class FloatField(models.FloatField):
+    """
+    Float field class with min and max value validation and point precision.
+    """
+
     def __init__(self, min_value=None, max_value=None, precision=None, **kwargs):
+        """
+        :param float min_value: Minimum value to be accepted
+        :param float max_value: Maximum value to be accepted
+        :param int precision: Float point precision
+        """
         self.min_value, self.max_value, self.precision = min_value, max_value, precision
 
         self.validators = kwargs.pop('validators', [])
@@ -31,7 +47,15 @@ class FloatField(models.FloatField):
 
 
 class SmallIntegerField(models.SmallIntegerField):
+    """
+    Django's SmallIntegerField with min and max value validation
+    """
+
     def __init__(self, min_value=None, max_value=None, **kwargs):
+        """
+        :param float min_value: Minimum value to be accepted
+        :param float max_value: Maximum value to be accepted
+        """
         self.min_value, self.max_value = min_value, max_value
 
         self.validators = kwargs.pop('validators', [])

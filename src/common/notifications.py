@@ -1,3 +1,10 @@
+"""
+=============
+Notifications
+=============
+Module for email or push notification base classes
+"""
+
 from django.core.mail import EmailMessage
 
 
@@ -6,6 +13,9 @@ class BaseNotification(object):
 
 
 class BaseEmailNotification(BaseNotification):
+    """
+    Base class for Email notification. It uses Mandrill for sending emails.
+    """
     # Email templates
     ETPL_VERIFICATION = 'email-verification'
     #: To user, after successful email verification
@@ -32,6 +42,15 @@ class BaseEmailNotification(BaseNotification):
         self.msg = EmailMessage()
 
     def _send(self, to, **kwargs):
+        """
+        Triggers ``msg.send()``
+
+        :param list to: List of email address to be send to
+        :param kwargs:
+            :template_name: Template name
+
+        :return:
+        """
         self.msg.to = to
         self.msg.template_name = kwargs.get('template_name')
         self.msg.use_template_subject = True

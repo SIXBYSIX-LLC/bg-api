@@ -1,4 +1,5 @@
 """
+======
 Models
 ======
 Provides base models for other django.model subclass
@@ -18,7 +19,8 @@ class BaseManager(models.Manager):
 class BaseModel(models.Model):
     """
     Adds default permissions and some common methods
-    *Always use this class instead of django.db.models.Model*
+
+    .. note:: Always use this class instead of django.db.models.Model
     """
     objects = BaseManager()
 
@@ -43,7 +45,7 @@ class BaseModel(models.Model):
 
 class DateTimeFieldMixin(models.Model):
     """
-    It adds date_created_at, date_updated_at fields to model
+    Abstract class that adds date_created_at, date_updated_at fields to model
     """
     date_created_at = models.DateTimeField(auto_now_add=True)
     date_updated_at = models.DateTimeField(auto_now=True)
@@ -54,7 +56,7 @@ class DateTimeFieldMixin(models.Model):
 
 class AddressBase(BaseModel):
     """
-    Address collection of the user
+    Abstract class for Address
     """
     TYPES = (
         (constants.Address.TYPE_JOB_SITE, 'Job site'),

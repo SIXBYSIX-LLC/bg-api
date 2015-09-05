@@ -1,4 +1,5 @@
 """
+=======
 Routers
 =======
 """
@@ -11,18 +12,18 @@ from rest_framework_extensions import routers as rfe_routers
 
 class CustomRouter(rf_routers.SimpleRouter):
     """
-    Extends simple router with default trailing_slash to False
+    Extends simple router with default trailing_slash to False.
+
+    It also converts endpoint name starts with ``action?_`` to ``/actions/...``
     """
 
     def __init__(self):
         super(CustomRouter, self).__init__(trailing_slash=False)
 
     def get_urls(self):
-        """
-        non standard method name ``actions_deactivate`` will appear in url as ``actions/deactivate``
-        """
         urls = super(CustomRouter, self).get_urls()
 
+        # Replace action urls with slashed name
         for url in urls:
             url._regex = re.sub(r'/actions?_', '/actions/', url._regex, 1)
 

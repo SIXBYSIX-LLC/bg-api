@@ -1,13 +1,22 @@
+"""
+=======
+Filters
+=======
+"""
+
 from rest_framework import filters as rf_filters
 from django.db.models import Q
 
 
 class OwnerFilterBackend(rf_filters.BaseFilterBackend):
     """
-    Filters list view to its owner's subset. It reads two additional attributes in viewset class
-    ``ownership_fields``. It can be switched off by specifying `ownership_fields` to False
+    Filter class that filters list view to its owner's subset.
 
-    *ownership_fields* will specify which attribute of the model poses the ownership of object.
+    It reads two additional attributes in viewset class.
+
+    :param list,tuple ownership_fields: List of str of model property that specify the ownership \
+    of object
+    :param bool skip_owner_filter: If True, this filter will be be switched off
     """
 
     def filter_queryset(self, request, queryset, view):
@@ -31,6 +40,15 @@ class OwnerFilterBackend(rf_filters.BaseFilterBackend):
 
 
 class SearchFilter(rf_filters.SearchFilter):
+    """
+    Filter class to perform search.
+
+    It reads ``search`` query parameter string and perform searches using queryset. Multiple search
+    term can be separated by comma.
+
+    :param Manager search_manager: Manager that should have ``.search(term)`` method implemented. \
+    This filter calls that method and filter the queryset
+    """
     def get_search_terms(self, request):
         """
         Search terms are set by a ?search=... query parameter.

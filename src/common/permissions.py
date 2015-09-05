@@ -1,6 +1,7 @@
 """
+===========
 Permissions
-~~~~~~~~~~~
+===========
 """
 import logging
 
@@ -11,7 +12,7 @@ LOG = logging.getLogger('nbmapi.' + __name__)
 
 class DjangoModelPermissions(rf_permissions.DjangoModelPermissions):
     """
-    Adds view permission
+    Extends to add view permission
     """
     perms_map = {
         'GET': ['%(app_label)s.view_%(model_name)s'],
@@ -26,10 +27,12 @@ class DjangoModelPermissions(rf_permissions.DjangoModelPermissions):
 
 class IsOwnerPermissions(rf_permissions.BasePermission):
     """
-    Decide permission grant according to ``ownership_fields`` attribute defined in view. If it's \
-    an empty object, ``True`` will always return.
+    Permission class that grant permission according to object owner.
 
-    Condition check on ``ownership_fields`` will be done in ORing fashion
+    :param bool ownership_fields: List of attribute of model property that specify the ownership \
+    of object, If it's an empty object, ``True`` will always return.
+
+    .. note:: Condition check on ``ownership_fields`` will be done in ORing fashion
     """
 
     def has_object_permission(self, request, view, obj):
@@ -65,14 +68,17 @@ class IsOwnerPermissions(rf_permissions.BasePermission):
 
 class CustomActionPermissions(rf_permissions.BasePermission):
     """
-    Implements check for custom permission defined under model's meta option. This should be used \
-    for custom view actions where special permission granted to user.
+    Permission class that checks for custom permissions defined under model's meta option.
 
-    To let this permission class work, permission's *codename* should be defined as \
-    ``<action_name>``. ``action_name`` is the name of custom method defined in *viewset*.
-    ``has_permission()`` will match ``<app_label>.<action_name>`` as permission name, the user has.
+    Model permission name should match with the custom action defined in viewset class.
+    for eg, if ``action_pay()`` defined under viewset, model permission set should contain custom
+    permission name `action_pay`.
 
-    **Be careful using this class as it doesn't check anything apart from custom permissions.**
+    ``has_permission()`` will match for ``<app_label>.<action_name>`` as permission name if user
+    has.
+
+    .. note:: Be careful using this class as it doesn't check anything apart from custom \
+    permissions.
     """
 
     def has_permission(self, request, view):

@@ -1,7 +1,8 @@
 """
+========
 Renderer
-~~~~~~~~
-Change the framework's standard response structure to NewsByMe specific response.
+========
+Change the framework's standard response structure to BuilderGiant specific response.
 
 The response design is follow
 
@@ -31,7 +32,9 @@ When error occurs::
         "error": {
             "type": "ERROR TYPE",
             "detail": "HUMAN READABLE MESSAGE",
-            "status_code": "APPROPRIATE STATUS CODE"
+            "status_code": "APPROPRIATE STATUS CODE",
+            "error_code": "ERROR CODE"
+
         }
     }
 """
@@ -40,7 +43,7 @@ from rest_framework.renderers import JSONRenderer as RFJSONRenderer
 
 class JSONRenderer(RFJSONRenderer):
     """
-    Override the ``render()`` of the rest framework JSONRenderer to produce JSON ouput as per \
+    Override the ``render()`` of the rest framework JSONRenderer to produce JSON output as per \
     API specification
     """
 

@@ -1,6 +1,7 @@
 """
+=======
 ViewSet
-~~~~~~~
+=======
 """
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import generics as rf_generics, viewsets as rf_viewsets
@@ -8,6 +9,9 @@ from rest_framework_extensions.mixins import NestedViewSetMixin as _NestedViewSe
 
 
 class GenericAPIView(rf_generics.GenericAPIView):
+    """
+    Extends feature to add parent_user object to request object
+    """
     def perform_authentication(self, request):
         """
         Add parent_user object request if current user belongs to User group
@@ -63,7 +67,6 @@ class GenericViewSet(GenericAPIView, rf_viewsets.GenericViewSet):
 
         return self.serializer_class
 
-
     def _get_admin_serializer(self):
         if self.request.user.is_superuser:
             return getattr(self, 'admin_serializer_class', None)
@@ -85,6 +88,12 @@ class ModelViewSet(rf_viewsets.ModelViewSet, GenericViewSet):
 
 
 class NestedViewSetMixin(_NestedViewSetMixin):
+    """
+    Extends feature to
+
+    * Method to get parent object
+    * Add parent query dict to ``request.data``
+    """
     def create(self, request, *args, **kwargs):
         self.get_parent_object()
         request.data.update(**self.get_parents_query_dict())

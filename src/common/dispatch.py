@@ -1,4 +1,5 @@
 """
+========
 Dispatch
 ========
 Identical to django.dispatch module but adds few more features
@@ -38,11 +39,18 @@ def async_receiver(signal, sender=None, **kwargs):
 def reducer(self):
     return django.dispatch.Signal, (self.providing_args,)
 
-
+#: Monkey patched Signal class to remove non-pickleable attribute
 django.dispatch.Signal.__reduce__ = reducer
 
 
 class Signal(django.dispatch.Signal):
+    """
+    Base class for all custom signal.
+
+    The reason of overriding standard django Signal class is to accept sender in construction and
+    passing it ``Signal.sends()`` implicitly
+    """
+
     def __init__(self, providing_args=None, use_caching=False, sender=None):
         self.sender = sender
         super(Signal, self).__init__(providing_args=providing_args, use_caching=use_caching)

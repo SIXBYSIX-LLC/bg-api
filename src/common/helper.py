@@ -1,7 +1,8 @@
 """
-Helper Methods
-~~~~~~~~~~~~~~
-Common helper methods that frequently used in this project
+=======
+Helpers
+=======
+Useful helper methods that frequently used in this project
 """
 
 import logging
@@ -67,6 +68,12 @@ def custom_exception_handler(exc, context):
 
 
 def str2bool(v):
+    """
+    Converts string to bool. True for any term from "yes", "true", "t", "1"
+
+    :param str v: Term
+    :return bool:
+    """
     try:
         return v.lower() in ("yes", "true", "t", "1")
     except:
@@ -96,9 +103,20 @@ def prop2pair(cls, out='tuple', startswith_only=None):
 
 
 class DictObjView(object):
+    """
+    Helper class that transform dict to object. Dict keys can be accessed by object attribute
+    """
+
     def __init__(self, d):
         self.__dict__ = d
 
 
 def round_off(value, digits=2):
+    """
+    Rounding off the value
+
+    :param float value: Value to be rounded
+    :param digits: Digit to kept as after point
+    :return float: Rounded value
+    """
     return float(("{0:.%sf}" % digits).format(value))

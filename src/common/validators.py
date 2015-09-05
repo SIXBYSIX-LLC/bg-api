@@ -1,7 +1,19 @@
+"""
+==========
+Validators
+==========
+"""
+
 from django.core.exceptions import ValidationError
 
 
 def phone_number(value):
+    """
+    Validates phone number for E.164 number formatting.
+
+    :param str value: Number to validate
+    :raise ValidationError:
+    """
     try:
         value = str(value)
     except ValueError:

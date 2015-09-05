@@ -1,3 +1,10 @@
+"""
+========
+Handlers
+========
+Holds logger handler classes
+"""
+
 from __future__ import absolute_import
 
 from raven.contrib.django.raven_compat.handlers import SentryHandler

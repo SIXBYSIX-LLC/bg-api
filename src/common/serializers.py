@@ -1,12 +1,16 @@
+"""
+===========
+Serializers
+===========
+"""
+
 from rest_framework import serializers as rf_serializers
 from rest_framework_gis import serializers as rfg_serializers
 
 
 class Serializer(rf_serializers.Serializer):
     """
-    This serializer adds a feature of dynamically allow selection fields in response.
-
-    Inherit this serializer to all serializers
+    Base serializer that adds a feature of dynamically allow selection fields in response.
     """
 
     def __init__(self, *args, **kwargs):
@@ -28,8 +32,15 @@ class Serializer(rf_serializers.Serializer):
 
 
 class ModelSerializer(rf_serializers.ModelSerializer, Serializer):
+    """
+    Base serializer for model
+    """
+
     @property
     def validated_data(self):
+        """
+        Overridden method to inject logged in user object to validated_data dict
+        """
         validated_data = super(Serializer, self).validated_data
 
         if getattr(self.Meta.model, 'user', None):
@@ -40,4 +51,7 @@ class ModelSerializer(rf_serializers.ModelSerializer, Serializer):
 
 
 class GeoModelSerializer(rfg_serializers.GeoModelSerializer, ModelSerializer):
+    """
+    Base serializer for Geo model
+    """
     pass

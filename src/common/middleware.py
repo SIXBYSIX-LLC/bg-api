@@ -1,5 +1,6 @@
 """
-Middlewares
+===========
+Middleware
 ===========
 """
 import uuid
@@ -7,6 +8,7 @@ import os
 import socket
 
 from django.utils import timezone
+
 
 
 
@@ -20,10 +22,10 @@ class HeadInfoMiddleware(object):
     """
     Adds these extra headers to response
 
-    * X-Runtime: Time to product the output
-    * X-Request-Id: UUID to identify the request
-    * X-Version: Git commit hash and branch name
-    * X-Served-By: Host name of the machine
+    * ``X-Runtime``: Time to product the output
+    * ``X-Request-Id``: UUID to identify the request
+    * ``X-Version``: Git commit hash and branch name
+    * ``X-Served-By``: Host name of the machine
     """
     request_id = None
     start_time = None
