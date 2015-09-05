@@ -1,4 +1,8 @@
-__all__ = ['email']
+"""
+=============
+Notifications
+=============
+"""
 
 import logging
 
@@ -8,6 +12,10 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class EmailNotification(BaseEmailNotification):
+    """
+    Helper class to send email notification
+    """
+
     def send_message_email(self, message_instance):
         """
         Sends message notification to receiver. The following variable will be available in the

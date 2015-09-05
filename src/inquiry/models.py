@@ -1,10 +1,27 @@
+"""
+======
+Models
+======
+"""
+
 from django.db import models
 
 from common.models import BaseModel, BaseManager, DateTimeFieldMixin
 
 
 class ThreadManager(BaseManager):
+    """
+    Thread manager class
+    """
+
     def create_thread(self, **kwargs):
+        """
+        Helper method to create thread along with the message if text is passed as keyword argument.
+
+        :param kwargs:
+            :text: (optional,str) String used to create message
+            :subject: (str) Subject of the inquiry
+        """
         text = kwargs.pop('text', None)
         product = kwargs.get('product')
         kwargs['subject'] = 'Inquiry about %s' % product.name
@@ -19,7 +36,9 @@ class ThreadManager(BaseManager):
 
 class Thread(BaseModel, DateTimeFieldMixin):
     """
-    (Can not be deleted)
+    Class for storing thread information
+
+    .. note:: Can not be deleted
     """
     #: Related product to be inquired
     product = models.ForeignKey('catalog.Product', null=True, default=None, blank=True)
@@ -34,7 +53,9 @@ class Thread(BaseModel, DateTimeFieldMixin):
 
 class Message(BaseModel, DateTimeFieldMixin):
     """
-    (Can not be deleted)
+    Class for storing messages
+
+    .. note:: Can not be deleted
     """
     #: Message thread
     thread = models.ForeignKey('Thread')
