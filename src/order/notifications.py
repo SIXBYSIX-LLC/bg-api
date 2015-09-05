@@ -1,4 +1,8 @@
-__all__ = ['email']
+"""
+=============
+Notifications
+=============
+"""
 
 import logging
 
@@ -10,6 +14,9 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class EmailNotification(BaseEmailNotification):
+    """
+    Helper class to send email notification
+    """
     def send_confirmation_email_to_buyer(self, order_instance, **kwargs):
         """
         Sends order confirmation email. The following variable will be available in the template

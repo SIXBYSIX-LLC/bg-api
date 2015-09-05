@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 import logging
 
 from django.db import models, transaction
@@ -20,9 +26,17 @@ L = logging.getLogger('bgapi.' + __name__)
 
 
 class OrderManager(BaseManager):
+    """
+    Manager class for order
+    """
     @transaction.atomic()
     def create_order(self, cart):
+        """
+        Convenient method to create order from cart instance
 
+        :param Cart cart: Cart instance
+        :return Order: Order instance
+        """
         def check_shipping(item):
             # Check if not any non-shippable item
             if (item.is_shippable is False
@@ -114,6 +128,9 @@ class OrderManager(BaseManager):
         return order
 
     def model_to_dict(self, address):
+        """
+        Helper method to construct object from dict
+        """
         kwargs = address.__dict__
         for k, v in kwargs.items():
             if k.startswith('_'):
@@ -125,7 +142,9 @@ class OrderManager(BaseManager):
 
 class Order(BaseModel, DateTimeFieldMixin):
     """
-    (Can not be deleted)
+    Class to store order information
+
+    .. note:: Can not be deleted
     """
     # Cart, just for reference
     cart = models.ForeignKey('cart.Cart')
@@ -164,6 +183,11 @@ class Order(BaseModel, DateTimeFieldMixin):
 
     @transaction.atomic()
     def confirm(self):
+        """
+        Change order status to confirm not confirmed
+
+        :send signal: order_confirm
+        """
         for item in self.item_set.filter(~Q(statuses__status=sts_const.CONFIRMED)):
             item.change_status(sts_const.CONFIRMED)
 
@@ -201,6 +225,9 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
         return PurchaseItem.objects.filter(orderline=self)
 
     def calculate_cost(self):
+        """
+        Calculates all the cost for the orderline
+        """
         q = Q(rentalitem__is_postpaid=False) | Q(rentalitem__isnull=True)
         cost = Calculator.calc_items_total(self.item_set.select_related('rentalitem').filter(q))
 
@@ -215,7 +242,9 @@ class OrderLine(BaseModel, DateTimeFieldMixin):
 
 class Item(BaseModel):
     """
-    (Can not be deleted)
+    Class to store order item information
+
+    .. note:: Can not be deleted
     """
     #: Reference to order
     order = models.ForeignKey(Order)
@@ -264,11 +293,15 @@ class Item(BaseModel):
 
     def change_status(self, status, info=None, **kwargs):
         """
-        Change item status
+        Changes item status
 
-        :param status: New status
-        :param comment: Comment if any
+        :param str status: New status
+        :param dict info: To store any descriptor with new status.
+        :param dict kwargs:
+            :user: The user who is changing the status
         :raise ChangeStatusError:
+            * When new status is not changeable from old status
+            * When tries to approve without assigning inventories to the item
         """
         old_status_obj = self.current_status
         old_status = getattr(old_status_obj, 'status', None)
@@ -295,7 +328,6 @@ class Item(BaseModel):
         Add inventories to this item
 
         :param Inventory inventories: Inventory object
-        :return: None
         :raise InventoryError:
         """
         for inventory in inventories:
@@ -313,7 +345,9 @@ class Item(BaseModel):
 
 class RentalItem(Item):
     """
-    (Can not be deleted)
+    Helper class to store rental related information
+
+    .. note:: Can not be deleted
     """
     #: Rental period
     date_start = models.DateTimeField()
@@ -323,10 +357,19 @@ class RentalItem(Item):
 
 
 class PurchaseItem(Item):
-    pass
+    """
+    Helper class to store purchase related information
+
+    .. note:: Can not be deleted
+    """
 
 
 class Status(BaseModel, DateTimeFieldMixin):
+    """
+    Class to store status history of the item
+
+    .. note:: Cannot be deleted
+    """
     CHANGEABLE_TO = {
         sts_const.NOT_CONFIRMED: [sts_const.CONFIRMED],
         sts_const.CONFIRMED: [sts_const.APPROVED, sts_const.CANCEL],
@@ -352,4 +395,7 @@ class Status(BaseModel, DateTimeFieldMixin):
 
 
 class Address(AddressBase):
-    pass
+    """
+    Helper class to store billing/shipping address for order
+    """
+
