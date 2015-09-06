@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 from django.db import models
 
 from common.models import BaseModel, BaseManager
@@ -6,7 +12,14 @@ from . import constants, messages
 
 
 class OrderItemManager(BaseManager):
+    """
+    Manager class for Order Item
+    """
     def create_review(self, **kwargs):
+        """
+        Creates review from order item and also decided who either buyer/seller is writing the
+        review.
+        """
         order_item = kwargs.get('order_item')
         to_user = order_item.orderline.user
         user = kwargs.get('user')
@@ -27,7 +40,7 @@ class OrderItemManager(BaseManager):
 
 class OrderItem(BaseModel):
     """
-    Review for order item, buyer/seller writes to each other
+    Class to store review for order item that buyer/seller writes to each other
     """
     REVIEWER = helper.prop2pair(constants.Reviewer)
 
