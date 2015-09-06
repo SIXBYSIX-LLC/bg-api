@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 import uuid
 import logging
 
@@ -126,7 +132,7 @@ class ProfileManager(UserManager):
 
 class Profile(User):
     """
-    Extends auth user to hold User's profile information
+    Class that extends user auth to store User's profile information
     """
 
     #: User's full name
@@ -198,6 +204,13 @@ class Profile(User):
         return timezone.localtime(dt, self.pytz)
 
     def change_password(self, old_password, new_password):
+        """
+        Helper method to user change password
+
+        :param str old_password: Old password
+        :param str new_password: New password
+        :send signal: password_changed
+        """
         LOG.debug('Changing password', extra={'old_password': old_password,
                                               'new_password': new_password})
 
@@ -268,4 +281,7 @@ class Profile(User):
 
 
 class Address(AddressBase):
+    """
+    Class to store address book for user
+    """
     pass
