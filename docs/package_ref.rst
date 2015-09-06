@@ -2,7 +2,7 @@ BuilderGiant - Package Reference
 ================================
 
 .. toctree::
-:maxdepth: 2
+    :maxdepth: 2
 
 .. automodule:: buildergiant
 
@@ -12,11 +12,21 @@ BuilderGiant - Package Reference
 
     .. automodule:: common.auth.authtoken
 
+    .. automodule:: common.dispatch
+
+    .. automodule:: common.errors
+
+    .. automodule:: common.fields
+
     .. automodule:: common.helper
 
     .. automodule:: common.models
 
+    .. automodule:: common.notifications
+
     .. automodule:: common.renderer
+
+    .. automodule:: common.routers
 
     .. automodule:: common.serializers
 
@@ -26,11 +36,9 @@ BuilderGiant - Package Reference
 
     .. automodule:: common.viewsets
 
-    .. automodule:: common.dispatch
-
-    .. automodule:: common.fields
-
     .. automodule:: common.middleware
+
+    .. automodule:: common.validators
 
 .. automodule:: cart
 
@@ -44,14 +52,10 @@ BuilderGiant - Package Reference
 
     .. automodule:: catalog.tasks
 
-    .. automodule:: catalog.serializers
-
 
 .. automodule:: category
 
     .. automodule:: category.models
-
-    .. automodule:: category.serializers
 
     .. automodule:: category.tasks
 
@@ -71,23 +75,21 @@ BuilderGiant - Package Reference
 
     .. automodule:: inquiry.models
 
-    .. automodule:: inquiry.serializers
-
     .. automodule:: inquiry.notifications
 
-    .. automodule:: inquiry.tasks
+.. automodule:: order
+
+    .. automodule:: order.models
+
+    .. automodule:: order.notifications
 
 .. automodule:: invoice
 
-    .. automodule:: inquiry.models
+    .. automodule:: invoice.models
 
-    .. automodule:: inquiry.serializers
+    .. automodule:: invoice.notifications
 
-    .. automodule:: inquiry.notifications
-
-    .. automodule:: inquiry.tasks
-
-    .. automodule:: inquiry.pdf
+    .. automodule:: invoice.pdf
 
 .. automodule:: paymentgateway
 
@@ -96,8 +98,6 @@ BuilderGiant - Package Reference
 .. automodule:: review
 
     .. automodule:: review.models
-
-    .. automodule:: review.serializers
 
 .. automodule:: shipping
 
@@ -122,8 +122,6 @@ BuilderGiant - Package Reference
 .. automodule:: transaction
 
     .. automodule:: transaction.models
-
-    .. automodule:: transaction.serializers
 
 .. automodule:: usr
 
