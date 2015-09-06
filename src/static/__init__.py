@@ -1,12 +1,14 @@
 """
+******
 Static
-------
-The aim of this package is to handle static files upload for any object (like product images,
+******
+The aim of this app is to handle static files upload for any object (like product images,
 user credit form, etc...) and store them to cloud.
 
-So any other app that needs file storage and upload should define ManyToMany field with
-static.File model
+We currently use `Cloudinary` for image/file storage
 
-TODO:
-    - Delete file from upstream server when the delete is called
+So any other app that needs file storage should make relation(either foreign key or many to many)
+with ``static.File`` model
+
+.. todo:: Delete file from upstream server when the delete is called
 """

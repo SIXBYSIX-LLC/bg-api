@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
 from django.conf import settings
@@ -12,7 +18,20 @@ from . import errors as e
 
 
 class FileManager(BaseManager):
+    """
+    Manager class for file
+    """
+
     def upload(self, f, **kwargs):
+        """
+        Uploads file to cloud.
+
+        :param File f: File object to be uploaded
+        :param kwargs:
+            :target: String that describe what is being uploaded. Any of ``constants.Target``
+            :target_id: Primary key of the given target
+            :user: User object who is uploading the file
+        """
         target = kwargs.pop('target')
 
         if target == constants.Target.PRODUCT_IMAGE:
@@ -114,7 +133,7 @@ class FileManager(BaseManager):
 
 class File(BaseModel):
     """
-    (Can be deleted)
+    Class to store files metadata
     """
     TARGETS = (
         (constants.Target.PRODUCT_IMAGE, 'Product Image'),
