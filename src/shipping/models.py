@@ -1,3 +1,9 @@
+"""
+======
+Models
+======
+"""
+
 from django.db import models
 
 from common.models import BaseManager, BaseModel
@@ -18,7 +24,7 @@ class ShippingManager(BaseManager):
 
 class ShippingBase(BaseModel):
     """
-    Base class for shipping methods, like via standard shipping, via uship
+    Base class for shipping methods
     """
     user = models.ForeignKey('miniauth.User')
     #: Source location
@@ -32,9 +38,7 @@ class ShippingBase(BaseModel):
 
 class StandardMethod(ShippingBase):
     """
-    Standard shipping
-
-    (can be delete)
+    Class to store rules for Standard shipping
     """
     #: County that rule belongs to
     country = models.ForeignKey('cities.Country')
