@@ -22,7 +22,7 @@ instance.
 * Redirect url can be payment gateway's hosted page to collect payment or simply same as return \
 url if payment can be process on server side.
 
-.. todo: Refund full/partial amount
+.. todo:: Refund full/partial amount
 
 
 Modules
