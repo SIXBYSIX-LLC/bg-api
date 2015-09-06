@@ -159,7 +159,7 @@ class Profile(User):
     date_password_reset_request = models.DateTimeField(blank=True, null=True, editable=False)
     #: Stores boolean if the password is reset using the key. The idea of keeping this variable
     #: is to check if the new password reset key should be generated each time user requests or it
-    #:  should be generated only if old key is not used. I thought it this way because sometimes
+    #: should be generated only if old key is not used. I thought it this way because sometimes
     #: email gets delayed and user try and try again and all email contains different key that
     #: makes user confused which key should be used to reset password
     is_password_reset = models.BooleanField(blank=True, default=True)

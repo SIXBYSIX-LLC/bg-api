@@ -10,8 +10,8 @@ Contents:
 	:maxdepth: 3
 
 	guide
-	package_ref
 	management_commands
+	package_ref
 
 
 

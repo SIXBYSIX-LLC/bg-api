@@ -112,6 +112,7 @@ BuilderGiant - Package Reference
     .. automodule:: static.serializers
 
 .. automodule:: system
+    :noindex:
 
     .. automodule:: system.models
 

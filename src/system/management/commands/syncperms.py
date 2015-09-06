@@ -1,3 +1,11 @@
+"""
+=========
+syncperms
+=========
+This command fill the default permissions for the User and device group
+"""
+
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Permission, ContentType
 
@@ -5,8 +13,7 @@ from group.models import Group
 
 
 class Command(BaseCommand):
-    args = '<app app ...>'
-    help = 'reloads permissions for specified apps, or all apps if no args are specified'
+    help = 'Loads default permissions user and device group'
 
     def handle(self, *args, **options):
         self.app_perms()
