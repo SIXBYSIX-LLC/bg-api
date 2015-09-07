@@ -1,5 +1,5 @@
-BuilderGiant - Package Reference
-================================
+Package Reference
+=================
 
 .. toctree::
     :maxdepth: 2
