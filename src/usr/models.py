@@ -224,61 +224,6 @@ class Profile(User):
 
         signals.password_changed.send(instance=self)
 
-    def send_email_verification(self):
-        """
-        Sends email address verification email. The following variable will be available in the
-        template
-        Variables:
-        * **VERIFICATION_KEY**: Verification key
-        * **USER_EMAIL**: User email address
-        * **FULL_NAME**: Username
-        * **WEB_DOMAIN**: Website domain name
-        """
-        if self.is_email_verified is True:
-            raise errors.ValidationError('Email address is already verified')
-
-        msg = EmailMessage(to=[self.email])
-        msg.template_name = settings.ETPL_VERIFICATION
-        # Merge tags in template
-        msg.global_merge_vars = {
-            'VERIFICATION_KEY': self.unverified_email_key,
-            'USER_EMAIL': self.email,
-            'FULL_NAME': self.fullname,
-            'WEB_DOMAIN': settings.WEB_DOMAIN
-        }
-        # User templates subject and from address
-        msg.use_template_subject = True
-        msg.use_template_from = True
-        # Send it right away
-        msg.send()
-
-        return True
-
-    def send_welcome_email(self):
-        """
-        Sends email address verification email. The following variable will be available in the
-        template
-        Variables:
-        * **USER_EMAIL**: User email address
-        * **FULL_NAME**: Username
-        * **WEB_DOMAIN**: Website domain name
-        """
-        msg = EmailMessage(to=[self.email])
-        msg.template_name = settings.ETPL_WELCOME
-        # Merge tags in template
-        msg.global_merge_vars = {
-            'USER_EMAIL': self.email,
-            'FULL_NAME': self.fullname,
-            'WEB_DOMAIN': settings.WEB_DOMAIN
-        }
-        # User templates subject and from address
-        msg.use_template_subject = True
-        msg.use_template_from = True
-        # Send it right away
-        msg.send()
-
-        return True
-
 
 class Address(AddressBase):
     """

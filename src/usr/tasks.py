@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from common.dispatch import async_receiver, receiver
 from group.models import Group
 from . import signals, models
+from .notifications import email
 
 
 @async_receiver(signals.user_registered)
@@ -11,13 +12,13 @@ def send_email_verification(sender, **kwargs):
     Sends email for email verification to user
     """
     user = kwargs.get('instance')
-    user.send_email_verification()
+    email.send_verification(user)
 
 
 @async_receiver(signals.user_verified_email)
 def send_welcome_email(sender, **kwargs):
     user = kwargs.get('instance')
-    user.send_welcome_email()
+    email.send_welcome_email(user)
 
 
 @receiver(post_save, sender=models.Profile)
