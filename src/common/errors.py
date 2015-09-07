@@ -12,12 +12,14 @@ class Code(object):
     """
     Helper class to hold initial error code for each app
     """
-    _MULTIPLY = 1000
+    _MULTIPLY = 100
 
     #: User app
     USR = 1 * _MULTIPLY
     #: Review app
     REVIEW = 2 * _MULTIPLY
+    #: Payment gateway app
+    PAYMENTGATEWAY = 3 * _MULTIPLY
     #: Catalog app
     CATALOG = 4 * _MULTIPLY
     #: Static app
@@ -34,7 +36,6 @@ class Code(object):
     # CHARGE = 6 * MULTIPLY
     #GROUP = 6 * MULTIPLY
     #INQUIRY = 6 * MULTIPLY
-    #PAYMENTGATEWAY = 6 * MULTIPLY
     #SHIPPING = 6 * MULTIPLY
     #SYSTEM = 6 * MULTIPLY
 

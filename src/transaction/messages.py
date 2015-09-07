@@ -1,3 +1,6 @@
 from django.utils.translation import ugettext as _
 
-ERR_NO_APPROVE = _('Cannot pay unapproved invoice'), 9001
+from common.errors import Code
+
+
+ERR_NO_APPROVE = _('Cannot pay unapproved invoice'), Code.TRANSACTION + 1
