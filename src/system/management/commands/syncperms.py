@@ -5,7 +5,6 @@ syncperms
 This command fill the default permissions for the User and device group
 """
 
-
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Permission, ContentType
 
@@ -106,6 +105,8 @@ class Command(BaseCommand):
             # Category
             Permission.objects.get(codename='view_category'),
             Permission.objects.get(codename='view_product'),
+            # Contact us
+            Permission.objects.get(codename='add_contactus'),
         )
 
 

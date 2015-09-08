@@ -80,7 +80,8 @@ LOCAL_APPS = (
     'invoice',
     'transaction',
     'paymentgateway',
-    'review'
+    'review',
+    'contactus'
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
