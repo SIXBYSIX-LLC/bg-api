@@ -22,7 +22,7 @@ class ItemSerializer(ModelSerializer):
             additional_charge = cost_breakup.get('additional_charge')
             instance.cost_breakup['additional_charge'] = additional_charge
         instance.full_clean()
-        super(ItemSerializer, self).update(instance, validated_data)
+        return super(ItemSerializer, self).update(instance, validated_data)
 
 
 class InvoiceSerializer(ModelSerializer):
