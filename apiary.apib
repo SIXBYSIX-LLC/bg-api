@@ -3191,6 +3191,310 @@ Visit braintree guide for more detail and flow. While using the Braintree, `nonc
             }
 
 
+
+# Group Invoiceline
+
+Invoiceline is sub-invoices groupped by seller. So it's invoices for seller.
+
+## Invoiceline List [GET /v1/invoicelines]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 1,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 1,
+                        "total": 6427.91,
+                        "subtotal": 5898.79,
+                        "additional_charge": 529.12,
+                        "invoice": {
+                            "order": {
+                                "id": 1,
+                                "shipping_address": {
+                                    "id": 1,
+                                    "name": "KolkVXuL8pWs",
+                                    "first_name": "Zebulon",
+                                    "last_name": "Miller",
+                                    "company_name": "Boehm-Rath",
+                                    "phone": "+149918135162161",
+                                    "address1": "6309 Fahey Station Suite 745\nRitchieview, NY 49540-6307",
+                                    "address2": null,
+                                    "zip_code": "364127",
+                                    "coord": null,
+                                    "kind": "job_site",
+                                    "city": 1258847,
+                                    "state": 1270770,
+                                    "country": 1269750
+                                },
+                                "billing_address": {
+                                    "id": 2,
+                                    "name": "kky0oj5WL9Qr",
+                                    "first_name": "Zebulon",
+                                    "last_name": "Miller",
+                                    "company_name": "Boehm-Rath",
+                                    "phone": "+149918135162161",
+                                    "address1": "6309 Fahey Station Suite 745\nRitchieview, NY 49540-6307",
+                                    "address2": null,
+                                    "zip_code": "364127",
+                                    "coord": null,
+                                    "kind": "job_site",
+                                    "city": 1258847,
+                                    "state": 1270770,
+                                    "country": 1269750
+                                }
+                            },
+                            "user": {
+                                "fullname": "Dr. Jaime Cremin V",
+                                "id": 5
+                            },
+                            "is_paid": false
+                        },
+                        "is_approve": true,
+                        "remark": "",
+                        "user": {
+                            "fullname": "Anton Haag",
+                            "id": 6
+                        }
+                    }
+                ]
+            }
+
+
+## Invoiceline Detail [GET /v1/invoicelines/{id}]
+
++ Parameters
+
+    + id (required, number, `34`) ... Id of invoice line
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+
++ Response 200 (application/json)
+
+            {
+                "data": {
+                    "id": 1,
+                    "total": 4136.7699999999995,
+                    "subtotal": 916.86,
+                    "additional_charge": 38.78,
+                    "invoice": {
+                        "order": {
+                            "id": 1,
+                            "shipping_address": {
+                                "id": 1,
+                                "name": "0ooROB8rsFTo",
+                                "first_name": "Lori",
+                                "last_name": "Ryan",
+                                "company_name": "Schmidt PLC",
+                                "phone": "+117970680409058",
+                                "address1": "79864 Marquardt Junctions Suite 837\nDerlfort, VT 27526",
+                                "address2": null,
+                                "zip_code": "364640",
+                                "coord": null,
+                                "kind": "job_site",
+                                "city": 1258847,
+                                "state": 1270770,
+                                "country": 1269750
+                            },
+                            "billing_address": {
+                                "id": 2,
+                                "name": "56PtnOfk99rg",
+                                "first_name": "Lori",
+                                "last_name": "Ryan",
+                                "company_name": "Schmidt PLC",
+                                "phone": "+117970680409058",
+                                "address1": "79864 Marquardt Junctions Suite 837\nDerlfort, VT 27526",
+                                "address2": null,
+                                "zip_code": "364640",
+                                "coord": null,
+                                "kind": "job_site",
+                                "city": 1258847,
+                                "state": 1270770,
+                                "country": 1269750
+                            }
+                        },
+                        "user": {
+                            "fullname": "Miss Selene Howe",
+                            "id": 5
+                        },
+                        "is_paid": false
+                    },
+                    "is_approve": true,
+                    "remark": "",
+                    "user": {
+                        "fullname": "Asa Runolfsdottir",
+                        "id": 6
+                    }
+                }
+            }
+
+## Approve Invoiceline [PUT /v1/invoicelines/{id}/actions/approve]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 204 (application/json)
+
+
+
+## List Invoiceline Items [GET /v1/invoicelines/{id}/items]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
++ Response 200 (application/json)
+
+            {
+                "meta": {
+                    "count": 2,
+                    "next": null,
+                    "previous": null
+                },
+                "data": [
+                    {
+                        "id": 2,
+                        "total": 0,
+                        "additional_charge": 0,
+                        "date_created_at": "2015-09-08T06:28:22.002675Z",
+                        "date_updated_at": "2015-09-08T06:28:22.002700Z",
+                        "description": "Katarina\nSKU: 168KAT61441693701\nRent from 2015-09-11T06:27:49.004661+00:00 to 2015-10-08T06:27:49.004670+00:00\nPost paid payment",
+                        "qty": 1,
+                        "unit_price": 0,
+                        "subtotal": 0,
+                        "shipping_charge": 0,
+                        "overuse_charge": 0,
+                        "cost_breakup": {
+                            "additional_charge": {}
+                        },
+                        "date_from": "2015-09-11T06:27:49.004661Z",
+                        "date_to": "2015-09-11T06:27:49.004661Z",
+                        "is_final_invoice": false,
+                        "user": 6
+                    },
+                    {
+                        "id": 1,
+                        "total": 9713.99,
+                        "additional_charge": 413.48,
+                        "date_created_at": "2015-09-08T06:28:21.996614Z",
+                        "date_updated_at": "2015-09-08T06:28:21.996639Z",
+                        "description": "Jude\nSKU: 171JUD61441693701",
+                        "qty": 1,
+                        "unit_price": 5498.36,
+                        "subtotal": 5498.36,
+                        "shipping_charge": 3802.15,
+                        "overuse_charge": 0,
+                        "cost_breakup": {
+                            "additional_charge": [
+                                {
+                                    "name": "Environment Fee",
+                                    "categories": [],
+                                    "value": 7.52,
+                                    "amt": 413.48,
+                                    "user": 6,
+                                    "item_kind": "all",
+                                    "id": 3,
+                                    "unit": "pct"
+                                },
+                                {
+                                    "name": "Sales tax",
+                                    "value": 0,
+                                    "merged": true,
+                                    "pct": 0,
+                                    "amt": 0,
+                                    "unit": "pct"
+                                }
+                            ],
+                            "subtotal": {
+                                "amt": 5498.36,
+                                "unit_price": 5498.36
+                            },
+                            "shipping": {
+                                "method": "standard_shipping",
+                                "id": 9,
+                                "amt": 3802.15
+                            }
+                        },
+                        "date_from": null,
+                        "date_to": null,
+                        "is_final_invoice": false,
+                        "user": 6
+                    }
+                ]
+            }
+
+
+## Update Invoiceline Item [PATCH /v1/invoicelines/{id}/items/{item_id}]
+
++ Parameters
+
+    + id (required, number, `234`) ... Invoiceline id
+    + item_id (required, number, `345`) ... Item id to be updated
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "description": "ABC item \n SKU: 24234",
+                "unit_price": 123.45,
+                "subtotal": 2345.23
+                "shipping_charge": 43.54,
+                "overuse_charge": 0.0
+            }
+
+
++ Response 200 (application/json)
+
+
+            {
+                "data": {
+                    "id": 2,
+                    "total": 530.32,
+                    "additional_charge": 0,
+                    "date_created_at": "2015-09-08T07:04:03.054891Z",
+                    "date_updated_at": "2015-09-08T07:04:03.221114Z",
+                    "description": "Thea\nSKU: 174THE61441695842\nRent from 2015-09-11T07:03:29.271602+00:00 to 2015-10-08T07:03:29.271618+00:00\nPost paid payment",
+                    "qty": 1,
+                    "unit_price": 123.34,
+                    "subtotal": 2345.23,
+                    "shipping_charge": 43.54,
+                    "overuse_charge": 0.0,
+                    "cost_breakup": {
+                        "additional_charge": {}
+                    },
+                    "date_from": "2015-09-11T07:03:29.271602Z",
+                    "date_to": "2015-09-11T07:03:29.271602Z",
+                    "is_final_invoice": false,
+                    "user": 6
+                }
+            }
+
+
 # Group Settings
 
 Settings are user's preferences towards system's default or new parameters. Currently there are 3 setting profiles that user can
