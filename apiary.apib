@@ -4341,3 +4341,39 @@ List of countries. Returns the key-value pair of id and name
             {
                 "client_token": "awe89f76a9g8yvq873ytr67q39y4t3q4tfcq34tfq34tq34tfq34tq34tg34tf34rtgq34thqb346n5y4hb99568uyun68yq036yb3"
             }
+
+
+# Group Contact Us
+
+## Create Message [POST /v1/contactus]
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+
+    + Body
+
+            {
+                "email": "beatty.landyn@yahoo.com",
+                "message": "Aperiam vel libero placeat aspernatur officia maxime ut. Consequatur enim debitis eos explicabo. Enim et aut aut.",
+                "last_name": "Padberg",
+                "first_name": "Corey",
+                "zip_code": "14594"
+            }
+
++ Response 201 (application/json)
+
+            {
+                "data": {
+                    "id": 1,
+                    "date_created_at": "2015-09-08T15:26:03.465619Z",
+                    "date_updated_at": "2015-09-08T15:26:03.465658Z",
+                    "first_name": "Derrell",
+                    "last_name": "Bailey",
+                    "zip_code": "75159",
+                    "email": "block.dick@kautzerrussel.com",
+                    "message": "Aperiam vel libero placeat aspernatur officia maxime ut. Consequatur enim debitis eos explicabo. Enim et aut aut."
+                }
+            }
