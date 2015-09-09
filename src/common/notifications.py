@@ -36,6 +36,8 @@ class BaseEmailNotification(BaseNotification):
     ETPL_INVOICE_AUTO_APPROVE = 'invoice-auto-approve'
     #: To sellers, every 3 days as reminder for invoice approve
     ETPL_INVOICE_APPROVE_REMINDER = 'invoice-approve_reminder'
+    #: Auto reply message template
+    ETPL_CONTACTUS_AUTOREPLY = 'contactus-autoreply'
 
     def __init__(self, *args, **kwargs):
         super(BaseEmailNotification, self).__init__()

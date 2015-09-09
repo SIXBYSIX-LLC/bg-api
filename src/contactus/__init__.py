@@ -9,3 +9,4 @@ the message.
 Modules
 -------
 """
+default_app_config = 'contactus.apps.ContactusConfig'
