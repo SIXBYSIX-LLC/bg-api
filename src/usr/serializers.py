@@ -2,7 +2,7 @@ import logging
 
 from cities.models import PostalCode, Country, City, Region
 
-from .models import Profile, Address
+from .models import Profile, Address, ContactInformation
 from common import serializers
 from common.serializers import rf_serializers
 from group.serializers import GroupRefSerializer
@@ -98,3 +98,9 @@ class AddressListSerializer(AddressSerializer):
 
     class Meta(AddressSerializer.Meta):
         read_only_fields = ()
+
+
+class ContactInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInformation
+        exclude = ('user',)

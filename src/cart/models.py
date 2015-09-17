@@ -16,6 +16,7 @@ from . import constants, messages
 from shipping import constants as ship_const
 from order.models import Order
 from invoice.models import Invoice
+from usr.models import ContactInformation
 
 L = logging.getLogger('bgapi.' + __name__)
 
@@ -45,6 +46,10 @@ class Cart(BaseModel, DateTimeFieldMixin):
     additional_charge = models.FloatField(editable=False, default=0)
     #: Cost breakups
     cost_breakup = pg_fields.JSONField(default={}, editable=False)
+    #: Anything about delivery
+    delivery_note = models.TextField(default='')
+    #: Contact information
+    contact_info = pg_fields.JSONField(default={})
 
     Const = constants
 
@@ -134,7 +139,19 @@ class Cart(BaseModel, DateTimeFieldMixin):
         order = Order.objects.create_order(self)
         invoice = Invoice.objects.create_from_order(order)
 
+        self.__save_contact_information()
+
         return order, invoice
+
+    def __save_contact_information(self):
+        """
+        Stores contact information to usr.ContactInformation class.
+        So it'll be useful for future lookup
+        """
+        try:
+            ContactInformation.objects.create(user=self.user, **self.contact_info)
+        except:
+            pass
 
 
 class Item(BaseModel):

@@ -210,3 +210,12 @@ class CartTestCase(TestCase):
         # Now we all good
         resp = c.put(cart_uri)
         self.assertEqual(resp.status_code, self.status_code.HTTP_200_OK, resp)
+
+    def test_contact_info_save(self):
+        """ Test if contact information is being saved with validation """
+
+        cart_id = self.get_cart()
+        data = {'contact_info': {'name': 'abc', 'phone': '+918080190902'}}
+        resp = self.user_client.patch('/carts/%s' % cart_id, data=data, format='json')
+
+        self.assertDictEqual(resp.data.get('contact_info'), data.get('contact_info'))
