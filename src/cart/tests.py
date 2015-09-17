@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from cart.factories import RentalItemBaseFactory, RentalItemFactory, CartFactory
 from common.tests import TestCase
 from catalog.factories import ProductFactory
@@ -75,6 +77,21 @@ class CartTestCase(TestCase):
         resp = c.patch('/carts/%s/rentals/%s' % (cart.id, rental_item.id),
                        data={'date_start': '2016-06-01T12:00:00',
                              'date_end': '2016-06-02T12:00:00'})
+        self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST)
+
+    def test_minimum_notice_period(self):
+        def change_min_notice_period(user, days):
+            user.profile.settings.update({'minimum_rent_notice_period': days})
+            user.profile.save()
+
+        cart_id = self.get_cart()
+        product = ProductFactory()
+        change_min_notice_period(product.user, 3)
+        new_rental = RentalItemBaseFactory(product=product.id,
+                                           date_start=(timezone.now() + timezone.timedelta(
+                                               days=1)).isoformat(),
+                                           date_end='2016-06-02T12:00:00')
+        resp = self.user_client.post('/carts/%s/rentals' % cart_id, data=new_rental)
         self.assertEqual(resp.status_code, self.status_code.HTTP_400_BAD_REQUEST)
 
     def test_is_shippable(self):

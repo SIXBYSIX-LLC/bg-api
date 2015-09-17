@@ -3,7 +3,7 @@
 Serializers
 ===========
 """
-
+from django.utils import timezone
 from rest_framework.validators import UniqueTogetherValidator
 
 from cart.models import Cart, RentalItem, Item, PurchaseItem
@@ -67,6 +67,12 @@ class RentalProductSerializer(ItemSerializer):
             min_contract_period = product.user.profile.settings.get('minimum_contract_period', 1)
             if (date_end - date_start).days < min_contract_period:
                 raise ValidationError(*messages.ERR_INVALID_END_DATE)
+
+        if date_start:
+            notice_period = product.user.profile.settings.get('minimum_rent_notice_period', 0)
+            if (date_start - timezone.now()).days < notice_period:
+                raise ValidationError(messages.ERR_INVALID_START_DATE[0] % notice_period,
+                                      messages.ERR_INVALID_START_DATE[1])
 
         return data
 

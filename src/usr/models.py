@@ -13,8 +13,6 @@ from miniauth.models import User, UserManager
 from django.contrib.auth.hashers import make_password, is_password_usable
 from django.utils.translation import ugettext as _
 from django.core import validators
-from django.core.mail import EmailMessage
-from django.conf import settings
 from djangofuture.contrib.postgres import fields as pg_fields
 
 from common import errors
@@ -171,6 +169,7 @@ class Profile(User):
         'daily_price_till_days': 3,
         'weekly_price_till_days': 14,
         'minimum_contract_period': 0,
+        'minimum_rent_notice_period': 0,
     })
     #: User's credit form, usually a PDF that contains account other personal information about
     # user. It helps to seller to authentic the user

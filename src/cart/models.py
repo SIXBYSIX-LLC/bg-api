@@ -9,7 +9,6 @@ import logging
 from django.db import models, transaction
 from djangofuture.contrib.postgres import fields as pg_fields
 
-from cart.validators import validate_date_start
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
 from common import fields as ex_fields, errors
 from charge.models import AdditionalCharge, Calculator
@@ -239,7 +238,7 @@ class RentalItem(Item):
     Class to store rental item information
     """
     # Item to be delivered by
-    date_start = models.DateTimeField(validators=[validate_date_start])
+    date_start = models.DateTimeField()
     # Item to be returned
     date_end = models.DateTimeField()
     #: Should pay later?
