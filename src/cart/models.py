@@ -179,6 +179,8 @@ class Item(BaseModel):
     qty = models.PositiveSmallIntegerField(default=1)
     #: Cost breakup
     cost_breakup = pg_fields.JSONField(default={'additional_charge': []}, editable=False)
+    #: Any special instruction related item
+    note = models.CharField(max_length=500, default='')
 
     class Meta(BaseModel.Meta):
         abstract = True

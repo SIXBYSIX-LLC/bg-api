@@ -93,7 +93,8 @@ class OrderManager(BaseManager):
                 shipping_charge=item.shipping_charge,
                 additional_charge=item.additional_charge,
                 cost_breakup=item.cost_breakup,
-                is_postpaid=item.is_postpaid
+                is_postpaid=item.is_postpaid,
+                note=item.note
             )
             rental_item.change_status(sts_const.NOT_CONFIRMED)
 
@@ -116,7 +117,8 @@ class OrderManager(BaseManager):
                 subtotal=item.subtotal,
                 shipping_charge=item.shipping_charge,
                 additional_charge=item.additional_charge,
-                cost_breakup=item.cost_breakup
+                cost_breakup=item.cost_breakup,
+                note=item.note
             )
             purchase_item.change_status(sts_const.NOT_CONFIRMED)
 
@@ -275,6 +277,7 @@ class Item(BaseModel):
     shipping_kind = models.CharField(max_length=20)
     #: Shipping method
     shipping_method = models.CharField(max_length=30, null=True)
+    note = models.CharField(max_length=500, default='')
 
     objects = InheritanceManager()
 
