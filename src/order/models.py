@@ -64,6 +64,8 @@ class OrderManager(BaseManager):
         order.cost_breakup = cart.cost_breakup
         order.shipping_address = shipping_address
         order.billing_address = billing_address
+        order.delivery_note = cart.delivery_note
+        order.contact_info = cart.contact_info
         order.save()
 
         # Creating RentalItem
@@ -162,6 +164,8 @@ class Order(BaseModel, DateTimeFieldMixin):
     additional_charge = ex_fields.FloatField(min_value=0.0, precision=2)
     #: Cost breakup
     cost_breakup = pg_fields.JSONField()
+    delivery_note = models.TextField(default='')
+    contact_info = pg_fields.JSONField(default={})
 
     objects = OrderManager()
 
