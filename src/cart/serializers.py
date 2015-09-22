@@ -11,6 +11,7 @@ from catalog.serializers import ProductRefSerializer
 from common.errors import ValidationError
 from common.serializers import ModelSerializer, rf_serializers
 from . import messages
+from usr.serializers import ContactInformationSerializer
 
 
 class ItemSerializer(ModelSerializer):
@@ -118,3 +119,9 @@ class CartSerializer(ModelSerializer):
         instance.calculate_cost()
 
         return instance
+
+    def validate_contact_info(self, value):
+        serializer = ContactInformationSerializer(data=value, context=self.context)
+        serializer.is_valid(True)
+
+        return serializer.data

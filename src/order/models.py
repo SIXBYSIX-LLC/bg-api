@@ -64,6 +64,8 @@ class OrderManager(BaseManager):
         order.cost_breakup = cart.cost_breakup
         order.shipping_address = shipping_address
         order.billing_address = billing_address
+        order.delivery_note = cart.delivery_note
+        order.contact_info = cart.contact_info
         order.save()
 
         # Creating RentalItem
@@ -91,7 +93,8 @@ class OrderManager(BaseManager):
                 shipping_charge=item.shipping_charge,
                 additional_charge=item.additional_charge,
                 cost_breakup=item.cost_breakup,
-                is_postpaid=item.is_postpaid
+                is_postpaid=item.is_postpaid,
+                note=item.note
             )
             rental_item.change_status(sts_const.NOT_CONFIRMED)
 
@@ -114,7 +117,8 @@ class OrderManager(BaseManager):
                 subtotal=item.subtotal,
                 shipping_charge=item.shipping_charge,
                 additional_charge=item.additional_charge,
-                cost_breakup=item.cost_breakup
+                cost_breakup=item.cost_breakup,
+                note=item.note
             )
             purchase_item.change_status(sts_const.NOT_CONFIRMED)
 
@@ -162,6 +166,8 @@ class Order(BaseModel, DateTimeFieldMixin):
     additional_charge = ex_fields.FloatField(min_value=0.0, precision=2)
     #: Cost breakup
     cost_breakup = pg_fields.JSONField()
+    delivery_note = models.TextField(default='')
+    contact_info = pg_fields.JSONField(default={})
 
     objects = OrderManager()
 
@@ -271,6 +277,7 @@ class Item(BaseModel):
     shipping_kind = models.CharField(max_length=20)
     #: Shipping method
     shipping_method = models.CharField(max_length=30, null=True)
+    note = models.CharField(max_length=500, default='')
 
     objects = InheritanceManager()
 

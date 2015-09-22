@@ -15,7 +15,7 @@ from django.utils.translation import ugettext as _
 from django.core import validators
 from djangofuture.contrib.postgres import fields as pg_fields
 
-from common import errors
+from common import errors, validators as ex_validators
 from common.models import BaseModel, AddressBase
 from . import messages, signals
 
@@ -229,3 +229,16 @@ class Address(AddressBase):
     Class to store address book for user
     """
     pass
+
+
+class ContactInformation(BaseModel):
+    """
+    Class to store contact information user has filled while checking out
+    """
+    user = models.ForeignKey('miniauth.User')
+    name = models.CharField(max_length=70)
+    email = models.EmailField(default='')
+    phone = models.CharField(max_length=20, validators=[ex_validators.phone_number])
+
+    class Meta(BaseModel.Meta):
+        unique_together = ('user', 'name', 'phone')
