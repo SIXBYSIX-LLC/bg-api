@@ -1824,6 +1824,38 @@ This endpoing will return the current cart of the user. Response will contain th
             }
 
 
+## Update Cart Detail [PATCH /v1/carts/{id}]
+
++ Parameters
+    + id (required, number, `1`) ... Cart id you get from `/carts/current` endpoint
+
++ Attributes
+    + location (number, required) - Job site id where item needs to be delivered
+    + billing_address (number, required) - Address id for which bill should be generated for
+    + delivery_note (string, optional) - Any special instruction regarding delivery. It'll be displayed to all sellers
+    + contact_info (object, required) - Contact person info
+
++ Request (application/json)
+
+    + Header
+
+            Authorization: Token TOKEN_VALUE
+            
+    + Body
+    
+            {
+                "location": 1,
+                "billing_address": 2,
+                "delivery_note": "Working hours is 10am to 5pm, Monday to Saturday", 
+                "contact_info": {
+                    "name": "Bertha R. Norris",
+                    "email": "",
+                    "phone": "BerthaRNorris@jourrapide.com"
+                }
+            }
+
++ Response 204 (application/json)
+
 
 ## Rental/Purchase Items [/v1/carts/{cart_id}/{add_as}]
 
@@ -1841,6 +1873,7 @@ This resource allow you to manage (add/update/remove) rental items in the cart. 
     + date_start (string, required) - ISO formated date string
     + date_end (string, required) - ISO formated date string
     + produt (number, required) - Product id to be added as rental
+    + note (string, optional) - Any item level special instruction
     
 
 + Request (application/json)
@@ -1855,7 +1888,8 @@ This resource allow you to manage (add/update/remove) rental items in the cart. 
                 "shipping_kind": "delivery",
                 "date_start": "2015-07-26T08:01:30.073832+00:00",
                 "product": 81, 
-                "date_end": "2015-08-22T08:01:30.073862+00:00"
+                "date_end": "2015-08-22T08:01:30.073862+00:00",
+                "note": "Any item level special instruction"
             }
 
 + Response 200 (application/json)
@@ -1954,7 +1988,8 @@ You can update `qty`, `shipping_kind`, `date_start` and `date_end` attributes
     
             {
                 "shipping_kind": "delivery",
-                "date_end": "2015-08-25T08:01:30.073862+00:00"
+                "date_end": "2015-08-25T08:01:30.073862+00:00",
+                "note": "Any item level special instruction"
             }
 
 + Response 200 (application/json)
@@ -3506,6 +3541,7 @@ change; General / Shippings and Additional charges.
 
 + Attributes
     + minimum_contract_period: 3 (optional, number) - Minimum contract period in days, default is 0
+    + minimum_rent_notice_period: 1 (optional, number) - Minimum rent notice period in days, default is 0
     
 + Request (application/json)
 
@@ -3515,7 +3551,7 @@ change; General / Shippings and Additional charges.
         
     + Body
         
-            {"minimum_contract_period": 2}
+            {"minimum_contract_period": 2, "minimum_rent_notice_period": 1}
                 
 + Response 204 (application/json)
 
