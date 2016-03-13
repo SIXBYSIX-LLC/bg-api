@@ -49,7 +49,7 @@ class OrderItem(BaseModel):
     to_user = models.ForeignKey('miniauth.User', related_name='+', editable=False)
     reviewer = models.CharField(choices=REVIEWER, max_length=30, editable=False)
     #: Catalog product as generic key
-    product = models.ForeignKey('catalog.Product', editable=False)
+    product = models.ForeignKey('catalog.Product', editable=False, related_name='reviews')
     #: The order item which this review is for
     order_item = models.ForeignKey('order.Item')
     #: Comment

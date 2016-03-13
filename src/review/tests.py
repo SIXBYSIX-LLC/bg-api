@@ -39,6 +39,18 @@ class ReviewTestCase(TestCase):
         self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
         self.assertEqual(resp.data.get('reviewer'), constants.Reviewer.SELLER)
 
+    def test_product_rating_annotation(self):
+        self.create_order()
+
+        # Buyer write the review
+        c = self.get_client(self.dataset.users[1])
+        resp = c.post('/reviews', data=self.data)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
+        self.assertEqual(resp.data.get('reviewer'), constants.Reviewer.BUYER)
+
+        resp = c.get('/products/%s' % resp.data.get('product'))
+        self.assertEqual(resp.data['review']['rating_count'], 1)
+
     def test_create_review_other_user(self):
         """
         Ensure fail when 3rd user tries to write a review

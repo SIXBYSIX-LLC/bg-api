@@ -1,4 +1,4 @@
-from django.db.models import Count, Case, When, Value
+from django.db.models import Count
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from cities.models import Country
@@ -27,8 +27,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         qs = super(ProductViewSet, self).get_queryset()
-        qs = qs.annotate(qty=Count(Case(When(inventory__is_active=True, then=Value(1)))))
-        return qs
+        return (qs
+                .annotate_rating()
+                .annotate_quantity())
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

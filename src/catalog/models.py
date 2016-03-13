@@ -4,6 +4,8 @@ Models
 ======
 """
 from django.db import models
+from django.db.models import Avg, QuerySet, Value, Count, Case, When
+from django.db.models.functions import Coalesce
 from djangofuture.contrib.postgres import fields as pg_fields
 from django.core.exceptions import ValidationError
 
@@ -44,6 +46,16 @@ class ProductManager(BaseManager):
         where += " OR name LIKE %s OR array_to_string(tags, ' ') LIKE %s"
 
         return self.extra(where=[where], params=[query, '%' + query + '%', '%' + query + '%'])
+
+
+class ProductQuerySet(QuerySet):
+    def annotate_rating(self):
+        qs = self.annotate(rating_average=Coalesce(Avg('reviews__rating'), Value(0.0)))
+        qs = qs.annotate(rating_count=Count('reviews__rating', distinct=True))
+        return qs
+
+    def annotate_quantity(self):
+        return self.annotate(qty=Count(Case(When(inventory__is_active=True, then=Value(1)))))
 
 
 class Product(BaseModel, DateTimeFieldMixin):
@@ -94,7 +106,7 @@ class Product(BaseModel, DateTimeFieldMixin):
     #: Condition
     condition = models.CharField(choices=CONDITION, max_length=50)
 
-    objects = ProductManager()
+    objects = ProductManager.from_queryset(ProductQuerySet)()
 
     class Meta(BaseModel.Meta):
         unique_together = ('user', 'sku')

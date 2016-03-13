@@ -10,6 +10,7 @@ from category.serializers import CategorySerializer
 class ProductSerializer(serializers.ModelSerializer):
     qty = rf_serializers.IntegerField(required=False)
     images = FileRefSerializer(many=True, read_only=True)
+    review = rf_serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -17,6 +18,12 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Product.objects.create_product(**validated_data)
+
+    def get_review(self, obj):
+        return {
+            'rating_average': getattr(obj, 'rating_average', 0.0),
+            'rating_count': getattr(obj, 'rating_count', 0)
+        }
 
 
 class ProductListSerializer(ProductSerializer):
