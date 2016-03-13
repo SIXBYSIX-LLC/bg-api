@@ -15,6 +15,12 @@ class OrderViewSet(GenericViewSet, CreateModelMixin, ListModelMixin, RetrieveMod
     list_serializer_class = OrderListSerializer
     ownership_fields = ('user',)
 
+    ordering_fields = ('total',)
+
+    def get_queryset(self):
+        return (super(OrderViewSet, self).get_queryset()
+                .annotate_total())
+
 
 class OrderLineViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     queryset = OrderLine.objects.all()

@@ -7,7 +7,8 @@ Models
 import logging
 
 from django.db import models, transaction
-from django.db.models import Q
+from django.db.models import Q, F
+from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.utils.crypto import get_random_string
 from djangofuture.contrib.postgres import fields as pg_fields
@@ -39,8 +40,7 @@ class OrderManager(BaseManager):
         """
         def check_shipping(item):
             # Check if not any non-shippable item
-            if (item.is_shippable is False
-                and item.shipping_kind == ship_const.SHIPPING_DELIVERY):
+            if item.is_shippable is False and item.shipping_kind == ship_const.SHIPPING_DELIVERY:
                 raise errors.OrderError(*messages.ERR_NON_SHIPPABLE)
 
             if not item.shipping_kind:
@@ -144,6 +144,13 @@ class OrderManager(BaseManager):
         return kwargs
 
 
+class OrderQuerySet(QuerySet):
+    def annotate_total(self):
+        return self.annotate(
+            total=F('subtotal') + F('shipping_charge') + F('additional_charge')
+        )
+
+
 class Order(BaseModel, DateTimeFieldMixin):
     """
     Class to store order information
@@ -169,7 +176,7 @@ class Order(BaseModel, DateTimeFieldMixin):
     delivery_note = models.TextField(default='')
     contact_info = pg_fields.JSONField(default={})
 
-    objects = OrderManager()
+    objects = OrderManager.from_queryset(OrderQuerySet)()
 
     class Meta(BaseModel.Meta):
         db_table = 'order'
@@ -186,6 +193,13 @@ class Order(BaseModel, DateTimeFieldMixin):
     @property
     def total(self):
         return round(self.subtotal + self.shipping_charge + self.additional_charge, 2)
+
+    @total.setter
+    def total(self, value):
+        """ Defined to get rid of the AttributeError as we already defined total as property and
+        QuerySet.iterator also set total property as the part of the annotation of `total`
+        """
+        pass
 
     @transaction.atomic()
     def confirm(self):

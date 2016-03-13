@@ -41,9 +41,19 @@ class OrderTest(TestCase):
 
     def test_list_order_user_acl(self):
         self.prepare_data()
+        another_cart = cart_factories.CartFactory(
+            user=self.dataset.users[1],
+            is_active=True,
+            location=self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot')[0],
+            billing_address=self.dataset.users[1].usr_address_set.filter(city__name_std='Rajkot')[0]
+        )
 
         c = self.get_client(self.dataset.users[1])
         order_resp = c.post('/orders', data={'cart': self.cart.id})
+        c.post('/orders', data={'cart': another_cart.id})
+
+        resp = c.get('/orders', data={'order_by': 'total'})
+        self.assertIsNotNone(resp.data[0].get('total'), resp.data[0])
 
         resp = c.get('/orders/%s' % order_resp.data['id'])
         self.assertEqual(len(resp.data['items']), 3)
