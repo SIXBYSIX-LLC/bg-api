@@ -310,6 +310,7 @@ class Item(BaseModel):
         data['location_id'] = data.pop('location')
         data['user_id'] = data.pop('user')
         data.pop('images', None)
+        data.pop('review', None)
         return Product(**data)
 
     def change_status(self, status, info=None, **kwargs):
