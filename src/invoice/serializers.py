@@ -43,7 +43,8 @@ class InvoiceRetrieveSerializer(InvoiceSerializer):
 
 
 class InvoiceLineSerializer(InvoiceSerializer):
-    invoice = InvoiceSerializer(read_only=True, fields=['order', 'user', 'is_paid'])
+    invoice = InvoiceSerializer(read_only=True, fields=['order', 'user', 'is_paid',
+                                                        'date_created_at', 'date_updated_at'])
 
     class Meta:
         model = InvoiceLine
