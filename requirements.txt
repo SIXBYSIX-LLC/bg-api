@@ -10,13 +10,13 @@ cffi==1.1.2
 cloudinary==1.1.2
 django-cities==0.4.1
 django-cors-headers==1.1.0
-django-filter==0.10.0
+django-filter==0.13.0
 git+https://github.com/inabhi9/django-miniauth.git
 django-model-utils==2.2
 git+https://github.com/inabhi9/djangofuture.git
 git+https://github.com/inabhi9/django-taxrates.git
-djangorestframework==3.1.3
-djangorestframework-filters==0.3.0
+djangorestframework==3.3.3
+djangorestframework-filters==0.8.0
 djangorestframework-gis==0.9
 djrill==1.4.0
 drf-extensions==0.2.7

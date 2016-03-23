@@ -12,6 +12,7 @@ from .serializers import (InvoiceSerializer, InvoiceRetrieveSerializer, InvoiceL
 from transaction.models import Transaction
 from transaction.serializer import TransactionRefSerializer
 from . import pdf
+from .filters import InvoiceFilter
 
 
 class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
@@ -19,7 +20,8 @@ class InvoiceViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     serializer_class = InvoiceSerializer
     retrieve_serializer_class = InvoiceRetrieveSerializer
     ownership_fields = ('user',)
-    filter_fields = ('order',)
+
+    filter_class = InvoiceFilter
 
     @decorators.detail_route(methods=['POST'], permission_classes=(IsOwnerPermissions,
                                                                    CustomActionPermissions,))
