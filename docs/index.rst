@@ -1,7 +1,7 @@
-.. BuilderGiant API documentation master file
+.. Marketplace API documentation master file
 
 
-Welcome to BuilderGiant API's documentation!
+Welcome to Marketplace API's documentation!
 ============================================
 
 Contents:
