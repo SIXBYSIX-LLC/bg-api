@@ -23,7 +23,7 @@ class CustomObtainAuthToken(ObtainAuthToken):
     renderer_classes = (JSONRenderer,)
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.DATA)
+        serializer = self.serializer_class(data=request.data)
         serializer.is_valid(True)
         user = serializer.validated_data['user']
         user_data = {}
