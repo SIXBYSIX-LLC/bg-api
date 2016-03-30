@@ -84,7 +84,7 @@ class AdditionalCharge(Charge):
     #: Either applicable on rental or purchase or all
     item_kind = models.CharField(choices=ITEM_KIND, max_length=30, db_index=True)
     #: Specifies the categories for which the charge should apply
-    categories = models.ManyToManyField('category.Category')
+    categories = models.ManyToManyField('category.Category', blank=True)
     #: Owner
     user = models.ForeignKey('miniauth.User', default=None)
 

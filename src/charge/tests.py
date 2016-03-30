@@ -12,7 +12,7 @@ class AdditionalChargeTest(TestCase):
     def test_create(self):
         st = factories.AdditionalChargeBaseFactory()
         resp = self.user_client.post('/charges/additional_charges', data=st)
-        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED)
+        self.assertEqual(resp.status_code, self.status_code.HTTP_201_CREATED, resp.data)
 
     def test_create_with_categories(self):
         categories = Category.objects.values_list('id').order_by('?').all()[:3]
