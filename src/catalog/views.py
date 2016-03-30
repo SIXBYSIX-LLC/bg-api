@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from cities.models import Country
 
 from common import viewsets
-from . import serializers, models
+from . import serializers, models, filters
 from usr.models import Address
 from shipping.serializers import StandardShippingSerializer
 
@@ -13,9 +13,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProductSerializer
     list_serializer_class = retrieve_serializer_class = serializers.ProductListSerializer
     queryset = models.Product.objects.all()
-    filter_fields = {'category': ['exact'], 'is_active': ['exact'], 'user': ['exact'],
-                     'daily_price': ['gte', 'lte'], 'sell_price': ['gte', 'lte'],
-                     'location': ['exact']}
+    filter_class = filters.ProductFilter
     search_manager = models.Product.objects
     facets_fields = ('location',)
 
