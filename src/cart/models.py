@@ -6,7 +6,7 @@ Models
 
 import logging
 
-from django.db import models, transaction
+from django.db import models
 from djangofuture.contrib.postgres import fields as pg_fields
 
 from common.models import BaseManager, BaseModel, DateTimeFieldMixin
@@ -111,7 +111,6 @@ class Cart(BaseModel, DateTimeFieldMixin):
         self.is_active = False
         self.save(update_fields=['is_active'])
 
-    @transaction.atomic
     def checkout(self):
         """
         Creates order and invoice from cart.

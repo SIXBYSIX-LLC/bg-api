@@ -16,7 +16,6 @@ from common import fields as ex_fields, errors
 from paymentgateway import models as paymentgateway
 from . import constants, messages
 
-
 L = logging.getLogger('bgapi.' + __name__)
 
 
@@ -65,7 +64,7 @@ class TransactionManager(BaseManager):
         # Call for the charge by payment gateway
         response = pg.charge(invoice, _id, **kwargs)
         L.debug('Charged by payment gateway', extra={
-            'status': response.status, 'message': response.message,
+            'status': response.status, 'm': response.message,
             'redirect_url': response.redirect_url
         })
 
